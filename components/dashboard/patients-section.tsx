@@ -34,7 +34,7 @@ export function PatientsSection() {
 
     // Form Hook
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<PatientFormData>({
-        resolver: zodResolver(patientSchema)
+        resolver: zodResolver(patientSchema),
     });
 
     const filteredPatients = patients.filter(
@@ -48,7 +48,7 @@ export function PatientsSection() {
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         const newPatient: Patient = {
-            id: String(Math.random()),
+            id: crypto.randomUUID(),
             name: data.name,
             cpf: data.cpf,
             phone: data.phone,
