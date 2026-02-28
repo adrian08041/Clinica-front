@@ -7,26 +7,37 @@ import { useState } from "react";
 import { loginSchema, type LoginFormData } from "@/lib/schemas/login-schema";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner"; // If you used sonner for toasts
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "admin@odontoflow.com", // Mock já preenchido para facilitar testes
+      password: "senha123", // Mock já preenchido para facilitar testes
       rememberMe: false, // will handle via standard checkbox
     },
   });
 
   const onSubmit = (data: LoginFormData) => {
-    console.log("Formulário de login:", data);
-    toast.success("Login simulado com sucesso!");
+    // Simulação assíncrona para feedback visual (opcional)
+    if (data.email === "admin@odontoflow.com" && data.password === "senha123") {
+      toast.success("Bem-vindo(a) de volta!");
+      router.push("/dashboard"); // Redireciona para o painel principal
+    } else {
+      toast.error("Credenciais inválidas. Tente novamente.");
+      setError("email", { message: "E-mail ou senha incorretos" });
+      setError("password", { message: "E-mail ou senha incorretos" });
+    }
   };
 
   return (
@@ -163,12 +174,12 @@ export function LoginForm() {
       {/* Footer Text */}
       <p className="font-medium text-[#6a7282] text-[16px] leading-[24px] text-center mt-6">
         Primeiro acesso?{" "}
-        <button
-          type="button"
+        <Link
+          href="/cadastro"
           className="font-bold text-[#0d9488] hover:underline"
         >
-          Fale com o administrador
-        </button>
+          Crie sua conta
+        </Link>
       </p>
     </div>
   );

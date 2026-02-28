@@ -48,7 +48,7 @@ export function PatientsSection() {
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         const newPatient: Patient = {
-            id: Math.random(),
+            id: String(Math.random()),
             name: data.name,
             cpf: data.cpf,
             phone: data.phone,
@@ -56,7 +56,8 @@ export function PatientsSection() {
             status: "Ativo",
             lastVisit: "Hoje",
             tags: ["Novo"],
-            avatar: "https://i.pravatar.cc/150?u=" + encodeURIComponent(data.name)
+            avatar: "https://i.pravatar.cc/150?u=" + encodeURIComponent(data.name),
+            createdAt: new Date().toISOString()
         };
 
         setPatients([newPatient, ...patients]);
@@ -225,18 +226,18 @@ export function PatientsSection() {
                                             </div>
                                         </TableCell>
                                         <TableCell className="align-top text-slate-500 text-[13px] font-medium whitespace-nowrap py-6 px-6">
-                                            {patient.lastVisit}
+                                            {patient.lastVisit || "-"}
                                         </TableCell>
                                         <TableCell className="align-top text-slate-700 text-[13px] font-medium whitespace-nowrap py-6 px-6">
                                             <div className="flex flex-col gap-0.5">
-                                                {patient.insurance.split(' ').map((word, index) => (
+                                                {patient.insurance ? patient.insurance.split(' ').map((word, index) => (
                                                     <span key={index}>{word}</span>
-                                                ))}
+                                                )) : <span>Particular</span>}
                                             </div>
                                         </TableCell>
                                         <TableCell className="align-top py-6 px-6">
                                             <div className="flex gap-1.5 flex-wrap max-w-[150px] flex-col items-start">
-                                                {patient.tags.map((tag, i) => (
+                                                {patient.tags?.map((tag, i) => (
                                                     <span key={i} className="px-[6px] py-[2px] bg-[#f1f5f9] text-slate-600 text-[10px] rounded-[4px] font-bold uppercase tracking-wider flex items-center">
                                                         {tag}
                                                     </span>

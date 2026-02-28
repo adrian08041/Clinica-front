@@ -1,10 +1,9 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
-import { PatientsSection } from "@/components/dashboard/patients-section";
 
-export default function PacientesPage() {
+export default function PainelLayout({ children }: { children: React.ReactNode }) {
     return (
         <DashboardLayout>
-            <PatientsSection />
+            {children}
         </DashboardLayout>
     );
 }

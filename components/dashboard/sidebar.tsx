@@ -15,7 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Pacientes", href: "/pacientes", icon: UserIcon },
     { name: "Agenda", href: "/agenda", icon: Calendar },
     { name: "Tratamentos", href: "/tratamentos", icon: Activity },
@@ -37,9 +37,8 @@ export function Sidebar({ className }: { className?: string }) {
 
                 <nav className="p-4 space-y-2">
                     {navItems.map((item) => {
-                        // Verify if route is exact match for '/' or starts with '/pacientes'
-                        const isActive =
-                            item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
+                        // Verifica se a rota atual começa com o href do item (para manter ativo em subpáginas)
+                        const isActive = pathname?.startsWith(item.href);
 
                         const Icon = item.icon;
 

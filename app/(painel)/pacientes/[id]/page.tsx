@@ -15,7 +15,7 @@ import {
   Upload,
   File,
 } from "lucide-react";
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,7 @@ export default function PatientProfilePage() {
   const breadcrumbs = ["SaaS Dashboard", "Pacientes", patient.name];
 
   return (
-    <DashboardLayout breadcrumbs={breadcrumbs}>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 md:pb-8 pt-2">
         {/* HEADER ROW */}
         <div className="flex items-center gap-3">
@@ -78,13 +78,12 @@ export default function PatientProfilePage() {
                 </h2>
                 <span
                   className={`text-[12px] font-bold px-2 py-[2px] rounded-[33554400px] whitespace-nowrap tracking-[0.2px]
-                                    ${
-                                      patient.status === "Ativo"
-                                        ? "bg-[#dcfce7] text-[#16a34a]"
-                                        : patient.status === "Pendente"
-                                          ? "bg-[#fef9c3] text-[#ca8a04]"
-                                          : "bg-[#fee2e2] text-[#dc2626]"
-                                    }`}
+                                    ${patient.status === "Ativo"
+                      ? "bg-[#dcfce7] text-[#16a34a]"
+                      : patient.status === "Pendente"
+                        ? "bg-[#fef9c3] text-[#ca8a04]"
+                        : "bg-[#fee2e2] text-[#dc2626]"
+                    }`}
                 >
                   {patient.status}
                 </span>
@@ -158,11 +157,10 @@ export default function PatientProfilePage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 text-[14px] pb-3 px-1 whitespace-nowrap transition-colors
-                                    ${
-                                      isActive
-                                        ? "text-[#0f766e] font-semibold border-b-2 border-[#0f766e]"
-                                        : "text-slate-400 font-medium hover:text-slate-600"
-                                    }`}
+                                    ${isActive
+                    ? "text-[#0f766e] font-semibold border-b-2 border-[#0f766e]"
+                    : "text-slate-400 font-medium hover:text-slate-600"
+                  }`}
               >
                 <Icon className="w-[18px] h-[18px]" />
                 {tab.id}
@@ -510,6 +508,6 @@ export default function PatientProfilePage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </>
   );
 }
