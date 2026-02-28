@@ -1,5 +1,6 @@
 import { MessageCircle, Zap, CreditCard, ExternalLink, Plus, CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const integrations = [
     {
@@ -71,10 +72,10 @@ export function IntegracoesSettings() {
                             <p className="text-[14px] font-medium text-slate-500 mb-6 flex-1 line-clamp-2">
                                 {integration.description}
                             </p>
-                            <button className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-slate-200 text-[13px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                            <Button variant="outline" className="w-full rounded-full border-slate-200 text-[13px] font-semibold text-slate-700 hover:bg-slate-50">
                                 Configurar Integração
-                                <ExternalLink className="w-[14px] h-[14px] text-slate-400" />
-                            </button>
+                                <ExternalLink className="w-[14px] h-[14px] ml-2 text-slate-400" />
+                            </Button>
                         </div>
                     );
                 })}

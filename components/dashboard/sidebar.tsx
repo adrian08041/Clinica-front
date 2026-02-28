@@ -13,6 +13,7 @@ import {
     LogOut
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -82,9 +83,9 @@ export function Sidebar({ className }: { className?: string }) {
                         <p className="text-sm font-medium text-white truncate">Dra. Ana Silva</p>
                         <p className="text-xs text-slate-400 truncate">Clínica Geral</p>
                     </div>
-                    <button className="p-1 hover:bg-slate-700 rounded transition-colors text-slate-400 hover:text-white mt-0.5">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700 mt-0.5 ml-2">
                         <LogOut className="w-4 h-4" />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </aside>

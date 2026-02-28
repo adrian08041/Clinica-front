@@ -246,19 +246,20 @@ export function PatientsSection() {
                                         </TableCell>
                                         <TableCell className="align-middle px-6 py-6 h-full">
                                             <div className="flex items-center gap-[18px] opacity-0 group-hover:opacity-100 transition-opacity justify-end">
-                                                <button
+                                                <Button
+                                                    variant="ghost" size="icon"
                                                     onClick={() => router.push(`/pacientes/${patient.id}`)}
                                                     className="text-slate-400 hover:text-teal-600 transition-colors cursor-pointer"
                                                     title="Ver Perfil"
                                                 >
                                                     <Eye className="w-[18px] h-[18px]" />
-                                                </button>
-                                                <button className="text-teal-600 hover:text-teal-700 transition-colors cursor-pointer" title="Editar">
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="text-teal-600 hover:text-teal-700 transition-colors cursor-pointer" title="Editar">
                                                     <PencilLine className="w-[18px] h-[18px]" />
-                                                </button>
-                                                <button className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer" title="Mensagem">
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer" title="Mensagem">
                                                     <MessageCircle className="w-[18px] h-[18px]" />
-                                                </button>
+                                                </Button>
                                             </div>
                                         </TableCell>
                                     </TableRow>

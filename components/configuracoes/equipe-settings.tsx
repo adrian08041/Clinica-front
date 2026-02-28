@@ -1,4 +1,7 @@
 import { Plus, UserPlus, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const teamMembers = [
     {
@@ -33,40 +36,39 @@ export function EquipeSettings() {
                         Controle os usuários e níveis de acesso ao sistema.
                     </p>
                 </div>
-                <button className="flex items-center justify-center h-10 px-4 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors">
+                <Button className="h-10 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm">
                     <UserPlus className="w-4 h-4 mr-2" />
                     Novo Usuário
-                </button>
+                </Button>
             </div>
 
             <div className="border border-slate-200 rounded-xl overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-slate-50 border-b border-slate-200">
-                            <th className="py-4 px-6 text-[13px] font-semibold text-slate-500">
+                <Table className="w-full text-left">
+                    <TableHeader>
+                        <TableRow className="bg-slate-50 border-b border-slate-200 hover:bg-slate-50">
+                            <TableHead className="py-4 px-6 text-[13px] font-semibold text-slate-500 h-auto">
                                 Colaborador
-                            </th>
-                            <th className="py-4 px-6 text-[13px] font-semibold text-slate-500">
+                            </TableHead>
+                            <TableHead className="py-4 px-6 text-[13px] font-semibold text-slate-500 h-auto">
                                 Cargo / Permissão
-                            </th>
-                            <th className="py-4 px-6 text-[13px] font-semibold text-slate-500 w-[100px] text-right">
+                            </TableHead>
+                            <TableHead className="py-4 px-6 text-[13px] font-semibold text-slate-500 w-[100px] text-right h-auto">
                                 Ações
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
                         {teamMembers.map((member, index) => (
-                            <tr
+                            <TableRow
                                 key={index}
                                 className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors"
                             >
-                                <td className="py-4 px-6">
+                                <TableCell className="py-4 px-6">
                                     <div className="flex items-center gap-4">
-                                        <img
-                                            src={member.avatar}
-                                            alt={member.name}
-                                            className="w-10 h-10 rounded-full border border-slate-200 object-cover"
-                                        />
+                                        <Avatar className="w-10 h-10 border border-slate-200">
+                                            <AvatarImage src={member.avatar} alt={member.name} />
+                                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
                                         <div className="flex flex-col">
                                             <span className="text-[14px] font-semibold text-slate-900">
                                                 {member.name}
@@ -76,21 +78,19 @@ export function EquipeSettings() {
                                             </span>
                                         </div>
                                     </div>
-                                </td>
-                                <td className="py-4 px-6">
-                                    <span className="text-[14px] font-medium text-slate-700">
-                                        {member.role}
-                                    </span>
-                                </td>
-                                <td className="py-4 px-6 text-right">
-                                    <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100">
+                                </TableCell>
+                                <TableCell className="py-4 px-6 text-[14px] font-medium text-slate-700">
+                                    {member.role}
+                                </TableCell>
+                                <TableCell className="py-4 px-6 text-right">
+                                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
                                         <MoreHorizontal className="w-5 h-5" />
-                                    </button>
-                                </td>
-                            </tr>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
                         ))}
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
             </div>
         </div>
     );

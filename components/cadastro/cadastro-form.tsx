@@ -8,6 +8,8 @@ import { cadastroSchema, type CadastroFormData } from "@/lib/schemas/cadastro-sc
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function CadastroForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -58,17 +60,17 @@ export function CadastroForm() {
                         Nome completo
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                             <User className="w-5 h-5 text-gray-400" />
                         </div>
-                        <input
+                        <Input
                             id="name"
                             type="text"
                             placeholder="Seu nome completo"
                             {...register("name")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all",
-                                errors.name && "border-red-500 focus:ring-red-500"
+                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                errors.name && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
                     </div>
@@ -88,17 +90,17 @@ export function CadastroForm() {
                         Email
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                             <Mail className="w-5 h-5 text-gray-400" />
                         </div>
-                        <input
+                        <Input
                             id="email"
                             type="email"
                             placeholder="seu@email.com"
                             {...register("email")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all",
-                                errors.email && "border-red-500 focus:ring-red-500"
+                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                errors.email && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
                     </div>
@@ -118,26 +120,28 @@ export function CadastroForm() {
                         Senha
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                             <Lock className="w-5 h-5 text-gray-400" />
                         </div>
-                        <input
+                        <Input
                             id="password"
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
                             {...register("password")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all",
-                                errors.password && "border-red-500 focus:ring-red-500"
+                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                errors.password && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
-                        <button
+                        <Button
                             type="button"
-                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute inset-y-0 right-0 h-[54px] w-[54px] flex items-center text-gray-400 hover:text-gray-600 focus:outline-none hover:bg-transparent"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                        </Button>
                     </div>
                     {errors.password && (
                         <span className="text-red-500 text-sm mt-1 animate-in fade-in">
@@ -155,26 +159,28 @@ export function CadastroForm() {
                         Confirme a senha
                     </label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                             <Lock className="w-5 h-5 text-gray-400" />
                         </div>
-                        <input
+                        <Input
                             id="confirmPassword"
                             type={showConfirmPassword ? "text" : "password"}
                             placeholder="••••••••"
                             {...register("confirmPassword")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all",
-                                errors.confirmPassword && "border-red-500 focus:ring-red-500"
+                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                errors.confirmPassword && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
-                        <button
+                        <Button
                             type="button"
-                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute inset-y-0 right-0 h-[54px] w-[54px] flex items-center text-gray-400 hover:text-gray-600 focus:outline-none hover:bg-transparent"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                             {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
+                        </Button>
                     </div>
                     {errors.confirmPassword && (
                         <span className="text-red-500 text-sm mt-1 animate-in fade-in">
@@ -184,12 +190,12 @@ export function CadastroForm() {
                 </div>
 
                 {/* Submit */}
-                <button
+                <Button
                     type="submit"
-                    className="bg-[#0d9488] hover:bg-teal-700 text-white font-bold text-[16px] leading-[24px] rounded-xl h-[56px] mt-4 shadow-[0px_10px_15px_0px_rgba(0,187,167,0.2),0px_4px_6px_0px_rgba(0,187,167,0.2)] transition-all flex items-center justify-center focus:ring-2 focus:ring-offset-2 focus:ring-[#0d9488] focus:outline-none"
+                    className="bg-[#0d9488] hover:bg-teal-700 text-white font-bold text-[16px] leading-[24px] rounded-xl h-[56px] mt-4 shadow-[0px_10px_15px_0px_rgba(0,187,167,0.2),0px_4px_6px_0px_rgba(0,187,167,0.2)]"
                 >
                     Cadastrar
-                </button>
+                </Button>
             </form>
 
             {/* Footer Text */}

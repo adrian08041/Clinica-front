@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { horariosSchema, type HorariosFormData } from "@/lib/schemas/horarios-schema";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function HorariosSettings() {
     const {
@@ -91,11 +92,11 @@ export function HorariosSettings() {
                                             <label className="text-[12px] font-bold text-slate-500 mb-1.5 block">
                                                 Início
                                             </label>
-                                            <input
+                                            <Input
                                                 type="time"
                                                 {...register(`dias.${index}.start`)}
                                                 className={cn(
-                                                    "h-10 w-full rounded-lg border bg-slate-50/50 px-4 text-sm font-medium outline-none transition-all placeholder:text-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 border-slate-200"
+                                                    "h-10 w-full rounded-lg bg-slate-50/50 px-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500 border-slate-200"
                                                 )}
                                             />
                                         </div>
@@ -103,11 +104,11 @@ export function HorariosSettings() {
                                             <label className="text-[12px] font-bold text-slate-500 mb-1.5 block">
                                                 Término
                                             </label>
-                                            <input
+                                            <Input
                                                 type="time"
                                                 {...register(`dias.${index}.end`)}
                                                 className={cn(
-                                                    "h-10 w-full rounded-lg border bg-slate-50/50 px-4 text-sm font-medium outline-none transition-all placeholder:text-slate-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 border-slate-200"
+                                                    "h-10 w-full rounded-lg bg-slate-50/50 px-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500 border-slate-200"
                                                 )}
                                             />
                                         </div>
@@ -172,19 +173,20 @@ export function HorariosSettings() {
                 </div>
 
                 <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
-                    <button
+                    <Button
                         type="button"
+                        variant="outline"
                         onClick={() => reset()}
-                        className="h-10 px-6 rounded-lg border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"
+                        className="h-10 px-6 rounded-lg text-slate-600 font-semibold text-sm hover:bg-slate-50"
                     >
                         Descartar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
-                        className="h-10 px-6 rounded-lg bg-teal-600 text-white font-semibold text-sm hover:bg-teal-700 shadow-sm transition-colors"
+                        className="h-10 px-6 rounded-lg bg-teal-600 text-white font-semibold text-sm hover:bg-teal-700 shadow-sm"
                     >
                         Salvar Horários
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>
