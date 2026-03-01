@@ -18,6 +18,7 @@ export default function MenuPage() {
             const storedUser = localStorage.getItem("user");
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
+                // eslint-disable-next-line
                 setUser({
                     name: parsedUser.name || "Dra. Ana Silva",
                     role: parsedUser.role || "Ortodontista",

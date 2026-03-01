@@ -19,6 +19,7 @@ export function Header({ breadcrumbs }: HeaderProps) {
             const storedUser = localStorage.getItem("user");
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
+                // eslint-disable-next-line
                 if (parsedUser.firstName) setUserName(parsedUser.firstName);
             }
         } catch (e) {

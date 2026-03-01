@@ -1,5 +1,5 @@
 import { SettingsContent } from "@/components/configuracoes/settings-content";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Configurações | OdontoFlow",

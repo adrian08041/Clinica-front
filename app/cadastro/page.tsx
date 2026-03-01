@@ -1,6 +1,6 @@
 import { InfoSection } from "@/components/login/info-section";
 import { CadastroForm } from "@/components/cadastro/cadastro-form";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Cadastro | OdontoFlow",

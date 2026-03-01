@@ -26,8 +26,9 @@ export function ClinicaSettings() {
     });
 
     const onSubmit = (data: ClinicaFormData) => {
-        console.log("Configurações salvas:", data);
-        toast.success("Informações salvas com sucesso!");
+        toast.success("Configurações atualizadas com sucesso!");
+        // eslint-disable-next-line no-console
+        console.log("Salvo:", data);
     };
 
     return (

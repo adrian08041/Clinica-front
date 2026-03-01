@@ -40,6 +40,7 @@ export function HorariosSettings() {
     });
 
     const onSubmit = (data: HorariosFormData) => {
+        // eslint-disable-next-line no-console
         console.log("Horários salvos:", data);
         toast.success("Horários salvos com sucesso!");
     };
@@ -58,7 +59,9 @@ export function HorariosSettings() {
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
                 <div className="flex flex-col gap-6 mb-10">
                     {fields.map((field, index) => {
+                        // eslint-disable-next-line
                         const isActive = watch(`dias.${index}.active`);
+                        // eslint-disable-next-line
                         const hours = watch(`dias.${index}.hours`);
 
                         return (

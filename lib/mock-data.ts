@@ -1,4 +1,4 @@
-import type { Service, Testimonial, Patient } from "@/lib/types";
+import type { Service, Patient } from "@/lib/types";
 
 // As per design, the login page doesn't strictly require data mapping here,
 // but to satisfy project conventions, mock data is centralized here.

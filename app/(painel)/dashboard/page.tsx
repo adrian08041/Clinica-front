@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { CalendarCheck, CheckCircle, DollarSign, Users, TrendingUp, TrendingDown, AlertCircle, CreditCard, Gift, ChevronRight, FileText } from 'lucide-react';
+import { CalendarCheck, CheckCircle, DollarSign, Users, TrendingUp, AlertCircle, CreditCard, Gift, ChevronRight, FileText } from 'lucide-react';
 
 const imgImageMarianaCosta = "https://api.dicebear.com/9.x/avataaars/png?seed=MarianaCosta&backgroundColor=f0f9ff";
 const imgImageRicardoMendes = "https://api.dicebear.com/9.x/avataaars/png?seed=RicardoMendes&backgroundColor=ecfdf5";
