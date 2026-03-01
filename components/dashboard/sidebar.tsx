@@ -1,7 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
@@ -25,6 +26,34 @@ const navItems = [
 
 export function Sidebar({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
     const pathname = usePathname();
+    const router = useRouter();
+    const [user, setUser] = useState({
+        name: "Dra. Ana Silva",
+        role: "Clínica Geral",
+        initials: "AS"
+    });
+
+    useEffect(() => {
+        try {
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                // eslint-disable-next-line
+                setUser({
+                    name: parsedUser.name || "Dra. Ana Silva",
+                    role: parsedUser.role || "Clínica Geral",
+                    initials: parsedUser.initials || "AS"
+                });
+            }
+        } catch (e) {
+            console.error("Failed to parse user from local storage", e);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        router.push("/");
+    };
 
     return (
         <aside className={cn("w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shrink-0", className)}>
@@ -80,13 +109,18 @@ export function Sidebar({ className, onNavigate }: { className?: string; onNavig
                 <div className="flex items-center p-3 mt-2 rounded-xl border border-slate-700 bg-slate-800/50">
                     <Avatar className="w-10 h-10 border-2 border-slate-600">
                         <AvatarImage src="https://i.pravatar.cc/150?u=ana-silva" />
-                        <AvatarFallback>AS</AvatarFallback>
+                        <AvatarFallback>{user.initials}</AvatarFallback>
                     </Avatar>
                     <div className="ml-3 flex-1 overflow-hidden">
-                        <p className="text-sm font-medium text-white truncate">Dra. Ana Silva</p>
-                        <p className="text-xs text-slate-400 truncate">Clínica Geral</p>
+                        <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                        <p className="text-xs text-slate-400 truncate">{user.role}</p>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700 mt-0.5 ml-2">
+                    <Button
+                        onClick={handleLogout}
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-700 mt-0.5 ml-2"
+                    >
                         <LogOut className="w-4 h-4" />
                     </Button>
                 </div>

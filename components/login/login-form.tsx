@@ -20,7 +20,7 @@ export function LoginForm() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,6 +34,13 @@ export function LoginForm() {
     // Simulação assíncrona para feedback visual (opcional)
     if (data.email === "admin@odontoflow.com" && data.password === "senha123") {
       toast.success("Bem-vindo(a) de volta!");
+      localStorage.setItem("user", JSON.stringify({
+        name: "Dra. Ana Silva",
+        firstName: "Dra. Ana",
+        email: data.email,
+        role: "Ortodontista",
+        initials: "AS"
+      }));
       router.push("/dashboard"); // Redireciona para o painel principal
     } else {
       toast.error("Credenciais inválidas. Tente novamente.");

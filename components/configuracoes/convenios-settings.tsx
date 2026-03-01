@@ -1,4 +1,4 @@
-import { Plus, Building, FileText, Percent, Info } from "lucide-react";
+import { Plus, Building, Phone, MapPin, Search, Trash2, Edit2, ShieldAlert, BadgeInfo, Percent, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const convenios = [

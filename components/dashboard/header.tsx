@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Bell, Menu, ChevronRight, ChevronDown, Check, Calendar as CalendarIcon, AlertTriangle, User as UserIcon, Settings as SettingsIcon, LogOut as LogOutIcon } from "lucide-react";
 import {
@@ -11,18 +10,33 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface HeaderProps {
-    onMenuClick?: () => void;
     breadcrumbs?: string[];
 }
 
-export function Header({ onMenuClick, breadcrumbs }: HeaderProps) {
+export function Header({ breadcrumbs }: HeaderProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const router = useRouter();
+    const [userName, setUserName] = useState("Dra. Ana");
+
+    // Load user data on mount
+    useEffect(() => {
+        try {
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                // eslint-disable-next-line
+                if (parsedUser.firstName) setUserName(parsedUser.firstName);
+            }
+        } catch (e) {
+            console.error("Failed to parse user from local storage", e);
+        }
+    }, []);
 
     const today = new Date().toLocaleDateString('pt-BR', {
         weekday: 'long',
@@ -34,12 +48,6 @@ export function Header({ onMenuClick, breadcrumbs }: HeaderProps) {
     return (
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shrink-0">
             <div className="flex items-center gap-4">
-                {/* Mobile Menu Toggle */}
-                <Button variant="ghost" size="icon" className="md:hidden" onClick={onMenuClick}>
-                    <Menu className="w-5 h-5 text-slate-500" />
-                    <span className="sr-only">Menu</span>
-                </Button>
-
                 {breadcrumbs && breadcrumbs.length > 0 ? (
                     <div className="flex items-center text-[13px] font-medium text-slate-500">
                         {breadcrumbs.map((crumb, index) => (
@@ -55,7 +63,7 @@ export function Header({ onMenuClick, breadcrumbs }: HeaderProps) {
                     </div>
                 ) : (
                     <div>
-                        <h2 className="text-base md:text-lg font-semibold text-slate-800">Bom dia, Dra. Ana 👋</h2>
+                        <h2 className="text-base md:text-lg font-semibold text-slate-800">Bom dia, {userName} 👋</h2>
                         <p className="hidden md:block text-xs text-slate-500 uppercase tracking-widest mt-1">
                             {today}
                         </p>

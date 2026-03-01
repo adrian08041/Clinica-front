@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
+import { MobileNav } from "@/components/dashboard/mobile-nav";
 import { Toaster } from "@/components/ui/sonner";
 
 export function DashboardLayout({ children, breadcrumbs }: { children: React.ReactNode, breadcrumbs?: string[] }) {
@@ -30,11 +31,12 @@ export function DashboardLayout({ children, breadcrumbs }: { children: React.Rea
             </div>
 
             <main className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
-                <Header breadcrumbs={breadcrumbs} onMenuClick={() => setIsSidebarOpen(true)} />
-                <div className="flex-1 overflow-auto p-4 md:p-8">
+                <Header breadcrumbs={breadcrumbs} />
+                <div className="flex-1 overflow-auto p-4 pb-20 md:p-8">
                     {children}
                 </div>
             </main>
+            <MobileNav />
             <Toaster position="bottom-right" />
         </div>
     );

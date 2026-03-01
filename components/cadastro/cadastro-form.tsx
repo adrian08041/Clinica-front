@@ -30,8 +30,12 @@ export function CadastroForm() {
     });
 
     const onSubmit = (data: CadastroFormData) => {
+        // eslint-disable-next-line no-console
         console.log("Formulário de cadastro:", data);
-        toast.success("Conta criada com sucesso! (Simulado)");
+        toast.success("Conta criada com sucesso! Bem-vindo(a) ao OdontoFlow.");
+        // eslint-disable-next-line no-console
+        console.log("Dados do cadastro:", data);
+        // router.push("/dashboard");
     };
 
     return (
