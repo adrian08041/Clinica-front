@@ -42,8 +42,8 @@ export function EquipeSettings() {
                 </Button>
             </div>
 
-            <div className="border border-slate-200 rounded-xl overflow-hidden">
-                <Table className="w-full text-left">
+            <div className="border border-slate-200 rounded-xl overflow-x-auto">
+                <Table className="w-full text-left min-w-[500px]">
                     <TableHeader>
                         <TableRow className="bg-slate-50 border-b border-slate-200 hover:bg-slate-50">
                             <TableHead className="py-4 px-6 text-[13px] font-semibold text-slate-500 h-auto">

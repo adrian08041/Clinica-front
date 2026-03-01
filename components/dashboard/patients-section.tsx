@@ -214,16 +214,10 @@ export function PatientsSection() {
                                             </div>
                                         </TableCell>
                                         <TableCell className="align-top text-slate-500 text-[13px] font-medium whitespace-nowrap py-6 px-6">
-                                            <div className="flex flex-col gap-0.5 max-w-[100px]">
-                                                <span>{patient.cpf.split('-')[0]}</span>
-                                                <span>-{patient.cpf.split('-')[1]}</span>
-                                            </div>
+                                            {patient.cpf}
                                         </TableCell>
                                         <TableCell className="align-top text-slate-500 text-[13px] font-medium whitespace-nowrap py-6 px-6">
-                                            <div className="flex flex-col gap-0.5">
-                                                <span className="text-slate-500">{patient.phone.split(' ')[0]}</span>
-                                                <span>{patient.phone.split(' ').slice(1).join(' ')}</span>
-                                            </div>
+                                            {patient.phone}
                                         </TableCell>
                                         <TableCell className="align-top text-slate-500 text-[13px] font-medium whitespace-nowrap py-6 px-6">
                                             {patient.lastVisit || "-"}
@@ -245,7 +239,7 @@ export function PatientsSection() {
                                             </div>
                                         </TableCell>
                                         <TableCell className="align-middle px-6 py-6 h-full">
-                                            <div className="flex items-center gap-[18px] opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                                            <div className="flex items-center gap-[18px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity justify-end">
                                                 <Button
                                                     variant="ghost" size="icon"
                                                     onClick={() => router.push(`/pacientes/${patient.id}`)}
@@ -274,11 +268,11 @@ export function PatientsSection() {
                     <p className="text-[14px] text-slate-500 font-medium">
                         Mostrando 1-{filteredPatients.length} de {filteredPatients.length > 4 ? filteredPatients.length : "342"} pacientes
                     </p>
-                    <div className="flex items-center gap-[6px]">
+                    <div className="flex flex-wrap justify-center items-center gap-[6px]">
                         <Button variant="outline" size="sm" className="h-[36px] px-4 text-slate-500 bg-white border-slate-200 rounded-[6px] font-medium hover:text-slate-700 shadow-sm border">Anterior</Button>
                         <Button variant="default" size="sm" className="h-[36px] w-[36px] bg-[#0d9488] hover:bg-[#0f766e] text-white p-0 flex items-center justify-center font-medium rounded-[6px] border-none shadow-md">1</Button>
-                        <Button variant="outline" size="sm" className="h-[36px] w-[36px] text-slate-600 bg-white border-slate-200 p-0 flex items-center justify-center font-medium hover:bg-slate-50 rounded-[6px] shadow-sm border">2</Button>
-                        <Button variant="outline" size="sm" className="h-[36px] w-[36px] text-slate-600 bg-white border-slate-200 p-0 flex items-center justify-center font-medium hover:bg-slate-50 rounded-[6px] shadow-sm border">3</Button>
+                        <Button variant="outline" size="sm" className="h-[36px] w-[36px] hidden sm:flex text-slate-600 bg-white border-slate-200 p-0 items-center justify-center font-medium hover:bg-slate-50 rounded-[6px] shadow-sm border">2</Button>
+                        <Button variant="outline" size="sm" className="h-[36px] w-[36px] hidden sm:flex text-slate-600 bg-white border-slate-200 p-0 items-center justify-center font-medium hover:bg-slate-50 rounded-[6px] shadow-sm border">3</Button>
                         <Button variant="outline" size="sm" className="h-[36px] px-4 text-slate-600 bg-white border-slate-200 font-medium hover:bg-slate-50 rounded-[6px] shadow-sm border">Próximo</Button>
                     </div>
                 </div>

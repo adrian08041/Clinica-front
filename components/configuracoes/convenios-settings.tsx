@@ -71,7 +71,7 @@ export function ConveniosSettings() {
                         Gerencie os planos de saúde e convênios da clínica.
                     </p>
                 </div>
-                <Button className="whitespace-nowrap">
+                <Button className="h-10 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm whitespace-nowrap">
                     <Plus className="w-4 h-4 mr-2" />
                     Novo Convênio
                 </Button>

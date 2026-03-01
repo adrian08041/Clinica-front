@@ -89,7 +89,7 @@ export default function PatientProfilePage() {
                 </span>
               </div>
 
-              <div className="flex gap-x-12 gap-y-4 mt-2 whitespace-nowrap">
+              <div className="flex flex-wrap md:gap-x-12 gap-x-6 gap-y-4 mt-2">
                 <div className="flex flex-col gap-1">
                   <span className="text-[12px] text-slate-400 font-medium">
                     Idade
@@ -126,7 +126,7 @@ export default function PatientProfilePage() {
             </div>
           </div>
 
-          <div className="flex gap-3 shrink-0 pt-1">
+          <div className="flex flex-wrap gap-3 shrink-0 pt-1">
             <Button
               variant="outline"
               className="text-slate-600 border-slate-200 shadow-sm h-10 px-4 rounded-[8px] font-semibold hover:bg-slate-50"
@@ -141,8 +141,7 @@ export default function PatientProfilePage() {
           </div>
         </div>
 
-        {/* TABS NAVIGATION */}
-        <div className="flex items-center gap-6 border-b border-slate-200 overflow-x-auto overflow-y-hidden pb-[1px] scrollbar-hide">
+        <div className="flex items-center gap-6 border-b border-slate-200 overflow-x-auto overflow-y-hidden pb-[1px] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {[
             { id: "Dados Pessoais", icon: User },
             { id: "Consultas", icon: Calendar },
@@ -341,7 +340,7 @@ export default function PatientProfilePage() {
 
         {/* TAB CONTENT: FINANCEIRO */}
         {activeTab === "Financeiro" && (
-          <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-slate-200">

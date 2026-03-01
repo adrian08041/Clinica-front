@@ -23,7 +23,7 @@ const navItems = [
     { name: "Financeiro", href: "/financeiro", icon: FileText },
 ];
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
     const pathname = usePathname();
 
     return (
@@ -47,6 +47,7 @@ export function Sidebar({ className }: { className?: string }) {
                             <Link
                                 key={item.href}
                                 href={item.href}
+                                onClick={onNavigate}
                                 className={cn(
                                     "flex items-center px-4 py-2 text-sm rounded-lg transition-colors",
                                     isActive
@@ -65,6 +66,7 @@ export function Sidebar({ className }: { className?: string }) {
             <div className="p-4 border-t border-slate-800">
                 <Link
                     href="/configuracoes"
+                    onClick={onNavigate}
                     className={cn(
                         "w-full flex items-center px-4 py-2 text-sm rounded-lg transition-colors mb-2",
                         pathname?.startsWith("/configuracoes")
