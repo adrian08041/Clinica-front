@@ -26,8 +26,8 @@ const teamMembers = [
 
 export function EquipeSettings() {
     return (
-        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm overflow-hidden p-8">
-            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm overflow-hidden w-full p-4 sm:p-6 md:p-8">
+            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6 md:mb-8">
                 <div>
                     <h2 className="text-[20px] font-bold text-slate-900 leading-[28px]">
                         Gestão de Equipe

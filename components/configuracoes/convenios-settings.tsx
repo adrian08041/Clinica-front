@@ -61,8 +61,8 @@ const convenios = [
 
 export function ConveniosSettings() {
     return (
-        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
                 <div>
                     <h2 className="text-[20px] font-bold text-slate-900 leading-[28px]">
                         Convênios Aceitos
@@ -81,7 +81,7 @@ export function ConveniosSettings() {
                 {convenios.map((item, idx) => (
                     <div
                         key={idx}
-                        className={`flex items-start gap-4 p-5 rounded-2xl border ${item.active ? 'border-slate-200 bg-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.02)]' : 'border-slate-100 bg-slate-50/50 opacity-75'} transition-all hover:border-slate-300 cursor-pointer`}
+                        className={`flex flex-col sm:flex-row sm:items-start gap-4 p-4 sm:p-5 rounded-2xl border ${item.active ? 'border-slate-200 bg-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.02)]' : 'border-slate-100 bg-slate-50/50 opacity-75'} transition-all hover:border-slate-300 cursor-pointer`}
                     >
                         {/* Logo / Initials */}
                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${item.bg}`}>

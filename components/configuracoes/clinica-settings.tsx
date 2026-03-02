@@ -32,10 +32,10 @@ export function ClinicaSettings() {
     };
 
     return (
-        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-8">
-            <div className="flex flex-col md:flex-row gap-8 items-start mb-10">
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center mb-8 md:mb-10">
                 <div className="flex flex-col items-center gap-3 shrink-0">
-                    <div className="w-[96px] h-[96px] bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-teal-600 shadow-sm">
+                    <div className="w-[80px] h-[80px] md:w-[96px] md:h-[96px] bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-teal-600 shadow-sm">
                         <Building2 className="w-10 h-10" />
                     </div>
                     <Button variant="ghost" className="text-[13px] font-semibold text-slate-500 hover:text-teal-600 transition-colors flex items-center gap-1">
@@ -54,8 +54,8 @@ export function ClinicaSettings() {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                     {/* Linha 1 */}
                     <div className="flex flex-col gap-2">
                         <label className="text-[13px] font-semibold text-slate-700">Nome Fantasia</label>

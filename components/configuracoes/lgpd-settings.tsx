@@ -2,9 +2,9 @@ import { Lock, Activity, ShieldCheck } from "lucide-react";
 
 export function LGPDSettings() {
     return (
-        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-8 max-w-4xl">
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 max-w-4xl w-full overflow-hidden">
             {/* Banner LGPD */}
-            <div className="flex items-start gap-4 mb-10 p-6 bg-[#f0fdf4] rounded-2xl border border-emerald-100/50">
+            <div className="flex flex-col sm:flex-row items-start gap-4 mb-6 md:mb-10 p-4 sm:p-6 bg-[#f0fdf4] rounded-2xl border border-emerald-100/50">
                 <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-6 h-6 text-emerald-600" />
                 </div>

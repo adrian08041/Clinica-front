@@ -46,8 +46,8 @@ export function HorariosSettings() {
     };
 
     return (
-        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-8">
-            <div className="mb-8">
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
+            <div className="mb-6 md:mb-8">
                 <h2 className="text-[20px] font-bold text-slate-900 leading-[28px]">
                     Horários de Atendimento
                 </h2>
@@ -67,7 +67,7 @@ export function HorariosSettings() {
                         return (
                             <div key={field.id} className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 border-b border-slate-100 pb-6 last:border-0 last:pb-0">
                                 {/* Day Label & Toggle */}
-                                <div className="w-[180px] flex items-center justify-between shrink-0">
+                                <div className="w-full sm:w-[180px] flex items-center justify-between shrink-0">
                                     <span className="text-[14px] font-bold text-slate-800">
                                         {field.label}
                                     </span>
@@ -90,7 +90,7 @@ export function HorariosSettings() {
 
                                 {/* Time Inputs */}
                                 {isActive ? (
-                                    <div className="flex-1 flex items-center gap-4">
+                                    <div className="flex-1 flex flex-row items-center gap-2 sm:gap-4 w-full">
                                         <div className="flex-1">
                                             <label className="text-[12px] font-bold text-slate-500 mb-1.5 block">
                                                 Início
