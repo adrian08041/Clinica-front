@@ -31,9 +31,9 @@ const integrations = [
 
 export function IntegracoesSettings() {
     return (
-        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-8">
-            <div className="mb-8">
-                <h2 className="text-[20px] font-bold text-slate-900 leading-[28px]">
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
+            <div className="mb-6 md:mb-8">
+                <h2 className="text-[18px] sm:text-[20px] font-bold text-slate-900 leading-[28px]">
                     Ecossistema de Integrações
                 </h2>
                 <p className="text-[14px] text-slate-500 font-medium mt-1">

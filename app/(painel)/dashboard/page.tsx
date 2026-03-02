@@ -131,97 +131,97 @@ export default function Dashboard() {
             </div>
 
             <div className="w-full overflow-x-auto overflow-y-hidden">
-              <div className="min-w-[800px]">
+              <div className="min-w-[600px] w-full">
                 {/* Header */}
                 <div className="bg-white border-b border-border-light border-solid flex h-[48.5px]">
-                  <div className="w-[107px] px-[24px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px]">Horário</p></div>
-                  <div className="w-[206px] px-[24px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px]">Paciente</p></div>
-                  <div className="w-[180px] px-[24px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px]">Procedimento</p></div>
-                  <div className="w-[156px] px-[24px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px]">Dentista</p></div>
-                  <div className="flex-1 px-[24px] py-[16px] pr-[32px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] text-right tracking-[0.6px] uppercase leading-[16px]">Status</p></div>
+                  <div className="w-[15%] min-w-[80px] px-[16px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px] truncate">Horário</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px] truncate">Paciente</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px] truncate">Procedimento</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px] py-[16px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] tracking-[0.6px] uppercase leading-[16px] truncate">Dentista</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] py-[16px] text-right"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-tertiary text-[12px] text-right tracking-[0.6px] uppercase leading-[16px] truncate">Status</p></div>
                 </div>
 
                 {/* Row 1 */}
                 <div className="border-b border-border-light border-solid flex items-center h-[65px] hover:bg-slate-50 transition-colors">
-                  <div className="w-[107px] px-[24px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">08:00</p></div>
-                  <div className="w-[206px] px-[24px] flex items-center gap-[12px]">
+                  <div className="w-[15%] min-w-[80px] px-[16px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">08:00</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] flex items-center gap-[12px]">
                     <div className="relative rounded-[33554400px] w-[32px] h-[32px] overflow-hidden shrink-0"><Image fill className="object-cover" alt="" src={imgImageMarianaCosta} /></div>
-                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px]">Mariana Costa</p>
+                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px] truncate">Mariana Costa</p>
                   </div>
-                  <div className="w-[180px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px]">Limpeza e Profilaxia</p></div>
-                  <div className="w-[156px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px]">Dra. Ana Silva</p></div>
-                  <div className="flex-1 px-[24px] pr-[32px] flex justify-end">
-                    <div className="bg-success-bg border border-success-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-success-text text-[12px]">Confirmado</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px] truncate">Limpeza e Profilaxia</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px] truncate">Dra. Ana Silva</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] flex justify-end">
+                    <div className="bg-success-bg border border-success-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-success-text text-[12px] whitespace-nowrap">Confirmado</p></div>
                   </div>
                 </div>
 
                 {/* Row 2 */}
                 <div className="border-b border-border-light border-solid flex items-center h-[65px] hover:bg-slate-50 transition-colors">
-                  <div className="w-[107px] px-[24px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">09:30</p></div>
-                  <div className="w-[206px] px-[24px] flex items-center gap-[12px]">
+                  <div className="w-[15%] min-w-[80px] px-[16px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">09:30</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] flex items-center gap-[12px]">
                     <div className="relative rounded-[33554400px] w-[32px] h-[32px] overflow-hidden shrink-0"><Image fill className="object-cover" alt="" src={imgImageRicardoMendes} /></div>
-                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px]">Ricardo Mendes</p>
+                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px] truncate">Ricardo Mendes</p>
                   </div>
-                  <div className="w-[180px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px]">Restauração Resina</p></div>
-                  <div className="w-[156px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px]">Dra. Ana Silva</p></div>
-                  <div className="flex-1 px-[24px] pr-[32px] flex justify-end">
-                    <div className="bg-warning-bg border border-warning-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-warning-text text-[12px]">Pendente</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px] truncate">Restauração Resina</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px] truncate">Dra. Ana Silva</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] flex justify-end">
+                    <div className="bg-warning-bg border border-warning-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-warning-text text-[12px] whitespace-nowrap">Pendente</p></div>
                   </div>
                 </div>
 
                 {/* Row 3 */}
                 <div className="border-b border-border-light border-solid flex items-center h-[65px] hover:bg-slate-50 transition-colors">
-                  <div className="w-[107px] px-[24px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">11:00</p></div>
-                  <div className="w-[206px] px-[24px] flex items-center gap-[12px]">
+                  <div className="w-[15%] min-w-[80px] px-[16px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">11:00</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] flex items-center gap-[12px]">
                     <div className="relative rounded-[33554400px] w-[32px] h-[32px] overflow-hidden shrink-0"><Image fill className="object-cover" alt="" src={imgImageMarianaCosta} /></div>
-                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px]">Julia Albuquerque</p>
+                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px] truncate">Julia Albuquerque</p>
                   </div>
-                  <div className="w-[180px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px]">Invisalign Follow-up</p></div>
-                  <div className="w-[156px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px]">Dr. Lucas Ferraz</p></div>
-                  <div className="flex-1 px-[24px] pr-[32px] flex justify-end">
-                    <div className="bg-success-bg border border-success-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-success-text text-[12px]">Confirmado</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px] truncate">Invisalign Follow-up</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px] truncate">Dr. Lucas Ferraz</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] flex justify-end">
+                    <div className="bg-success-bg border border-success-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-success-text text-[12px] whitespace-nowrap">Confirmado</p></div>
                   </div>
                 </div>
 
                 {/* Row 4 */}
                 <div className="border-b border-border-light border-solid flex items-center h-[65px] hover:bg-slate-50 transition-colors">
-                  <div className="w-[107px] px-[24px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">14:00</p></div>
-                  <div className="w-[206px] px-[24px] flex items-center gap-[12px]">
+                  <div className="w-[15%] min-w-[80px] px-[16px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">14:00</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] flex items-center gap-[12px]">
                     <div className="relative rounded-[33554400px] w-[32px] h-[32px] overflow-hidden shrink-0"><Image fill className="object-cover" alt="" src={imgImageMarianaCosta} /></div>
-                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px]">Carlos Eduardo</p>
+                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px] truncate">Carlos Eduardo</p>
                   </div>
-                  <div className="w-[180px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px]">Canal (Endodontia)</p></div>
-                  <div className="w-[156px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px]">Dra. Ana Silva</p></div>
-                  <div className="flex-1 px-[24px] pr-[32px] flex justify-end">
-                    <div className="bg-danger-bg border border-danger-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-danger-text text-[12px]">Cancelado</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px] truncate">Canal (Endodontia)</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px] truncate">Dra. Ana Silva</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] flex justify-end">
+                    <div className="bg-danger-bg border border-danger-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-danger-text text-[12px] whitespace-nowrap">Cancelado</p></div>
                   </div>
                 </div>
 
                 {/* Row 5 */}
                 <div className="border-b border-border-light border-solid flex items-center h-[65px] hover:bg-slate-50 transition-colors">
-                  <div className="w-[107px] px-[24px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">15:30</p></div>
-                  <div className="w-[206px] px-[24px] flex items-center gap-[12px]">
+                  <div className="w-[15%] min-w-[80px] px-[16px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">15:30</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] flex items-center gap-[12px]">
                     <div className="relative rounded-[33554400px] w-[32px] h-[32px] overflow-hidden shrink-0"><Image fill className="object-cover" alt="" src={imgImageRicardoMendes} /></div>
-                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px]">Beatriz Santos</p>
+                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px] truncate">Beatriz Santos</p>
                   </div>
-                  <div className="w-[180px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px]">Clareamento Dental</p></div>
-                  <div className="w-[156px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px]">Dr. Lucas Ferraz</p></div>
-                  <div className="flex-1 px-[24px] pr-[32px] flex justify-end">
-                    <div className="bg-success-bg border border-success-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-success-text text-[12px]">Confirmado</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px] truncate">Clareamento Dental</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px] truncate">Dr. Lucas Ferraz</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] flex justify-end">
+                    <div className="bg-success-bg border border-success-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-success-text text-[12px] whitespace-nowrap">Confirmado</p></div>
                   </div>
                 </div>
 
                 {/* Row 6 */}
                 <div className="flex items-center h-[64.5px] hover:bg-slate-50 transition-colors">
-                  <div className="w-[107px] px-[24px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">17:00</p></div>
-                  <div className="w-[206px] px-[24px] flex items-center gap-[12px]">
+                  <div className="w-[15%] min-w-[80px] px-[16px]"><p className="font-['Inter:Medium',sans-serif] font-medium text-text-secondary text-[14px]">17:00</p></div>
+                  <div className="w-[30%] min-w-[160px] px-[16px] flex items-center gap-[12px]">
                     <div className="relative rounded-[33554400px] w-[32px] h-[32px] overflow-hidden shrink-0"><Image fill className="object-cover" alt="" src={imgImageMarianaCosta} /></div>
-                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px]">Fernando Souza</p>
+                    <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-text-primary text-[14px] truncate">Fernando Souza</p>
                   </div>
-                  <div className="w-[180px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px]">Primeira Consulta</p></div>
-                  <div className="w-[156px] px-[24px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px]">Dra. Ana Silva</p></div>
-                  <div className="flex-1 px-[24px] pr-[32px] flex justify-end">
-                    <div className="bg-warning-bg border border-warning-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-warning-text text-[12px]">Pendente</p></div>
+                  <div className="w-[25%] min-w-[140px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-secondary text-[14px] truncate">Primeira Consulta</p></div>
+                  <div className="w-[20%] min-w-[120px] px-[16px]"><p className="font-['Inter:Regular',sans-serif] font-normal text-text-tertiary text-[14px] truncate">Dra. Ana Silva</p></div>
+                  <div className="flex-1 min-w-[100px] px-[16px] flex justify-end">
+                    <div className="bg-warning-bg border border-warning-border border-solid rounded-[33554400px] px-[11px] py-[4px]"><p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-warning-text text-[12px] whitespace-nowrap">Pendente</p></div>
                   </div>
                 </div>
               </div>

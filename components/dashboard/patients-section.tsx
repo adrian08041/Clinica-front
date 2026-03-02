@@ -66,7 +66,7 @@ export function PatientsSection() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6 md:pb-8 pt-2">
+        <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 pb-4 md:pb-8 pt-2 px-4 sm:px-6 lg:px-8">
 
             {/* HEADER ROW */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -263,7 +263,7 @@ export function PatientsSection() {
                 </div>
 
                 {/* PAGINATION */}
-                <div className="px-6 py-[16px] border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-[14px] shrink-0">
+                <div className="px-4 sm:px-6 py-[16px] border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-[14px] shrink-0">
                     <p className="text-[14px] text-slate-500 font-medium">
                         Mostrando 1-{filteredPatients.length} de {filteredPatients.length > 4 ? filteredPatients.length : "342"} pacientes
                     </p>
