@@ -15,6 +15,7 @@ export function InfoSection() {
         />
       </div>
 
+
       {/* Gradient Overlay */}
       <div
         className="absolute inset-0 w-full h-full"
