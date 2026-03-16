@@ -1,5 +1,6 @@
 import {
   CheckCircle2,
+  Clock3,
   CreditCard,
   ExternalLink,
   MessageCircle,
@@ -47,6 +48,7 @@ export function IntegracoesSettings() {
       <div className="grid gap-6 px-6 py-8 md:grid-cols-2 md:px-12">
         {integrations.map((integration) => {
           const Icon = integration.icon;
+          const StatusIcon = integration.status === "Conectado" ? CheckCircle2 : Clock3;
 
           return (
             <div key={integration.name} className="rounded-[26px] border border-[#dfe6f2] bg-white p-6 shadow-[0_4px_14px_rgba(15,39,76,0.03)]">
@@ -55,7 +57,7 @@ export function IntegracoesSettings() {
                   <Icon className="h-6 w-6" />
                 </div>
                 <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] ${integration.statusClass}`}>
-                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  <StatusIcon className="h-3.5 w-3.5" />
                   {integration.status}
                 </span>
               </div>

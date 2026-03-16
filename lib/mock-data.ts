@@ -158,3 +158,47 @@ export const FINANCE_PAYMENT_METHODS = [
 
 export const FINANCE_LINE_POINTS = [38, 42, 40, 48, 41, 45];
 export const FINANCE_LINE_LABELS = ["Set", "Out", "Nov", "Dez", "Jan", "Fev"];
+
+export const TREATMENT_INITIAL_PLANS = [
+  {
+    id: "1",
+    patient: "Mariana Costa",
+    title: "Ortodontia Preventiva",
+    createdAt: "15/11/2025",
+    startDate: "2025-11-15",
+    endDate: "2026-07-15",
+    notes: "Acompanhamento mensal com foco em alinhamento e manutencao.",
+    total: 3200,
+    completed: 4,
+    totalProcedures: 8,
+    procedures: [
+      { id: "p1", tooth: "-", name: "Limpeza e Profilaxia", value: 250, paid: true, done: true },
+      { id: "p2", tooth: "11", name: "Restauracao de Resina", value: 350, paid: true, done: true },
+      { id: "p3", tooth: "-", name: "Instalacao Aparelho", value: 1500, paid: true, done: true },
+      { id: "p4", tooth: "-", name: "Manutencao Mensal 1", value: 180, paid: true, done: true },
+      { id: "p5", tooth: "-", name: "Manutencao Mensal 2", value: 180, paid: false, done: false },
+      { id: "p6", tooth: "-", name: "Manutencao Mensal 3", value: 180, paid: false, done: false },
+      { id: "p7", tooth: "-", name: "Manutencao Mensal 4", value: 180, paid: false, done: false },
+      { id: "p8", tooth: "-", name: "Remocao e Contencao", value: 380, paid: false, done: false },
+    ],
+  },
+  {
+    id: "2",
+    patient: "Ricardo Mendes",
+    title: "Reabilitacao Estetica",
+    createdAt: "10/01/2026",
+    startDate: "2026-01-10",
+    endDate: "2026-05-10",
+    notes: "Reabilitacao com foco em funcao mastigatoria e estetica do sorriso.",
+    total: 8500,
+    completed: 2,
+    totalProcedures: 5,
+    procedures: [
+      { id: "p9", tooth: "14", name: "Clareamento Dentario", value: 1200, paid: true, done: true },
+      { id: "p10", tooth: "16", name: "Lente de Contato Dental", value: 2300, paid: true, done: true },
+      { id: "p11", tooth: "21", name: "Ajuste de Gengiva", value: 1800, paid: false, done: false },
+      { id: "p12", tooth: "24", name: "Finalizacao Estetica", value: 1700, paid: false, done: false },
+      { id: "p13", tooth: "-", name: "Retorno Clinico", value: 1500, paid: false, done: false },
+    ],
+  },
+];

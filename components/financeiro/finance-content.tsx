@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   ArrowDownLeft,
-  Banknote,
   CalendarClock,
   CreditCard,
   DollarSign,
@@ -13,7 +12,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NewTransactionDialog } from "@/components/financeiro/new-transaction-dialog";
 import {
   FINANCE_LINE_LABELS,

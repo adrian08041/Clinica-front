@@ -54,8 +54,8 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
     setDescription("");
     setAmount("");
     setDueDate("");
-    setMethod("");
-    setCategory("");
+    setMethod("Selecione...");
+    setCategory("Selecione...");
     setInstallments("A vista");
     setNotes("");
   };

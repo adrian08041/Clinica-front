@@ -5,6 +5,7 @@ import { CircleDot, Clock3, MoreVertical, Plus, Search, Stethoscope } from "luci
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NewPlanDialog, type ProcedureDraft } from "@/components/tratamentos/new-plan-dialog";
+import { TREATMENT_INITIAL_PLANS } from "@/lib/mock-data";
 
 type Procedure = {
   id: string;
@@ -20,49 +21,14 @@ type TreatmentPlan = {
   patient: string;
   title: string;
   createdAt: string;
+  startDate?: string;
+  endDate?: string;
+  notes?: string;
   total: number;
   completed: number;
   totalProcedures: number;
   procedures: Procedure[];
 };
-
-const initialPlans: TreatmentPlan[] = [
-  {
-    id: "1",
-    patient: "Mariana Costa",
-    title: "Ortodontia Preventiva",
-    createdAt: "15/11/2025",
-    total: 3200,
-    completed: 4,
-    totalProcedures: 8,
-    procedures: [
-      { id: "p1", tooth: "-", name: "Limpeza e Profilaxia", value: 250, paid: true, done: true },
-      { id: "p2", tooth: "11", name: "Restauracao de Resina", value: 350, paid: true, done: true },
-      { id: "p3", tooth: "-", name: "Instalacao Aparelho", value: 1500, paid: true, done: true },
-      { id: "p4", tooth: "-", name: "Manutencao Mensal 1", value: 180, paid: true, done: true },
-      { id: "p5", tooth: "-", name: "Manutencao Mensal 2", value: 180, paid: false, done: false },
-      { id: "p6", tooth: "-", name: "Manutencao Mensal 3", value: 180, paid: false, done: false },
-      { id: "p7", tooth: "-", name: "Manutencao Mensal 4", value: 180, paid: false, done: false },
-      { id: "p8", tooth: "-", name: "Remocao e Contencao", value: 380, paid: false, done: false },
-    ],
-  },
-  {
-    id: "2",
-    patient: "Ricardo Mendes",
-    title: "Reabilitacao Estetica",
-    createdAt: "10/01/2026",
-    total: 8500,
-    completed: 2,
-    totalProcedures: 5,
-    procedures: [
-      { id: "p9", tooth: "14", name: "Clareamento Dentario", value: 1200, paid: true, done: true },
-      { id: "p10", tooth: "16", name: "Lente de Contato Dental", value: 2300, paid: true, done: true },
-      { id: "p11", tooth: "21", name: "Ajuste de Gengiva", value: 1800, paid: false, done: false },
-      { id: "p12", tooth: "24", name: "Finalizacao Estetica", value: 1700, paid: false, done: false },
-      { id: "p13", tooth: "-", name: "Retorno Clinico", value: 1500, paid: false, done: false },
-    ],
-  },
-];
 
 const currency = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -84,8 +50,8 @@ function StatusBadge({ paid }: { paid: boolean }) {
 }
 
 export function TreatmentsContent() {
-  const [plans, setPlans] = useState(initialPlans);
-  const [selectedId, setSelectedId] = useState(initialPlans[0].id);
+  const [plans, setPlans] = useState<TreatmentPlan[]>(TREATMENT_INITIAL_PLANS);
+  const [selectedId, setSelectedId] = useState(TREATMENT_INITIAL_PLANS[0].id);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -116,6 +82,9 @@ export function TreatmentsContent() {
       patient: payload.patient || "Paciente nao informado",
       title: payload.planName || "Novo Plano",
       createdAt: new Date().toLocaleDateString("pt-BR"),
+      startDate: payload.startDate || undefined,
+      endDate: payload.endDate || undefined,
+      notes: payload.notes || undefined,
       total,
       completed: 0,
       totalProcedures: procedures.length,
@@ -144,7 +113,7 @@ export function TreatmentsContent() {
             <div className="mt-5 space-y-4">
               {filteredPlans.map((plan) => {
                 const selected = selectedPlan?.id === plan.id;
-                const progress = (plan.completed / plan.totalProcedures) * 100;
+                const progress = plan.totalProcedures > 0 ? (plan.completed / plan.totalProcedures) * 100 : 0;
                 return (
                   <button key={plan.id} type="button" onClick={() => setSelectedId(plan.id)} className={`w-full rounded-[22px] border p-5 text-left shadow-[0_6px_18px_rgba(15,39,76,0.04)] ${selected ? "border-[#91e8df] bg-[#f1fcfb]" : "border-[#e1e8f2] bg-white"}`}>
                     <div className="flex items-start justify-between gap-4">
@@ -168,7 +137,16 @@ export function TreatmentsContent() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-[18px] border border-[#e1e8f2] bg-white text-[#0e9e95] shadow-sm"><Stethoscope className="h-6 w-6" /></div>
-                    <div><h2 className="text-[20px] font-black text-[#0f274c]">{selectedPlan.title}</h2><p className="mt-1 text-[13px] font-black uppercase tracking-[0.12em] text-[#93a0bd]">Paciente:<span className="ml-2 normal-case tracking-normal text-[#0e9e95]">{selectedPlan.patient}</span></p></div>
+                    <div>
+                      <h2 className="text-[20px] font-black text-[#0f274c]">{selectedPlan.title}</h2>
+                      <p className="mt-1 text-[13px] font-black uppercase tracking-[0.12em] text-[#93a0bd]">Paciente:<span className="ml-2 normal-case tracking-normal text-[#0e9e95]">{selectedPlan.patient}</span></p>
+                      {(selectedPlan.startDate || selectedPlan.endDate) ? (
+                        <p className="mt-2 text-[13px] font-medium text-[#6b7d99]">
+                          {selectedPlan.startDate ? `Inicio: ${selectedPlan.startDate}` : "Inicio nao informado"}
+                          {selectedPlan.endDate ? ` • Termino: ${selectedPlan.endDate}` : ""}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
                   <button type="button" className="rounded-[14px] border border-[#e1e8f2] p-2 text-[#a0acc3]"><MoreVertical className="h-5 w-5" /></button>
                 </div>
