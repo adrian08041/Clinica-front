@@ -15,24 +15,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NewTransactionDialog } from "@/components/financeiro/new-transaction-dialog";
-
-const receivables = [
-  { patient: "Mariana Costa", description: "Mensalidade Ortodontia (Fev)", value: "R$ 180,00", due: "25/02/2026", status: "Pendente" },
-  { patient: "Ricardo Mendes", description: "Restauracao Resina", value: "R$ 350,00", due: "12/02/2026", status: "Pago" },
-  { patient: "Julia Albuquerque", description: "Limpeza e Profilaxia", value: "R$ 250,00", due: "05/02/2026", status: "Pago" },
-  { patient: "Carlos Eduardo", description: "Cirurgia Siso", value: "R$ 800,00", due: "10/02/2026", status: "Atrasado" },
-  { patient: "Beatriz Santos", description: "Implante Dentario (Parcela 1/12)", value: "R$ 1.200,00", due: "20/02/2026", status: "Pendente" },
-];
-
-const paymentMethods = [
-  { label: "Cartao de Credito", value: 45, color: "#0e9e95" },
-  { label: "PIX", value: 35, color: "#d9ad4c" },
-  { label: "Boleto", value: 12, color: "#ff6f66" },
-  { label: "Dinheiro", value: 8, color: "#202a44" },
-];
-
-const linePoints = [38, 42, 40, 48, 41, 45];
-const labels = ["Set", "Out", "Nov", "Dez", "Jan", "Fev"];
+import {
+  FINANCE_LINE_LABELS,
+  FINANCE_LINE_POINTS,
+  FINANCE_PAYMENT_METHODS,
+  FINANCE_RECEIVABLES,
+} from "@/lib/mock-data";
 
 function statusClass(status: string) {
   if (status === "Pago") return "bg-[#e8faf2] text-[#00a56d]";
@@ -68,7 +56,7 @@ function StatCard({
 export function FinanceContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const path = linePoints
+  const path = FINANCE_LINE_POINTS
     .map((value, index) => {
       const x = 40 + index * 110;
       const y = 220 - value * 3;
@@ -135,7 +123,7 @@ export function FinanceContent() {
                       <stop offset="100%" stopColor="#0e9e95" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  {labels.map((label, index) => (
+                  {FINANCE_LINE_LABELS.map((label, index) => (
                     <text key={label} x={40 + index * 110} y="250" fill="#4f6183" fontSize="14" fontWeight="700">
                       {label}
                     </text>
@@ -159,7 +147,7 @@ export function FinanceContent() {
             </div>
 
             <div className="mt-8 space-y-4">
-              {paymentMethods.map((method) => (
+              {FINANCE_PAYMENT_METHODS.map((method) => (
                 <div key={method.label} className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span className="h-3 w-3 rounded-full" style={{ backgroundColor: method.color }} />
@@ -197,7 +185,7 @@ export function FinanceContent() {
               <span>Status</span>
               <span className="text-right">Acao</span>
             </div>
-            {receivables.map((item) => (
+            {FINANCE_RECEIVABLES.map((item) => (
               <div key={`${item.patient}-${item.description}`} className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_90px] gap-4 border-b border-[#f1f4f9] px-6 py-5 last:border-b-0 md:px-8">
                 <span className="text-[15px] font-black text-[#0f274c]">{item.patient}</span>
                 <span className="text-[15px] font-medium text-[#4f6183]">{item.description}</span>
@@ -210,7 +198,7 @@ export function FinanceContent() {
           </div>
 
           <div className="space-y-4 p-5 lg:hidden">
-            {receivables.map((item) => (
+            {FINANCE_RECEIVABLES.map((item) => (
               <div key={`${item.patient}-${item.description}`} className="rounded-[20px] border border-[#e1e8f2] p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>

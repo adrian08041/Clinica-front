@@ -140,3 +140,21 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     patientSince: "2024",
   },
 ];
+
+export const FINANCE_RECEIVABLES = [
+  { patient: "Mariana Costa", description: "Mensalidade Ortodontia (Fev)", value: "R$ 180,00", due: "25/02/2026", status: "Pendente" },
+  { patient: "Ricardo Mendes", description: "Restauracao Resina", value: "R$ 350,00", due: "12/02/2026", status: "Pago" },
+  { patient: "Julia Albuquerque", description: "Limpeza e Profilaxia", value: "R$ 250,00", due: "05/02/2026", status: "Pago" },
+  { patient: "Carlos Eduardo", description: "Cirurgia Siso", value: "R$ 800,00", due: "10/02/2026", status: "Atrasado" },
+  { patient: "Beatriz Santos", description: "Implante Dentario (Parcela 1/12)", value: "R$ 1.200,00", due: "20/02/2026", status: "Pendente" },
+];
+
+export const FINANCE_PAYMENT_METHODS = [
+  { label: "Cartao de Credito", value: 45, color: "#0e9e95" },
+  { label: "PIX", value: 35, color: "#d9ad4c" },
+  { label: "Boleto", value: 12, color: "#ff6f66" },
+  { label: "Dinheiro", value: 8, color: "#202a44" },
+];
+
+export const FINANCE_LINE_POINTS = [38, 42, 40, 48, 41, 45];
+export const FINANCE_LINE_LABELS = ["Set", "Out", "Nov", "Dez", "Jan", "Fev"];
