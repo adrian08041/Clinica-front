@@ -24,3 +24,26 @@ export interface Patient {
   tags?: string[];
   avatar?: string;
 }
+
+export type AppointmentType = "evaluation" | "cleaning" | "procedure" | "return" | "urgency";
+
+export interface Appointment {
+  id: string;
+  patientName: string;
+  dentistId: string;
+  date: string;
+  time: string;
+  duration: number;
+  type: AppointmentType;
+  procedure: string;
+  observations?: string;
+  patientSince?: string;
+}
+
+export interface Dentist {
+  id: string;
+  name: string;
+  specialty: string;
+}
+
+export type AgendaView = "day" | "week" | "month";

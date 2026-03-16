@@ -28,6 +28,10 @@
   --color-brand-border: rgba(13, 148, 136, 0.2);
   --color-brand-dark: #0f766e;
 
+  /* Colors - Background */
+  --color-background-card: #f8fafc;
+  --color-background-hover: #f1f5f9;
+
   /* Colors - Status */
   --color-success-text: #007a55;
   --color-success-bg: #ecfdf5;
@@ -40,6 +44,14 @@
   --color-danger-text: #c70036;
   --color-danger-bg: #fff1f2;
   --color-danger-border: #ffe4e6;
+  --color-danger-action: #ff2056;
+
+  /* Colors - Appointments */
+  --color-appointment-evaluation: #2b7fff;
+  --color-appointment-cleaning: #00bc7d;
+  --color-appointment-procedure: #ad46ff;
+  --color-appointment-return: #f59e0b;
+  --color-appointment-urgency: #ef4444;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -86,6 +98,8 @@
 
   --color-background-main: var(--color-background-main);
   --color-background-sidebar: var(--color-background-sidebar);
+  --color-background-card: var(--color-background-card);
+  --color-background-hover: var(--color-background-hover);
 
   --color-text-primary: var(--color-text-primary);
   --color-text-secondary: var(--color-text-secondary);
@@ -105,6 +119,14 @@
   --color-danger-text: var(--color-danger-text);
   --color-danger-bg: var(--color-danger-bg);
   --color-danger-border: var(--color-danger-border);
+  --color-danger-action: var(--color-danger-action);
+
+  /* Appointment type colors */
+  --color-appointment-evaluation: var(--color-appointment-evaluation);
+  --color-appointment-cleaning: var(--color-appointment-cleaning);
+  --color-appointment-procedure: var(--color-appointment-procedure);
+  --color-appointment-return: var(--color-appointment-return);
+  --color-appointment-urgency: var(--color-appointment-urgency);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -191,5 +213,15 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
