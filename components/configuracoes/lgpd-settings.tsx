@@ -1,64 +1,68 @@
-import type { ComponentType } from "react";
-import { Activity, Lock, ShieldCheck } from "lucide-react";
-
-function PrivacyItem({
-  title,
-  description,
-  icon: Icon,
-}: {
-  title: string;
-  description: string;
-  icon: ComponentType<{ className?: string }>;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-[22px] border border-[#e5ebf4] bg-[#f9fbfe] px-5 py-5">
-      <div className="flex items-center gap-4">
-        <Icon className="h-5 w-5 shrink-0 text-[#91a0bd]" />
-        <div>
-          <p className="text-[16px] font-black text-[#0f274c]">{title}</p>
-          <p className="text-[14px] font-medium text-[#6b7d99]">{description}</p>
-        </div>
-      </div>
-
-      <div className="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-[#0e9e95]">
-        <span className="inline-block h-5 w-5 translate-x-6 rounded-full bg-white" />
-      </div>
-    </div>
-  );
-}
+import { Lock, Activity, ShieldCheck } from "lucide-react";
 
 export function LGPDSettings() {
-  return (
-    <div className="overflow-hidden rounded-[30px] border border-[#dfe6f2] bg-white shadow-[0_8px_24px_rgba(15,39,76,0.06)]">
-      <div className="px-6 py-8 md:px-12 md:py-12">
-        <div className="mb-10 flex flex-col gap-4 rounded-[28px] border border-[#c5f0dd] bg-[#effdf8] p-6 md:flex-row md:items-start md:p-8">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] bg-[#cbf7e5] text-[#00a56d]">
-            <ShieldCheck className="h-7 w-7" />
-          </div>
-          <div>
-            <h2 className="text-[20px] font-black text-[#00684f] md:text-[22px]">Sua Clinica esta Protegida</h2>
-            <p className="mt-2 max-w-4xl text-[15px] font-medium leading-8 text-[#00745d]">
-              O OdontoFlow segue rigorosamente as diretrizes da Lei Geral de Protecao de Dados (LGPD). Todos os
-              dados sensiveis dos pacientes sao criptografados e o acesso e auditado.
-            </p>
-          </div>
-        </div>
+    return (
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 max-w-4xl w-full overflow-hidden">
+            {/* Banner LGPD */}
+            <div className="flex flex-col sm:flex-row items-start gap-4 mb-6 md:mb-10 p-4 sm:p-6 bg-[#f0fdf4] rounded-2xl border border-emerald-100/50">
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                    <h2 className="text-[18px] font-bold text-[#065f46] leading-[28px]">
+                        Sua Clínica está Protegida
+                    </h2>
+                    <p className="text-[14px] text-emerald-800 font-medium mt-1 leading-relaxed">
+                        O OdontoFlow segue rigorosamente as diretrizes da Lei Geral de Proteção de Dados (LGPD). Todos os dados sensíveis dos pacientes são criptografados e o acesso é auditado.
+                    </p>
+                </div>
+            </div>
 
-        <h3 className="mb-5 text-[18px] font-black text-[#0f274c]">Controle de Privacidade</h3>
+            <h3 className="text-[16px] font-bold text-slate-800 mb-4">
+                Controle de Privacidade
+            </h3>
 
-        <div className="space-y-4">
-          <PrivacyItem
-            title="Criptografia de Ponta-a-Ponta"
-            description="Ativado para todos os prontuarios e exames."
-            icon={Lock}
-          />
-          <PrivacyItem
-            title="Logs de Auditoria"
-            description="Registrar quem acessou cada dado de paciente."
-            icon={Activity}
-          />
+            <div className="flex flex-col gap-4">
+                {/* Setting 1 */}
+                <div className="flex items-center justify-between p-5 border border-slate-200 rounded-xl bg-[#f8fafc]">
+                    <div className="flex gap-4 items-center">
+                        <Lock className="w-5 h-5 text-slate-400 shrink-0" />
+                        <div>
+                            <p className="text-[14px] font-bold text-slate-700">
+                                Criptografia de Ponta-a-Ponta
+                            </p>
+                            <p className="text-[13px] text-slate-500 mt-0.5 font-medium">
+                                Ativado para todos os prontuários e exames.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Switch via CSS */}
+                    <div className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full bg-teal-500 transition-colors">
+                        <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
+                    </div>
+                </div>
+
+                {/* Setting 2 */}
+                <div className="flex items-center justify-between p-5 border border-slate-200 rounded-xl bg-[#f8fafc]">
+                    <div className="flex gap-4 items-center">
+                        <Activity className="w-5 h-5 text-slate-400 shrink-0" />
+                        <div>
+                            <p className="text-[14px] font-bold text-slate-700">
+                                Logs de Auditoria
+                            </p>
+                            <p className="text-[13px] text-slate-500 mt-0.5 font-medium">
+                                Registrar quem acessou cada dado de paciente.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Switch via CSS */}
+                    <div className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full bg-teal-500 transition-colors">
+                        <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform" />
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }

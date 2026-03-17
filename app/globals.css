@@ -27,10 +27,48 @@
   --color-brand-light: rgba(13, 148, 136, 0.1);
   --color-brand-border: rgba(13, 148, 136, 0.2);
   --color-brand-dark: #0f766e;
+  --color-brand-teal: #0e9e95;
+  --color-brand-teal-dark: #0c8d85;
+  --color-brand-teal-soft: #19b8ad;
+  --color-brand-teal-deep: #0a685f;
+  --color-brand-teal-glow: rgba(14, 158, 149, 0.22);
+  --color-brand-teal-glow-strong: rgba(14, 158, 149, 0.28);
+  --color-brand-teal-surface: #eefcfb;
+  --color-brand-teal-surface-strong: #e8fbf6;
+  --color-brand-teal-surface-muted: #f3fcfb;
+  --color-brand-teal-border: #91e8df;
+  --color-brand-teal-border-soft: #9be3dd;
+  --color-brand-teal-border-pale: #bdece5;
+  --color-brand-teal-fill: #cbf7e5;
 
   /* Colors - Background */
   --color-background-card: #f8fafc;
   --color-background-hover: #f1f5f9;
+  --color-surface-white: #ffffff;
+  --color-surface-canvas: #fcfdfd;
+  --color-surface-canvas-soft: #fbfdfd;
+  --color-surface-section: #f6f8fb;
+  --color-surface-section-alt: #f3f7fb;
+  --color-surface-panel: #f8fbff;
+  --color-surface-panel-alt: #fbfdff;
+  --color-surface-panel-tint: #f1fcfb;
+  --color-surface-panel-ghost: #f4fcfb;
+  --color-surface-muted: #eef3f8;
+  --color-surface-muted-alt: #dfe8f0;
+  --color-surface-map-top: #f8fafc;
+  --color-surface-map-bottom: #e8eef7;
+  --color-surface-avatar-blue: #dbeafe;
+  --color-surface-avatar-pink: #fce7f3;
+  --color-surface-avatar-red: #fee2e2;
+  --color-surface-team-a: #d7fbf2;
+  --color-surface-team-b: #dff4ff;
+  --color-surface-team-c: #f1e2ff;
+  --color-surface-chip: #caf7ec;
+  --color-surface-chip-text: #0a9287;
+  --color-surface-highlight: #dffaf2;
+  --color-surface-status-neutral: #f3f5fb;
+  --color-surface-status-tooth: #f3f7fb;
+  --color-surface-warning-soft: #fff4e5;
 
   /* Colors - Status */
   --color-success-text: #007a55;
@@ -45,6 +83,13 @@
   --color-danger-bg: #fff1f2;
   --color-danger-border: #ffe4e6;
   --color-danger-action: #ff2056;
+  --color-danger-soft: #ffe8ed;
+  --color-warning-strong: #ff9800;
+  --color-success-strong: #00a56d;
+  --color-warning-accent: #d9ad4c;
+  --color-warning-accent-soft: #e1b44c;
+  --color-warning-accent-muted: #e1bf6a;
+  --color-danger-accent: #ff6f66;
 
   /* Colors - Appointments */
   --color-appointment-evaluation: #2b7fff;
@@ -52,6 +97,39 @@
   --color-appointment-procedure: #ad46ff;
   --color-appointment-return: #f59e0b;
   --color-appointment-urgency: #ef4444;
+  --color-ink-strong: #0c1d46;
+  --color-ink-panel: #0f274c;
+  --color-ink-muted: #42516a;
+  --color-text-panel: #4f6183;
+  --color-text-section: #53627d;
+  --color-text-soft: #5d6d88;
+  --color-text-panel-soft: #5f7091;
+  --color-text-footer: #6b7a93;
+  --color-text-caption: #6b7d99;
+  --color-text-subtle: #7ca1bb;
+  --color-text-subtle-alt: #7d8eac;
+  --color-text-faint: #8ba0bf;
+  --color-text-faint-alt: #93a0bd;
+  --color-text-faint-strong: #9ba6bc;
+  --color-text-faint-soft: #9cabc5;
+  --color-text-placeholder: #a0acc3;
+  --color-text-disabled: #a1adbf;
+  --color-text-muted-alt: #a3acc2;
+  --color-text-dim: #b5c1d6;
+  --color-icon-muted: #c0cadf;
+  --color-divider-soft: #d3dae8;
+  --color-border-soft: #d9e1ef;
+  --color-border-panel: #dfe6f2;
+  --color-border-section: #e1e8f2;
+  --color-border-marketing: #e6edf2;
+  --color-border-marketing-alt: #e6eef1;
+  --color-border-panel-soft: #e9eef6;
+  --color-border-panel-muted: #ebeff5;
+  --color-border-panel-alt: #eef2f8;
+  --color-border-panel-lite: #f1f4f9;
+  --color-ring-soft: #cfe3e7;
+  --shadow-panel-rgb: 15, 39, 76;
+  --shadow-marketing-rgb: 12, 29, 70;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -223,5 +301,43 @@ body {
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+
+  .marketing-hero-bg {
+    background-image:
+      radial-gradient(circle at top, rgba(184, 241, 234, 0.28), transparent 34%),
+      linear-gradient(180deg, var(--color-white) 0%, var(--color-surface-canvas-soft) 100%);
+  }
+
+  .marketing-hero-image {
+    background-image:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9), transparent 22%),
+      linear-gradient(135deg, #edf5fb 0%, #d6e2ee 100%);
+  }
+
+  .marketing-about-image {
+    background-image:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.92), transparent 32%),
+      linear-gradient(180deg, #f5f8fb 0%, #e5edf4 100%);
+  }
+
+  .marketing-cta-bg {
+    background-image: linear-gradient(135deg, var(--color-brand-teal) 0%, #0d8a82 100%);
+  }
+
+  .marketing-map-bg {
+    background-image: linear-gradient(135deg, var(--color-surface-map-top) 0%, var(--color-surface-map-bottom) 100%);
+  }
+
+  .finance-donut-chart {
+    background:
+      conic-gradient(
+        var(--color-brand-teal) 0% 45%,
+        var(--color-white) 45% 48%,
+        var(--color-warning-accent) 48% 83%,
+        var(--color-white) 83% 86%,
+        var(--color-danger-accent) 86% 98%,
+        var(--color-white) 98% 100%
+      );
   }
 }

@@ -47,3 +47,42 @@ export interface Dentist {
 }
 
 export type AgendaView = "day" | "week" | "month";
+
+export type FinanceReceivableStatus = "Pendente" | "Pago" | "Atrasado";
+
+export interface FinanceReceivable {
+  patient: string;
+  description: string;
+  value: string;
+  due: string;
+  status: FinanceReceivableStatus;
+}
+
+export interface FinancePaymentMethod {
+  label: string;
+  value: number;
+  color: string;
+}
+
+export interface TreatmentProcedure {
+  id: string;
+  tooth: string;
+  name: string;
+  value: number;
+  paid: boolean;
+  done: boolean;
+}
+
+export interface TreatmentPlan {
+  id: string;
+  patient: string;
+  title: string;
+  createdAt: string;
+  startDate?: string;
+  endDate?: string;
+  notes?: string;
+  total: number;
+  completed: number;
+  totalProcedures: number;
+  procedures: TreatmentProcedure[];
+}

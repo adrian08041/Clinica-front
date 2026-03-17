@@ -1,4 +1,12 @@
-import type { Service, Patient, Appointment, Dentist } from "@/lib/types";
+import type {
+  Service,
+  Patient,
+  Appointment,
+  Dentist,
+  FinanceReceivable,
+  FinancePaymentMethod,
+  TreatmentPlan,
+} from "@/lib/types";
 
 // As per design, the login page doesn't strictly require data mapping here,
 // but to satisfy project conventions, mock data is centralized here.
@@ -141,7 +149,7 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
   },
 ];
 
-export const FINANCE_RECEIVABLES = [
+export const FINANCE_RECEIVABLES: FinanceReceivable[] = [
   { patient: "Mariana Costa", description: "Mensalidade Ortodontia (Fev)", value: "R$ 180,00", due: "25/02/2026", status: "Pendente" },
   { patient: "Ricardo Mendes", description: "Restauracao Resina", value: "R$ 350,00", due: "12/02/2026", status: "Pago" },
   { patient: "Julia Albuquerque", description: "Limpeza e Profilaxia", value: "R$ 250,00", due: "05/02/2026", status: "Pago" },
@@ -149,17 +157,17 @@ export const FINANCE_RECEIVABLES = [
   { patient: "Beatriz Santos", description: "Implante Dentario (Parcela 1/12)", value: "R$ 1.200,00", due: "20/02/2026", status: "Pendente" },
 ];
 
-export const FINANCE_PAYMENT_METHODS = [
-  { label: "Cartao de Credito", value: 45, color: "#0e9e95" },
-  { label: "PIX", value: 35, color: "#d9ad4c" },
-  { label: "Boleto", value: 12, color: "#ff6f66" },
-  { label: "Dinheiro", value: 8, color: "#202a44" },
+export const FINANCE_PAYMENT_METHODS: FinancePaymentMethod[] = [
+  { label: "Cartao de Credito", value: 45, color: "var(--color-brand-teal)" },
+  { label: "PIX", value: 35, color: "var(--color-warning-accent)" },
+  { label: "Boleto", value: 12, color: "var(--color-danger-accent)" },
+  { label: "Dinheiro", value: 8, color: "var(--color-sidebar-foreground)" },
 ];
 
 export const FINANCE_LINE_POINTS = [38, 42, 40, 48, 41, 45];
 export const FINANCE_LINE_LABELS = ["Set", "Out", "Nov", "Dez", "Jan", "Fev"];
 
-export const TREATMENT_INITIAL_PLANS = [
+export const TREATMENT_INITIAL_PLANS: TreatmentPlan[] = [
   {
     id: "1",
     patient: "Mariana Costa",
@@ -202,3 +210,4 @@ export const TREATMENT_INITIAL_PLANS = [
     ],
   },
 ];
+

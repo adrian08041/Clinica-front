@@ -1,5 +1,4 @@
-import type { ComponentType, ReactNode } from "react";
-import { Building2, Globe, Mail, MapPin, Phone, Upload } from "lucide-react";
+import { Building2, Phone, MapPin, Mail, Globe, Upload } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -8,118 +7,166 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-type FieldProps = {
-  label: string;
-  icon?: ComponentType<{ className?: string }>;
-  error?: string;
-  children: ReactNode;
-};
-
-function Field({ label, icon: Icon, error, children }: FieldProps) {
-  return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[12px] font-black uppercase tracking-[0.16em] text-[#93a0bd]">{label}</label>
-      <div className="relative">
-        {Icon ? <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#c0cadf]" /> : null}
-        {children}
-      </div>
-      {error ? <span className="text-xs font-medium text-red-500">{error}</span> : null}
-    </div>
-  );
-}
-
 export function ClinicaSettings() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ClinicaFormData>({
-    resolver: zodResolver(clinicaSchema),
-    defaultValues: {
-      nomeFantasia: "OdontoFlow Clinica Matriz",
-      cnpj: "12.345.678/0001-90",
-      telefone: "(11) 4567-8900",
-      endereco: "Av. Paulista, 1200 - Conj 12 - Sao Paulo, SP",
-      email: "contato@odontoflow.com",
-      website: "https://www.odontoflow.com.br",
-    },
-  });
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<ClinicaFormData>({
+        resolver: zodResolver(clinicaSchema),
+        defaultValues: {
+            nomeFantasia: "OdontoFlow Clínica Matriz",
+            cnpj: "12.345.678/0001-90",
+            telefone: "(11) 4567-8900",
+            endereco: "Av. Paulista, 1200 - Conj 12 - São Paulo, SP",
+            email: "contato@odontoflow.com",
+            website: "https://www.odontoflow.com.br",
+        },
+    });
 
-  const onSubmit = (_data: ClinicaFormData) => {
-    toast.success("Configuracoes atualizadas com sucesso!");
-  };
+    const onSubmit = (data: ClinicaFormData) => {
+        toast.success("Configurações atualizadas com sucesso!");
+        // eslint-disable-next-line no-console
+        console.log("Salvo:", data);
+    };
 
-  const inputClassName =
-    "h-12 rounded-[16px] border border-[#d9e1ef] bg-[#f8fbff] pr-4 text-[15px] font-medium text-[#0f274c] shadow-none focus-visible:ring-2 focus-visible:ring-[#0e9e95]/30 focus-visible:border-[#0e9e95]";
+    return (
+        <div className="bg-white rounded-[14px] border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center mb-8 md:mb-10">
+                <div className="flex flex-col items-center gap-3 shrink-0">
+                    <div className="w-[80px] h-[80px] md:w-[96px] md:h-[96px] bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-teal-600 shadow-sm">
+                        <Building2 className="w-10 h-10" />
+                    </div>
+                    <Button variant="ghost" className="text-[13px] font-semibold text-slate-500 hover:text-teal-600 transition-colors flex items-center gap-1">
+                        <Upload className="w-3.5 h-3.5 mr-1" />
+                        Alterar Logo
+                    </Button>
+                </div>
 
-  return (
-    <div className="overflow-hidden rounded-[30px] border border-[#dfe6f2] bg-white shadow-[0_8px_24px_rgba(15,39,76,0.06)]">
-      <div className="border-b border-[#eef2f8] px-6 py-8 md:px-12 md:py-10">
-        <div className="flex flex-col gap-6 md:flex-row md:items-start">
-          <div className="flex shrink-0 flex-col items-center gap-3">
-            <div className="flex h-24 w-24 items-center justify-center rounded-[26px] border-2 border-dashed border-[#d8e0ef] bg-[#fafcff] text-[#c3cedf]">
-              <Building2 className="h-10 w-10" />
+                <div className="flex flex-col pt-1">
+                    <h2 className="text-[20px] font-bold text-slate-900 leading-[28px]">
+                        Informações da Clínica
+                    </h2>
+                    <p className="text-[14px] text-slate-500 font-medium">
+                        Configure os dados cadastrais da sua unidade.
+                    </p>
+                </div>
             </div>
-            <button type="button" className="text-[12px] font-black uppercase tracking-[0.12em] text-[#93a0bd]">
-              Alterar Logo
-            </button>
-          </div>
 
-          <div className="pt-2">
-            <h2 className="text-[20px] font-black text-[#0f274c] md:text-[22px]">Informacoes da Clinica</h2>
-            <p className="mt-1 text-[15px] font-medium text-[#5f7091]">
-              Configure os dados cadastrais da sua unidade.
-            </p>
-          </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    {/* Linha 1 */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[13px] font-semibold text-slate-700">Nome Fantasia</label>
+                        <Input
+                            type="text"
+                            {...register("nomeFantasia")}
+                            className={cn(
+                                "h-11 rounded-lg bg-slate-50/50 px-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500",
+                                errors.nomeFantasia ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : "border-slate-200"
+                            )}
+                        />
+                        {errors.nomeFantasia && <span className="text-xs text-red-500">{errors.nomeFantasia.message}</span>}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-[13px] font-semibold text-slate-700">CNPJ</label>
+                        <Input
+                            type="text"
+                            {...register("cnpj")}
+                            className={cn(
+                                "h-11 rounded-lg bg-slate-50/50 px-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500",
+                                errors.cnpj ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : "border-slate-200"
+                            )}
+                        />
+                        {errors.cnpj && <span className="text-xs text-red-500">{errors.cnpj.message}</span>}
+                    </div>
+
+                    {/* Linha 2 */}
+                    <div className="flex flex-col gap-2 relative">
+                        <label className="text-[13px] font-semibold text-slate-700">Telefone de Contato</label>
+                        <div className="relative">
+                            <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input
+                                type="text"
+                                {...register("telefone")}
+                                className={cn(
+                                    "h-11 w-full rounded-lg bg-slate-50/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500",
+                                    errors.telefone ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : "border-slate-200"
+                                )}
+                            />
+                        </div>
+                        {errors.telefone && <span className="text-xs text-red-500">{errors.telefone.message}</span>}
+                    </div>
+
+                    <div className="flex flex-col gap-2 relative">
+                        <label className="text-[13px] font-semibold text-slate-700">Endereço Completo</label>
+                        <div className="relative">
+                            <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input
+                                type="text"
+                                {...register("endereco")}
+                                className={cn(
+                                    "h-11 w-full rounded-lg bg-slate-50/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500",
+                                    errors.endereco ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : "border-slate-200"
+                                )}
+                            />
+                        </div>
+                        {errors.endereco && <span className="text-xs text-red-500">{errors.endereco.message}</span>}
+                    </div>
+
+                    {/* Linha 3 */}
+                    <div className="flex flex-col gap-2 relative">
+                        <label className="text-[13px] font-semibold text-slate-700">E-mail Clínico</label>
+                        <div className="relative">
+                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input
+                                type="email"
+                                {...register("email")}
+                                className={cn(
+                                    "h-11 w-full rounded-lg bg-slate-50/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500",
+                                    errors.email ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : "border-slate-200"
+                                )}
+                            />
+                        </div>
+                        {errors.email && <span className="text-xs text-red-500">{errors.email.message}</span>}
+                    </div>
+
+                    <div className="flex flex-col gap-2 relative">
+                        <label className="text-[13px] font-semibold text-slate-700">Website</label>
+                        <div className="relative">
+                            <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input
+                                type="text"
+                                {...register("website")}
+                                className={cn(
+                                    "h-11 w-full rounded-lg bg-slate-50/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-teal-500 focus-visible:ring-1 focus-visible:ring-teal-500",
+                                    errors.website ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500" : "border-slate-200"
+                                )}
+                            />
+                        </div>
+                        {errors.website && <span className="text-xs text-red-500">{errors.website.message}</span>}
+                    </div>
+                </div>
+
+                <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-slate-100">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => reset()}
+                        className="h-10 px-6 rounded-lg text-slate-600 font-semibold text-sm hover:bg-slate-50"
+                    >
+                        Descartar
+                    </Button>
+                    <Button
+                        type="submit"
+                        className="h-10 px-6 rounded-lg bg-teal-600 text-white font-semibold text-sm hover:bg-teal-700 shadow-sm"
+                    >
+                        Salvar Alterações
+                    </Button>
+                </div>
+            </form>
         </div>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-8 md:px-12 md:py-10">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Field label="Nome Fantasia" error={errors.nomeFantasia?.message}>
-            <Input {...register("nomeFantasia")} className={cn(inputClassName, errors.nomeFantasia && "border-red-500")} />
-          </Field>
-
-          <Field label="Endereco Completo" icon={MapPin} error={errors.endereco?.message}>
-            <Input {...register("endereco")} className={cn(inputClassName, "pl-11", errors.endereco && "border-red-500")} />
-          </Field>
-
-          <Field label="CNPJ" error={errors.cnpj?.message}>
-            <Input {...register("cnpj")} className={cn(inputClassName, errors.cnpj && "border-red-500")} />
-          </Field>
-
-          <Field label="E-mail Clinico" icon={Mail} error={errors.email?.message}>
-            <Input {...register("email")} className={cn(inputClassName, "pl-11", errors.email && "border-red-500")} />
-          </Field>
-
-          <Field label="Telefone de Contato" icon={Phone} error={errors.telefone?.message}>
-            <Input {...register("telefone")} className={cn(inputClassName, "pl-11", errors.telefone && "border-red-500")} />
-          </Field>
-
-          <Field label="Website" icon={Globe} error={errors.website?.message}>
-            <Input {...register("website")} className={cn(inputClassName, "pl-11", errors.website && "border-red-500")} />
-          </Field>
-        </div>
-
-        <div className="mt-12 flex flex-col-reverse justify-end gap-3 border-t border-[#eef2f8] pt-8 sm:flex-row">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => reset()}
-            className="h-11 rounded-[16px] px-6 text-[15px] font-bold text-[#67799a] hover:bg-[#f5f8fc]"
-          >
-            Descartar
-          </Button>
-          <Button
-            type="submit"
-            className="h-11 rounded-[16px] bg-[#0e9e95] px-7 text-[15px] font-bold text-white shadow-[0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[#0c8d85]"
-          >
-            <Upload className="mr-2 h-4 w-4" />
-            Salvar Alteracoes
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
+    );
 }
