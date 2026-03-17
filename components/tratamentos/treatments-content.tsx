@@ -15,7 +15,20 @@ const formatDatePtBr = (dateInput?: string | Date) => {
     return "";
   }
 
-  const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  let date: Date;
+
+  if (dateInput instanceof Date) {
+    date = dateInput;
+  } else {
+    const localDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput);
+
+    if (localDateMatch) {
+      const [, year, month, day] = localDateMatch;
+      date = new Date(Number(year), Number(month) - 1, Number(day));
+    } else {
+      date = new Date(dateInput);
+    }
+  }
 
   if (Number.isNaN(date.getTime())) {
     return String(dateInput);
@@ -48,7 +61,7 @@ export function TreatmentsContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const filteredPlans = useMemo(() => plans.filter((plan) => `${plan.patient} ${plan.title}`.toLowerCase().includes(search.toLowerCase())), [plans, search]);
-  const selectedPlan = filteredPlans.find((plan) => plan.id === selectedId) ?? plans.find((plan) => plan.id === selectedId) ?? plans[0];
+  const selectedPlan = filteredPlans.find((plan) => plan.id === selectedId) ?? filteredPlans[0];
   const totalPaid = selectedPlan?.procedures.filter((item) => item.paid).reduce((sum, item) => sum + item.value, 0) ?? 0;
 
   const handleCreatePlan = (payload: {
@@ -71,7 +84,7 @@ export function TreatmentsContent() {
     const total = procedures.reduce((sum, item) => sum + item.value, 0);
     const plan: TreatmentPlan = {
       id: `plan-${Date.now()}`,
-      patient: payload.patient || "Paciente nao informado",
+      patient: payload.patient || "Paciente não informado",
       title: payload.planName || "Novo Plano",
       createdAt: new Date().toLocaleDateString("pt-BR"),
       startDate: payload.startDate || undefined,
@@ -94,7 +107,7 @@ export function TreatmentsContent() {
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-[28px] font-black tracking-tight text-[var(--color-ink-panel)]">Planos de Tratamento</h1>
-            <p className="mt-1 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Acompanhe o progresso clinico e financeiro dos tratamentos.</p>
+            <p className="mt-1 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Acompanhe o progresso clínico e financeiro dos tratamentos.</p>
           </div>
           <Button onClick={() => setDialogOpen(true)} className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white shadow-[0_12px_24px_var(--color-brand-teal-glow)] hover:bg-[var(--color-brand-teal-dark)]"><Plus className="mr-2 h-4 w-4" />Novo Plano</Button>
         </div>
@@ -134,15 +147,15 @@ export function TreatmentsContent() {
                       <p className="mt-1 text-[13px] font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Paciente:<span className="ml-2 normal-case tracking-normal text-[var(--color-brand-teal)]">{selectedPlan.patient}</span></p>
                       {(selectedPlan.startDate || selectedPlan.endDate) ? (
                         <p className="mt-2 text-[13px] font-medium text-[var(--color-text-caption)]">
-                          {selectedPlan.startDate ? `Inicio: ${formatDatePtBr(selectedPlan.startDate)}` : "Inicio nao informado"}
-                          {selectedPlan.endDate ? ` • Termino: ${formatDatePtBr(selectedPlan.endDate)}` : ""}
+                          {selectedPlan.startDate ? `Início: ${formatDatePtBr(selectedPlan.startDate)}` : "Início não informado"}
+                          {selectedPlan.endDate ? ` • Término: ${formatDatePtBr(selectedPlan.endDate)}` : ""}
                         </p>
                       ) : null}
                     </div>
                   </div>
                   <button
                     type="button"
-                    aria-label="Acoes do plano"
+                    aria-label="Ações do plano"
                     aria-haspopup="menu"
                     className="rounded-[14px] border border-[var(--color-border-section)] p-2 text-[var(--color-text-placeholder)]"
                   >
@@ -209,7 +222,7 @@ export function TreatmentsContent() {
               </div>
 
               <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-6 py-5 md:px-8 xl:flex-row xl:items-center xl:justify-between">
-                <p className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--color-text-caption)]"><Clock3 className="h-4 w-4 text-[var(--color-text-faint-alt)]" />Ultima atualizacao: Hoje as 14:30</p>
+                <p className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--color-text-caption)]"><Clock3 className="h-4 w-4 text-[var(--color-text-faint-alt)]" />Última atualização: Hoje às 14:30</p>
                 <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
                   <Button variant="outline" className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]">Imprimir</Button>
                   <Button className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white hover:bg-[var(--color-brand-teal-dark)]">Aprovar Etapa</Button>

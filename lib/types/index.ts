@@ -51,9 +51,10 @@ export type AgendaView = "day" | "week" | "month";
 export type FinanceReceivableStatus = "Pendente" | "Pago" | "Atrasado";
 
 export interface FinanceReceivable {
+  id: string;
   patient: string;
   description: string;
-  value: string;
+  value: number;
   due: string;
   status: FinanceReceivableStatus;
 }

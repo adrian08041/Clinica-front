@@ -64,14 +64,14 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
     <Dialog open={open} onOpenChange={(next) => (!next ? close() : onOpenChange(true))}>
       <DialogContent className="max-w-[720px] overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]" showCloseButton={false}>
         <div className="sr-only">
-          <DialogTitle>Nova Transacao</DialogTitle>
-          <DialogDescription>Formulario em etapas para registrar uma nova receita ou despesa.</DialogDescription>
+          <DialogTitle>Nova Transação</DialogTitle>
+          <DialogDescription>Formulário em etapas para registrar uma nova receita ou despesa.</DialogDescription>
         </div>
 
         <div className="bg-[linear-gradient(135deg,var(--color-brand-teal)_0%,var(--color-brand-teal-soft)_100%)] px-6 py-7 text-white md:px-8">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-[20px] font-black md:text-[22px]">Nova Transacao</h2>
+              <h2 className="text-[20px] font-black md:text-[22px]">Nova Transação</h2>
               <p className="mt-2 text-[15px] text-white/85">Registre uma receita ou despesa no sistema</p>
             </div>
             <button type="button" onClick={close} aria-label="Fechar" className="rounded-full p-2 hover:bg-white/10">
@@ -84,7 +84,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
               <div key={item} className="flex items-center gap-3">
                 <div className="flex flex-col items-center gap-2">
                   <StepDot active={step === item} done={step > item} value={item} />
-                  <span className="text-[12px] font-bold">{["Tipo", "Detalhes", "Revisao"][index]}</span>
+                  <span className="text-[12px] font-bold">{["Tipo", "Detalhes", "Revisão"][index]}</span>
                 </div>
                 {index < 2 ? <div className="h-0.5 w-14 bg-white/30" /> : null}
               </div>
@@ -96,8 +96,8 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
           {step === 1 ? (
             <div className="space-y-6 px-6 py-8 md:px-8">
               <div>
-                <h3 className="text-[18px] font-black text-[var(--color-ink-panel)]">Tipo de Transacao</h3>
-                <p className="mt-2 text-[15px] font-medium text-[var(--color-text-caption)]">Selecione se e uma receita ou despesa</p>
+                <h3 className="text-[18px] font-black text-[var(--color-ink-panel)]">Tipo de Transação</h3>
+                <p className="mt-2 text-[15px] font-medium text-[var(--color-text-caption)]">Selecione se é uma receita ou despesa</p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -143,7 +143,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descricao</label>
+                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</label>
                 <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ex: Limpeza e Profilaxia" className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30" />
               </div>
             </div>
@@ -169,7 +169,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
                   </div>
                 </div>
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Metodo de Pagamento</label>
+                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Método de Pagamento</label>
                   <div className="relative">
                     <CreditCard className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                     <select value={method} onChange={(e) => setMethod(e.target.value)} className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30">
@@ -201,7 +201,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Numero de Parcelas</label>
+                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Número de Parcelas</label>
                 <select value={installments} onChange={(e) => setInstallments(e.target.value)} className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30">
                   <option>A vista</option>
                   <option>2x</option>
@@ -216,7 +216,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
           {step === 3 ? (
             <div className="space-y-6 px-6 py-8 md:px-8">
               <div>
-                <h3 className="text-[18px] font-black text-[var(--color-ink-panel)]">Revisao e Confirmacao</h3>
+                <h3 className="text-[18px] font-black text-[var(--color-ink-panel)]">Revisão e Confirmação</h3>
                 <p className="mt-2 text-[15px] font-medium text-[var(--color-text-caption)]">Verifique os dados antes de salvar</p>
               </div>
 
@@ -233,10 +233,10 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
 
                 <div className="grid gap-5 pt-5 sm:grid-cols-2">
                   <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descricao</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{description || "-"}</p></div>
+                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{description || "-"}</p></div>
                   <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Valor</p><p className="mt-2 text-[18px] font-black text-[var(--color-brand-teal)]">R$ {amount || "0,00"}</p></div>
                   <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Vencimento</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{dueDate || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Metodo</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{method || "-"}</p></div>
+                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Método</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{method || "-"}</p></div>
                   <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Categoria</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{category || "-"}</p></div>
                   <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Parcelas</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{installments}</p></div>
                 </div>
@@ -255,7 +255,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
             </Button>
             <div className="flex items-center gap-2">{[1, 2, 3].map((item) => <span key={item} className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`} />)}</div>
             <Button onClick={() => (step < 3 ? setStep((current) => current + 1) : close())} className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)]">
-              {step < 3 ? "Proximo" : "Salvar Transacao"}
+              {step < 3 ? "Próximo" : "Salvar Transação"}
             </Button>
           </div>
         </div>

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Phone } from "lucide-react";
 
 const navLinks = [
-  { label: "Inicio", href: "#inicio" },
-  { label: "Servicos", href: "#servicos" },
+  { label: "Início", href: "#inicio" },
+  { label: "Serviços", href: "#servicos" },
   { label: "Equipe", href: "#equipe" },
   { label: "Depoimentos", href: "#depoimentos" },
   { label: "Contato", href: "#contato" },
@@ -23,13 +23,17 @@ export default function MarketingLayout({
               <span className="text-lg font-black">O</span>
             </div>
             <span className="text-3xl font-black tracking-tight text-[var(--color-ink-strong)]">
-              Odonto<span className="text-[var(--color-brand-teal)]">Clinic</span>
+              Odonto<span className="text-[var(--color-brand-teal)]">Flow</span>
             </span>
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex">
             {navLinks.map((link) => (
-              <Link key={link.label} href={link.href} className="text-base font-semibold text-[var(--color-ink-strong)] transition hover:text-[var(--color-brand-teal)]">
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-base font-semibold text-[var(--color-ink-strong)] transition hover:text-[var(--color-brand-teal)]"
+              >
                 {link.label}
               </Link>
             ))}
@@ -38,10 +42,15 @@ export default function MarketingLayout({
           <div className="hidden items-center gap-8 lg:flex">
             <div className="flex items-center gap-3 text-[var(--color-brand-teal)]">
               <Phone className="h-5 w-5" />
-              <span className="text-lg font-bold text-[var(--color-ink-strong)]">(11) 99999-9999</span>
+              <span className="text-lg font-bold text-[var(--color-ink-strong)]">
+                (11) 99999-9999
+              </span>
             </div>
-            <Link href="/login" className="text-base font-bold text-[var(--color-ink-strong)] transition hover:text-[var(--color-brand-teal)]">
-              Faca login
+            <Link
+              href="/login"
+              className="text-base font-bold text-[var(--color-ink-strong)] transition hover:text-[var(--color-brand-teal)]"
+            >
+              Faça login
             </Link>
             <Link
               href="/cadastro"
@@ -57,7 +66,9 @@ export default function MarketingLayout({
 
       <footer className="border-t border-[var(--color-border-marketing)] bg-white">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 text-center lg:flex-row lg:px-8 lg:text-left">
-          <p className="text-sm font-medium text-[var(--color-text-footer)]">© 2026 OdontoClinic. Todos os direitos reservados.</p>
+          <p className="text-sm font-medium text-[var(--color-text-footer)]">
+            © 2026 OdontoFlow. Todos os direitos reservados.
+          </p>
           <div className="flex items-center gap-6 text-sm font-semibold text-[var(--color-text-footer)]">
             <Link href="#inicio" className="hover:text-[var(--color-brand-teal)]">
               Voltar ao topo
