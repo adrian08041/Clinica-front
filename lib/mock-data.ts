@@ -1,4 +1,12 @@
-import type { Service, Patient, Appointment, Dentist } from "@/lib/types";
+import type {
+  Service,
+  Patient,
+  Appointment,
+  Dentist,
+  FinanceReceivable,
+  FinancePaymentMethod,
+  TreatmentPlan,
+} from "@/lib/types";
 
 // As per design, the login page doesn't strictly require data mapping here,
 // but to satisfy project conventions, mock data is centralized here.
@@ -140,3 +148,66 @@ export const MOCK_APPOINTMENTS: Appointment[] = [
     patientSince: "2024",
   },
 ];
+
+export const FINANCE_RECEIVABLES: FinanceReceivable[] = [
+  { id: "fr-1", patient: "Mariana Costa", description: "Mensalidade Ortodontia (Fev)", value: 180, due: "2026-02-25", status: "Pendente" },
+  { id: "fr-2", patient: "Ricardo Mendes", description: "Restauração de Resina", value: 350, due: "2026-02-12", status: "Pago" },
+  { id: "fr-3", patient: "Julia Albuquerque", description: "Limpeza e Profilaxia", value: 250, due: "2026-02-05", status: "Pago" },
+  { id: "fr-4", patient: "Carlos Eduardo", description: "Cirurgia Siso", value: 800, due: "2026-02-10", status: "Atrasado" },
+  { id: "fr-5", patient: "Beatriz Santos", description: "Implante Dentário (Parcela 1/12)", value: 1200, due: "2026-02-20", status: "Pendente" },
+];
+
+export const FINANCE_PAYMENT_METHODS: FinancePaymentMethod[] = [
+  { label: "Cartão de Crédito", value: 45, color: "var(--color-brand-teal)" },
+  { label: "PIX", value: 35, color: "var(--color-warning-accent)" },
+  { label: "Boleto", value: 12, color: "var(--color-danger-accent)" },
+  { label: "Dinheiro", value: 8, color: "var(--color-sidebar-foreground)" },
+];
+
+export const FINANCE_LINE_POINTS = [38, 42, 40, 48, 41, 45];
+export const FINANCE_LINE_LABELS = ["Set", "Out", "Nov", "Dez", "Jan", "Fev"];
+
+export const TREATMENT_INITIAL_PLANS: TreatmentPlan[] = [
+  {
+    id: "1",
+    patient: "Mariana Costa",
+    title: "Ortodontia Preventiva",
+    createdAt: "15/11/2025",
+    startDate: "2025-11-15",
+    endDate: "2026-07-15",
+    notes: "Acompanhamento mensal com foco em alinhamento e manutenção.",
+    total: 3200,
+    completed: 4,
+    totalProcedures: 8,
+    procedures: [
+      { id: "p1", tooth: "-", name: "Limpeza e Profilaxia", value: 250, paid: true, done: true },
+      { id: "p2", tooth: "11", name: "Restauração de Resina", value: 350, paid: true, done: true },
+      { id: "p3", tooth: "-", name: "Instalação de Aparelho", value: 1500, paid: true, done: true },
+      { id: "p4", tooth: "-", name: "Manutenção Mensal 1", value: 180, paid: true, done: true },
+      { id: "p5", tooth: "-", name: "Manutenção Mensal 2", value: 180, paid: false, done: false },
+      { id: "p6", tooth: "-", name: "Manutenção Mensal 3", value: 180, paid: false, done: false },
+      { id: "p7", tooth: "-", name: "Manutenção Mensal 4", value: 180, paid: false, done: false },
+      { id: "p8", tooth: "-", name: "Remoção e Contenção", value: 380, paid: false, done: false },
+    ],
+  },
+  {
+    id: "2",
+    patient: "Ricardo Mendes",
+    title: "Reabilitação Estética",
+    createdAt: "10/01/2026",
+    startDate: "2026-01-10",
+    endDate: "2026-05-10",
+    notes: "Reabilitação com foco em função mastigatória e estética do sorriso.",
+    total: 8500,
+    completed: 2,
+    totalProcedures: 5,
+    procedures: [
+      { id: "p9", tooth: "14", name: "Clareamento Dentário", value: 1200, paid: true, done: true },
+      { id: "p10", tooth: "16", name: "Lente de Contato Dental", value: 2300, paid: true, done: true },
+      { id: "p11", tooth: "21", name: "Ajuste de Gengiva", value: 1800, paid: false, done: false },
+      { id: "p12", tooth: "24", name: "Finalização Estética", value: 1700, paid: false, done: false },
+      { id: "p13", tooth: "-", name: "Retorno Clínico", value: 1500, paid: false, done: false },
+    ],
+  },
+];
+

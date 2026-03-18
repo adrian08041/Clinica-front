@@ -42,10 +42,10 @@ export function CadastroForm() {
         <div className="flex flex-col gap-6 w-full max-w-[423px] mx-auto md:mx-0 py-8 lg:py-0">
             {/* Header */}
             <div className="flex flex-col gap-2">
-                <h1 className="font-bold text-[#101828] text-[36px] leading-[40px] tracking-[-0.9px] font-['Outfit',sans-serif]">
+                <h1 className="font-bold text-[var(--color-text-primary)] text-[36px] leading-[40px] tracking-[-0.9px] font-['Outfit',sans-serif]">
                     Crie sua conta
                 </h1>
-                <p className="font-medium text-[#6a7282] text-[16px] leading-[24px]">
+                <p className="font-medium text-[var(--color-text-tertiary)] text-[16px] leading-[24px]">
                     Preencha os dados abaixo para começar.
                 </p>
             </div>
@@ -59,7 +59,7 @@ export function CadastroForm() {
                 <div className="flex flex-col gap-2 relative">
                     <label
                         htmlFor="name"
-                        className="font-semibold text-[#364153] text-[14px] leading-[20px]"
+                        className="font-semibold text-[var(--color-text-secondary)] text-[14px] leading-[20px]"
                     >
                         Nome completo
                     </label>
@@ -73,7 +73,7 @@ export function CadastroForm() {
                             placeholder="Seu nome completo"
                             {...register("name")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                "bg-[var(--color-background-card)] border border-[var(--color-border-light)] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
                                 errors.name && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
@@ -89,7 +89,7 @@ export function CadastroForm() {
                 <div className="flex flex-col gap-2 relative">
                     <label
                         htmlFor="email"
-                        className="font-semibold text-[#364153] text-[14px] leading-[20px]"
+                        className="font-semibold text-[var(--color-text-secondary)] text-[14px] leading-[20px]"
                     >
                         Email
                     </label>
@@ -103,7 +103,7 @@ export function CadastroForm() {
                             placeholder="seu@email.com"
                             {...register("email")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                "bg-[var(--color-background-card)] border border-[var(--color-border-light)] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
                                 errors.email && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
@@ -119,7 +119,7 @@ export function CadastroForm() {
                 <div className="flex flex-col gap-2 relative">
                     <label
                         htmlFor="password"
-                        className="font-semibold text-[#364153] text-[14px] leading-[20px]"
+                        className="font-semibold text-[var(--color-text-secondary)] text-[14px] leading-[20px]"
                     >
                         Senha
                     </label>
@@ -133,7 +133,7 @@ export function CadastroForm() {
                             placeholder="••••••••"
                             {...register("password")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                "bg-[var(--color-background-card)] border border-[var(--color-border-light)] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
                                 errors.password && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
@@ -158,7 +158,7 @@ export function CadastroForm() {
                 <div className="flex flex-col gap-2 relative">
                     <label
                         htmlFor="confirmPassword"
-                        className="font-semibold text-[#364153] text-[14px] leading-[20px]"
+                        className="font-semibold text-[var(--color-text-secondary)] text-[14px] leading-[20px]"
                     >
                         Confirme a senha
                     </label>
@@ -172,7 +172,7 @@ export function CadastroForm() {
                             placeholder="••••••••"
                             {...register("confirmPassword")}
                             className={cn(
-                                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
+                                "bg-[var(--color-background-card)] border border-[var(--color-border-light)] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
                                 errors.confirmPassword && "border-red-500 focus-visible:ring-red-500"
                             )}
                         />
@@ -196,19 +196,21 @@ export function CadastroForm() {
                 {/* Submit */}
                 <Button
                     type="submit"
-                    className="bg-[#0d9488] hover:bg-teal-700 text-white font-bold text-[16px] leading-[24px] rounded-xl h-[56px] mt-4 shadow-[0px_10px_15px_0px_rgba(0,187,167,0.2),0px_4px_6px_0px_rgba(0,187,167,0.2)]"
+                    className="bg-[var(--color-brand-primary)] hover:bg-[var(--color-brand-dark)] text-white font-bold text-[16px] leading-[24px] rounded-xl h-[56px] mt-4 shadow-[0px_10px_15px_0px_rgba(0,187,167,0.2),0px_4px_6px_0px_rgba(0,187,167,0.2)]"
                 >
                     Cadastrar
                 </Button>
             </form>
 
             {/* Footer Text */}
-            <p className="font-medium text-[#6a7282] text-[16px] leading-[24px] text-center mt-6">
+            <p className="font-medium text-[var(--color-text-tertiary)] text-[16px] leading-[24px] text-center mt-6">
                 Já possui uma conta?{" "}
-                <Link href="/" className="font-bold text-[#0d9488] hover:underline">
+                <Link href="/login" className="font-bold text-[var(--color-brand-primary)] hover:underline">
                     Faça login
                 </Link>
             </p>
         </div>
     );
 }
+
+

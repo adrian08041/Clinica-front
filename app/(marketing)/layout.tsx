@@ -1,54 +1,84 @@
 import Link from "next/link";
+import { Phone } from "lucide-react";
+
+const navLinks = [
+  { label: "Início", href: "#inicio" },
+  { label: "Serviços", href: "#servicos" },
+  { label: "Equipe", href: "#equipe" },
+  { label: "Depoimentos", href: "#depoimentos" },
+  { label: "Contato", href: "#contato" },
+];
 
 export default function MarketingLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <div className="flex flex-col min-h-screen">
-            {/* Marketing Header */}
-            <header className="absolute inset-x-0 top-0 z-50">
-                <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
-                    <div className="flex lg:flex-1">
-                        <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2">
-                            <span className="sr-only">Clinica</span>
-                            <div className="h-8 w-8 bg-blue-600 rounded-md"></div>
-                            <span className="font-bold text-xl text-gray-900 tracking-tight">Clínica</span>
-                        </Link>
-                    </div>
-                    <div className="flex flex-1 justify-end items-center gap-4">
-                        <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-colors">
-                            Log in
-                        </Link>
-                        <Link
-                            href="/cadastro"
-                            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
-                        >
-                            Criar Conta
-                        </Link>
-                    </div>
-                </nav>
-            </header>
+  return (
+    <div className="min-h-screen bg-[var(--color-surface-canvas)]">
+      <header className="sticky top-0 z-50 border-b border-[var(--color-border-marketing)] bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 lg:px-8">
+          <Link href="#inicio" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-brand-teal)] text-white shadow-[0_10px_20px_var(--color-brand-teal-glow)]">
+              <span className="text-lg font-black">O</span>
+            </div>
+            <span className="text-3xl font-black tracking-tight text-[var(--color-ink-strong)]">
+              Odonto<span className="text-[var(--color-brand-teal)]">Flow</span>
+            </span>
+          </Link>
 
-            {/* Main Content */}
-            <main className="flex-1 isolate">
-                {children}
-            </main>
+          <nav className="hidden items-center gap-8 lg:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-base font-semibold text-[var(--color-ink-strong)] transition hover:text-[var(--color-brand-teal)]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
-            {/* Marketing Footer */}
-            <footer className="bg-white" aria-labelledby="footer-heading">
-                <h2 id="footer-heading" className="sr-only">
-                    Footer
-                </h2>
-                <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
-                    <div className="border-t border-gray-900/10 pt-8 mt-16 md:flex md:items-center md:justify-between">
-                        <p className="mt-8 text-xs leading-5 text-gray-500 md:order-1 md:mt-0">
-                            &copy; 2026 Sistema para Clínicas Odontológicas. Todos os direitos reservados.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+          <div className="hidden items-center gap-8 lg:flex">
+            <div className="flex items-center gap-3 text-[var(--color-brand-teal)]">
+              <Phone className="h-5 w-5" />
+              <span className="text-lg font-bold text-[var(--color-ink-strong)]">
+                (11) 99999-9999
+              </span>
+            </div>
+            <Link
+              href="/login"
+              className="text-base font-bold text-[var(--color-ink-strong)] transition hover:text-[var(--color-brand-teal)]"
+            >
+              Faça login
+            </Link>
+            <Link
+              href="/cadastro"
+              className="inline-flex items-center justify-center rounded-full bg-[var(--color-brand-teal)] px-7 py-3 text-base font-extrabold text-white shadow-[0_12px_24px_var(--color-brand-teal-glow)] transition hover:bg-[var(--color-brand-teal-dark)]"
+            >
+              Agendar Consulta
+            </Link>
+          </div>
         </div>
-    );
+      </header>
+
+      <main>{children}</main>
+
+      <footer className="border-t border-[var(--color-border-marketing)] bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 text-center lg:flex-row lg:px-8 lg:text-left">
+          <p className="text-sm font-medium text-[var(--color-text-footer)]">
+            © 2026 OdontoFlow. Todos os direitos reservados.
+          </p>
+          <div className="flex items-center gap-6 text-sm font-semibold text-[var(--color-text-footer)]">
+            <Link href="#inicio" className="hover:text-[var(--color-brand-teal)]">
+              Voltar ao topo
+            </Link>
+            <Link href="#contato" className="hover:text-[var(--color-brand-teal)]">
+              Fale conosco
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
