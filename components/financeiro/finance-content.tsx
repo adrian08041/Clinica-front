@@ -11,15 +11,19 @@ import {
   Plus,
   TrendingUp,
 } from "lucide-react";
+import {
+  NewTransactionDialog,
+  type NewTransactionPayload,
+} from "@/components/financeiro/new-transaction-dialog";
 import { Button } from "@/components/ui/button";
-import { NewTransactionDialog } from "@/components/financeiro/new-transaction-dialog";
 import {
   FINANCE_LINE_LABELS,
   FINANCE_LINE_POINTS,
   FINANCE_PAYMENT_METHODS,
   FINANCE_RECEIVABLES,
 } from "@/lib/mock-data";
-import type { FinancePaymentMethod, FinanceReceivableStatus } from "@/lib/types";
+import type { FinancePaymentMethod, FinanceReceivable, FinanceReceivableStatus } from "@/lib/types";
+import { formatDatePtBr } from "@/lib/utils/date";
 
 function statusClass(status: FinanceReceivableStatus) {
   if (status === "Pago") return "bg-[var(--color-success-bg)] text-[var(--color-success-strong)]";
@@ -29,24 +33,6 @@ function statusClass(status: FinanceReceivableStatus) {
 
 function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function formatDatePtBr(dateInput: string) {
-  const localDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput);
-
-  const date = localDateMatch
-    ? new Date(
-        Number(localDateMatch[1]),
-        Number(localDateMatch[2]) - 1,
-        Number(localDateMatch[3])
-      )
-    : new Date(dateInput);
-
-  if (Number.isNaN(date.getTime())) {
-    return dateInput;
-  }
-
-  return new Intl.DateTimeFormat("pt-BR").format(date);
 }
 
 function buildPaymentMethodsConicGradient(methods: FinancePaymentMethod[]) {
@@ -108,7 +94,9 @@ function StatCard({
   return (
     <div className="rounded-[24px] border border-[var(--color-border-panel)] bg-white p-6 shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)]">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[var(--color-brand-teal-surface)] text-[var(--color-brand-teal)]">{icon}</div>
+        <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[var(--color-brand-teal-surface)] text-[var(--color-brand-teal)]">
+          {icon}
+        </div>
         {badge ? <span className={`rounded-full px-3 py-1 text-[11px] font-black ${badgeColor}`}>{badge}</span> : null}
       </div>
       <p className="mt-5 text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">{title}</p>
@@ -119,14 +107,26 @@ function StatCard({
 
 export function FinanceContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [receivables, setReceivables] = useState<FinanceReceivable[]>(FINANCE_RECEIVABLES);
 
-  const path = FINANCE_LINE_POINTS
-    .map((value, index) => {
-      const x = 40 + index * 110;
-      const y = 220 - value * 3;
-      return `${index === 0 ? "M" : "L"} ${x} ${y}`;
-    })
-    .join(" ");
+  const path = FINANCE_LINE_POINTS.map((value, index) => {
+    const x = 40 + index * 110;
+    const y = 220 - value * 3;
+    return `${index === 0 ? "M" : "L"} ${x} ${y}`;
+  }).join(" ");
+
+  const handleCreateTransaction = (payload: NewTransactionPayload) => {
+    const nextReceivable: FinanceReceivable = {
+      id: `receivable-${Date.now()}`,
+      patient: payload.patient || (payload.type === "receita" ? "Paciente não informado" : "Clínica"),
+      description: payload.description || (payload.type === "receita" ? "Nova receita" : "Nova despesa"),
+      value: payload.amount,
+      due: payload.dueDate || new Date().toISOString().slice(0, 10),
+      status: payload.type === "receita" ? "Pendente" : "Pago",
+    };
+
+    setReceivables((current) => [nextReceivable, ...current]);
+  };
 
   return (
     <>
@@ -134,15 +134,23 @@ export function FinanceContent() {
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <h1 className="text-[28px] font-black tracking-tight text-[var(--color-ink-panel)]">Financeiro</h1>
-            <p className="mt-1 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Visão geral do faturamento e controle de caixa.</p>
+            <p className="mt-1 text-[15px] font-medium text-[var(--color-text-panel-soft)]">
+              Visão geral do faturamento e controle de caixa.
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button variant="outline" className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]">
+            <Button
+              variant="outline"
+              className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
+            >
               <Download className="mr-2 h-4 w-4" />
               Relatórios
             </Button>
-            <Button onClick={() => setDialogOpen(true)} className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white shadow-[0_12px_24px_var(--color-brand-teal-glow)] hover:bg-[var(--color-brand-teal-dark)]">
+            <Button
+              onClick={() => setDialogOpen(true)}
+              className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white shadow-[0_12px_24px_var(--color-brand-teal-glow)] hover:bg-[var(--color-brand-teal-dark)]"
+            >
               <Plus className="mr-2 h-4 w-4" />
               Nova Transação
             </Button>
@@ -150,9 +158,27 @@ export function FinanceContent() {
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-4">
-          <StatCard icon={<DollarSign className="h-6 w-6" />} title="Faturamento Mensal" value="R$ 45.200" badge="↑ 12%" badgeColor="bg-[var(--color-success-bg)] text-[var(--color-success-strong)]" />
-          <StatCard icon={<CalendarClock className="h-6 w-6 text-[var(--color-warning-accent)]" />} title="A Receber" value="R$ 12.800" badge="Previsão" badgeColor="bg-[var(--color-surface-panel)] text-[var(--color-text-faint-alt)]" />
-          <StatCard icon={<ArrowDownLeft className="h-6 w-6 text-[var(--color-danger-action)]" />} title="Inadimplência" value="R$ 3.400" badge="7.5%" badgeColor="bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]" />
+          <StatCard
+            icon={<DollarSign className="h-6 w-6" />}
+            title="Faturamento Mensal"
+            value="R$ 45.200"
+            badge="↑ 12%"
+            badgeColor="bg-[var(--color-success-bg)] text-[var(--color-success-strong)]"
+          />
+          <StatCard
+            icon={<CalendarClock className="h-6 w-6 text-[var(--color-warning-accent)]" />}
+            title="A Receber"
+            value="R$ 12.800"
+            badge="Previsão"
+            badgeColor="bg-[var(--color-surface-panel)] text-[var(--color-text-faint-alt)]"
+          />
+          <StatCard
+            icon={<ArrowDownLeft className="h-6 w-6 text-[var(--color-danger-action)]" />}
+            title="Inadimplência"
+            value="R$ 3.400"
+            badge="7.5%"
+            badgeColor="bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]"
+          />
           <StatCard icon={<TrendingUp className="h-6 w-6 text-[var(--color-text-panel)]" />} title="Ticket Médio" value="R$ 380" />
         </div>
 
@@ -172,7 +198,15 @@ export function FinanceContent() {
               <div className="min-w-[620px]">
                 <svg viewBox="0 0 640 280" className="h-[320px] w-full">
                   {[0, 1, 2, 3, 4].map((line) => (
-                    <line key={line} x1="40" y1={40 + line * 55} x2="610" y2={40 + line * 55} stroke="var(--color-border-panel-soft)" strokeDasharray="4 6" />
+                    <line
+                      key={line}
+                      x1="40"
+                      y1={40 + line * 55}
+                      x2="610"
+                      y2={40 + line * 55}
+                      stroke="var(--color-border-panel-soft)"
+                      strokeDasharray="4 6"
+                    />
                   ))}
                   {["R$ 60k", "R$ 45k", "R$ 30k", "R$ 15k", "R$ 0k"].map((label, index) => (
                     <text key={label} x="0" y={45 + index * 55} fill="var(--color-text-caption)" fontSize="14" fontWeight="700">
@@ -240,7 +274,10 @@ export function FinanceContent() {
               >
                 <Funnel className="h-4 w-4" />
               </Button>
-              <Button variant="outline" className="h-10 rounded-[14px] border-[var(--color-border-soft)] px-5 text-[14px] font-bold text-[var(--color-text-panel)]">
+              <Button
+                variant="outline"
+                className="h-10 rounded-[14px] border-[var(--color-border-soft)] px-5 text-[14px] font-bold text-[var(--color-text-panel)]"
+              >
                 Ver Tudo
               </Button>
             </div>
@@ -255,20 +292,25 @@ export function FinanceContent() {
               <span>Status</span>
               <span className="text-right">Ação</span>
             </div>
-            {FINANCE_RECEIVABLES.map((item) => (
-              <div key={item.id} className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_90px] gap-4 border-b border-[var(--color-border-panel-lite)] px-6 py-5 last:border-b-0 md:px-8">
+            {receivables.map((item) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_90px] gap-4 border-b border-[var(--color-border-panel-lite)] px-6 py-5 last:border-b-0 md:px-8"
+              >
                 <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{item.patient}</span>
                 <span className="text-[15px] font-medium text-[var(--color-text-panel)]">{item.description}</span>
                 <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</span>
                 <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</span>
-                <span><span className={`rounded-full px-3 py-1 text-[11px] font-black uppercase ${statusClass(item.status)}`}>{item.status}</span></span>
+                <span>
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-black uppercase ${statusClass(item.status)}`}>{item.status}</span>
+                </span>
                 <span className="text-right text-[15px] font-bold text-[var(--color-text-panel)]">...</span>
               </div>
             ))}
           </div>
 
           <div className="space-y-4 p-5 lg:hidden">
-            {FINANCE_RECEIVABLES.map((item) => (
+            {receivables.map((item) => (
               <div key={item.id} className="rounded-[20px] border border-[var(--color-border-section)] p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -278,8 +320,14 @@ export function FinanceContent() {
                   <span className={`rounded-full px-3 py-1 text-[11px] font-black uppercase ${statusClass(item.status)}`}>{item.status}</span>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-4 text-[14px]">
-                  <div><p className="font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Valor</p><p className="mt-1 font-black text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</p></div>
-                  <div><p className="font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Vencimento</p><p className="mt-1 font-black text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</p></div>
+                  <div>
+                    <p className="font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Valor</p>
+                    <p className="mt-1 font-black text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Vencimento</p>
+                    <p className="mt-1 font-black text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -287,10 +335,7 @@ export function FinanceContent() {
         </section>
       </div>
 
-      <NewTransactionDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <NewTransactionDialog open={dialogOpen} onOpenChange={setDialogOpen} onCreate={handleCreateTransaction} />
     </>
   );
 }
-
-
-

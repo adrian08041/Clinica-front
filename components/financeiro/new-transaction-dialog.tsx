@@ -15,18 +15,35 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-type TransactionType = "receita" | "despesa";
+export type TransactionType = "receita" | "despesa";
+
+export type NewTransactionPayload = {
+  type: TransactionType;
+  patient: string;
+  description: string;
+  amount: number;
+  dueDate: string;
+  method: string;
+  category: string;
+  installments: string;
+  notes: string;
+};
 
 type NewTransactionDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onCreate: (payload: NewTransactionPayload) => void;
 };
 
 function StepDot({ active, done, value }: { active: boolean; done: boolean; value: number }) {
   return (
     <div
       className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-black ${
-        active ? "bg-white text-[var(--color-brand-teal)]" : done ? "bg-white/25 text-white" : "bg-white/15 text-white/60"
+        active
+          ? "bg-white text-[var(--color-brand-teal)]"
+          : done
+            ? "bg-white/25 text-white"
+            : "bg-white/15 text-white/60"
       }`}
     >
       {done ? <Check className="h-5 w-5" /> : value}
@@ -34,7 +51,7 @@ function StepDot({ active, done, value }: { active: boolean; done: boolean; valu
   );
 }
 
-export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialogProps) {
+export function NewTransactionDialog({ open, onOpenChange, onCreate }: NewTransactionDialogProps) {
   const [step, setStep] = useState(1);
   const [type, setType] = useState<TransactionType>("receita");
   const [patient, setPatient] = useState("");
@@ -43,7 +60,7 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
   const [dueDate, setDueDate] = useState("");
   const [method, setMethod] = useState("Selecione...");
   const [category, setCategory] = useState("Selecione...");
-  const [installments, setInstallments] = useState("A vista");
+  const [installments, setInstallments] = useState("À vista");
   const [notes, setNotes] = useState("");
 
   const close = () => {
@@ -56,13 +73,37 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
     setDueDate("");
     setMethod("Selecione...");
     setCategory("Selecione...");
-    setInstallments("A vista");
+    setInstallments("À vista");
     setNotes("");
+  };
+
+  const handleNext = () => {
+    if (step < 3) {
+      setStep((current) => current + 1);
+      return;
+    }
+
+    onCreate({
+      type,
+      patient,
+      description,
+      amount: Number(amount) || 0,
+      dueDate,
+      method,
+      category,
+      installments,
+      notes,
+    });
+
+    close();
   };
 
   return (
     <Dialog open={open} onOpenChange={(next) => (!next ? close() : onOpenChange(true))}>
-      <DialogContent className="max-w-[720px] overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]" showCloseButton={false}>
+      <DialogContent
+        className="max-w-[720px] overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]"
+        showCloseButton={false}
+      >
         <div className="sr-only">
           <DialogTitle>Nova Transação</DialogTitle>
           <DialogDescription>Formulário em etapas para registrar uma nova receita ou despesa.</DialogDescription>
@@ -110,7 +151,13 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
                       : "border-[var(--color-border-panel)] bg-white hover:border-[var(--color-brand-teal)]"
                   }`}
                 >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-[16px] ${type === "receita" ? "bg-[var(--color-brand-teal-fill)] text-[var(--color-success-strong)]" : "bg-[var(--color-background-hover)] text-[var(--color-text-faint)]"}`}>
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-[16px] ${
+                      type === "receita"
+                        ? "bg-[var(--color-brand-teal-fill)] text-[var(--color-success-strong)]"
+                        : "bg-[var(--color-background-hover)] text-[var(--color-text-faint)]"
+                    }`}
+                  >
                     <ArrowUpRight className="h-5 w-5" />
                   </div>
                   <p className="mt-6 text-[18px] font-black text-[var(--color-ink-panel)]">Receita</p>
@@ -126,7 +173,13 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
                       : "border-[var(--color-border-panel)] bg-white hover:border-[var(--color-brand-teal)]"
                   }`}
                 >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-[16px] ${type === "despesa" ? "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]" : "bg-[var(--color-background-hover)] text-[var(--color-text-faint)]"}`}>
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-[16px] ${
+                      type === "despesa"
+                        ? "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]"
+                        : "bg-[var(--color-background-hover)] text-[var(--color-text-faint)]"
+                    }`}
+                  >
                     <ArrowDownLeft className="h-5 w-5" />
                   </div>
                   <p className="mt-6 text-[18px] font-black text-[var(--color-ink-panel)]">Despesa</p>
@@ -138,13 +191,23 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
                 <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                  <Input value={patient} onChange={(e) => setPatient(e.target.value)} placeholder="Nome do paciente" className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30" />
+                  <Input
+                    value={patient}
+                    onChange={(e) => setPatient(e.target.value)}
+                    placeholder="Nome do paciente"
+                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                  />
                 </div>
               </div>
 
               <div>
                 <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</label>
-                <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ex: Limpeza e Profilaxia" className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30" />
+                <Input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Ex: Limpeza e Profilaxia"
+                  className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                />
               </div>
             </div>
           ) : null}
@@ -159,27 +222,42 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Valor (R$)</label>
-                  <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00" className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30" />
+                  <Input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0,00"
+                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                  />
                 </div>
                 <div>
                   <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Vencimento</label>
                   <div className="relative">
                     <CalendarDays className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30" />
+                    <Input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Método de Pagamento</label>
                   <div className="relative">
                     <CreditCard className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <select value={method} onChange={(e) => setMethod(e.target.value)} className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30">
+                    <select
+                      value={method}
+                      onChange={(e) => setMethod(e.target.value)}
+                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                    >
                       <option>Selecione...</option>
                       <option>Dinheiro</option>
                       <option>PIX</option>
-                      <option>Cartao de Credito</option>
-                      <option>Cartao de Debito</option>
+                      <option>Cartão de Crédito</option>
+                      <option>Cartão de Débito</option>
                       <option>Boleto</option>
-                      <option>Transferencia Bancaria</option>
+                      <option>Transferência Bancária</option>
                     </select>
                   </div>
                 </div>
@@ -187,7 +265,11 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
                   <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Categoria</label>
                   <div className="relative">
                     <Tag className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <select value={category} onChange={(e) => setCategory(e.target.value)} className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30">
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                    >
                       <option>Selecione...</option>
                       <option>Consulta</option>
                       <option>Procedimento</option>
@@ -202,8 +284,12 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
 
               <div>
                 <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Número de Parcelas</label>
-                <select value={installments} onChange={(e) => setInstallments(e.target.value)} className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30">
-                  <option>A vista</option>
+                <select
+                  value={installments}
+                  onChange={(e) => setInstallments(e.target.value)}
+                  className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                >
+                  <option>À vista</option>
                   <option>2x</option>
                   <option>3x</option>
                   <option>6x</option>
@@ -226,35 +312,81 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
                     <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Tipo</p>
                     <p className="mt-2 text-[16px] font-black text-[var(--color-ink-panel)]">{type === "receita" ? "Receita" : "Despesa"}</p>
                   </div>
-                  <span className={`rounded-full px-4 py-2 text-[14px] font-black ${type === "receita" ? "bg-[var(--color-brand-teal-fill)] text-[var(--color-success-strong)]" : "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]"}`}>
+                  <span
+                    className={`rounded-full px-4 py-2 text-[14px] font-black ${
+                      type === "receita"
+                        ? "bg-[var(--color-brand-teal-fill)] text-[var(--color-success-strong)]"
+                        : "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]"
+                    }`}
+                  >
                     {type === "receita" ? "Receita" : "Despesa"}
                   </span>
                 </div>
 
                 <div className="grid gap-5 pt-5 sm:grid-cols-2">
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{description || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Valor</p><p className="mt-2 text-[18px] font-black text-[var(--color-brand-teal)]">R$ {amount || "0,00"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Vencimento</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{dueDate || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Método</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{method || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Categoria</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{category || "-"}</p></div>
-                  <div><p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Parcelas</p><p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{installments}</p></div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{description || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Valor</p>
+                    <p className="mt-2 text-[18px] font-black text-[var(--color-brand-teal)]">{amount ? `R$ ${amount}` : "R$ 0,00"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Vencimento</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{dueDate || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Método</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{method || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Categoria</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{category || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Parcelas</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{installments}</p>
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Observacoes (Opcional)</label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Adicione informacoes complementares..." className="min-h-[120px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30" />
+                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Observações (Opcional)</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Adicione informações complementares..."
+                  className="min-h-[120px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                />
               </div>
             </div>
           ) : null}
 
           <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
-            <Button variant="outline" onClick={() => (step === 1 ? close() : setStep((current) => current - 1))} className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]">
+            <Button
+              variant="outline"
+              onClick={() => (step === 1 ? close() : setStep((current) => current - 1))}
+              className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
+            >
               {step === 1 ? "Cancelar" : "Voltar"}
             </Button>
-            <div className="flex items-center gap-2">{[1, 2, 3].map((item) => <span key={item} className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`} />)}</div>
-            <Button onClick={() => (step < 3 ? setStep((current) => current + 1) : close())} className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)]">
+            <div className="flex items-center gap-2">
+              {[1, 2, 3].map((item) => (
+                <span
+                  key={item}
+                  className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`}
+                />
+              ))}
+            </div>
+            <Button
+              onClick={handleNext}
+              className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)]"
+            >
               {step < 3 ? "Próximo" : "Salvar Transação"}
             </Button>
           </div>
@@ -263,5 +395,3 @@ export function NewTransactionDialog({ open, onOpenChange }: NewTransactionDialo
     </Dialog>
   );
 }
-
-
