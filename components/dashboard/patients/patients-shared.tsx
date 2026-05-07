@@ -19,11 +19,13 @@ export function formatCpf(cpf: string) {
 export function formatDate(date?: string) {
   if (!date) return "-";
 
-  try {
-    return new Date(`${date}T00:00:00`).toLocaleDateString("pt-BR");
-  } catch {
+  const parsedDate = new Date(`${date}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
     return date;
   }
+
+  return parsedDate.toLocaleDateString("pt-BR");
 }
 
 export function formatCpfInput(value: string) {

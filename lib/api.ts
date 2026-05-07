@@ -9,10 +9,7 @@ function parseJsonResponse<T>(responseText: string, status: number): T {
   const trimmedResponseText = responseText.trim();
 
   if (!trimmedResponseText) {
-    throw {
-      message: "Resposta vazia do servidor",
-      status,
-    } satisfies ApiError;
+    return undefined as T;
   }
 
   try {

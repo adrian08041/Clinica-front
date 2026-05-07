@@ -115,10 +115,6 @@ export function PatientsSection() {
     void fetchPatients();
   }, [fetchPatients]);
 
-  useEffect(() => {
-    setPage(0);
-  }, [search]);
-
   const resetDialogState = useCallback(() => {
     setStep(1);
     setEditingPatient(null);
@@ -290,7 +286,10 @@ export function PatientsSection() {
             setInsuranceFilter(value === "all" ? "" : value);
             setPage(0);
           }}
-          onSearchChange={setSearch}
+          onSearchChange={(value) => {
+            setSearch(value);
+            setPage(0);
+          }}
           onSortChange={setSortBy}
           onStatusFilterChange={(value) => {
             setStatusFilter(value === "all" ? "" : value);

@@ -24,6 +24,8 @@ export function FlowDialogFooter({
   step,
   totalSteps,
 }: FlowDialogFooterProps) {
+  const isPrimaryDisabled = disabled || isLoading;
+
   return (
     <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-4 py-4 sm:px-6 sm:py-5 md:flex-row md:items-center md:justify-between md:px-8">
       <Button
@@ -49,10 +51,18 @@ export function FlowDialogFooter({
       <Button
         type="button"
         onClick={onPrimaryAction}
-        disabled={disabled}
+        disabled={isPrimaryDisabled}
+        aria-busy={isLoading}
         className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)]"
       >
-        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : primaryLabel}
+        {isLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            <span className="sr-only">{primaryLabel}</span>
+          </>
+        ) : (
+          primaryLabel
+        )}
       </Button>
     </div>
   );
