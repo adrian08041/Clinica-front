@@ -62,6 +62,7 @@ export function AgendaHeader({
               size="icon-xs"
               className="cursor-pointer"
               onClick={() => navigate(-1)}
+              aria-label="Mês anterior"
             >
               <ChevronLeft className="size-4 lg:size-5 text-text-tertiary" />
             </Button>
@@ -73,6 +74,7 @@ export function AgendaHeader({
               size="icon-xs"
               className="cursor-pointer"
               onClick={() => navigate(1)}
+              aria-label="Próximo mês"
             >
               <ChevronRight className="size-4 lg:size-5 text-text-tertiary" />
             </Button>

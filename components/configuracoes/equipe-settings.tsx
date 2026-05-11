@@ -1,97 +1,152 @@
-import { UserPlus, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+"use client";
 
-const teamMembers = [
-    {
-        name: "Dra. Ana Silva",
-        status: "ativo no sistema",
-        role: "Administrador",
-        avatar: "https://i.pravatar.cc/150?u=ana-silva",
-    },
-    {
-        name: "Dr. Lucas Ferraz",
-        status: "ativo no sistema",
-        role: "Dentista",
-        avatar: "https://i.pravatar.cc/150?u=lucas",
-    },
-    {
-        name: "Mariana Santos",
-        status: "ativo no sistema",
-        role: "Recepcionista",
-        avatar: "https://i.pravatar.cc/150?u=mariana",
-    },
-];
+import { useMemo, useState } from "react";
+import { UserPlus } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { TeamMemberDialog } from "./equipe/team-member-dialog";
+import { TeamMembersTable } from "./equipe/team-members-table";
+import {
+  EMPTY_TEAM_FORM,
+  INITIAL_TEAM_MEMBERS,
+  type TeamFormState,
+  type TeamMember,
+} from "./equipe/team-shared";
 
 export function EquipeSettings() {
-    return (
-        <div className="bg-white rounded-[14px] border border-border-light shadow-sm overflow-hidden w-full p-4 sm:p-6 md:p-8">
-            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6 md:mb-8">
-                <div>
-                    <h2 className="text-[20px] font-bold text-text-primary leading-[28px]">
-                        Gestão de Equipe
-                    </h2>
-                    <p className="text-[14px] text-text-tertiary font-medium mt-1">
-                        Controle os usuários e níveis de acesso ao sistema.
-                    </p>
-                </div>
-                <Button className="h-10 px-4 bg-brand-primary hover:bg-brand-dark text-white rounded-lg shadow-sm">
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Novo Usuário
-                </Button>
-            </div>
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(INITIAL_TEAM_MEMBERS);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [form, setForm] = useState<TeamFormState>(EMPTY_TEAM_FORM);
 
-            <div className="border border-border-light rounded-xl overflow-x-auto">
-                <Table className="w-full text-left min-w-[500px]">
-                    <TableHeader>
-                        <TableRow className="bg-background-card border-b border-border-light hover:bg-background-card">
-                            <TableHead className="py-4 px-6 text-[13px] font-semibold text-text-tertiary h-auto">
-                                Colaborador
-                            </TableHead>
-                            <TableHead className="py-4 px-6 text-[13px] font-semibold text-text-tertiary h-auto">
-                                Cargo / Permissão
-                            </TableHead>
-                            <TableHead className="py-4 px-6 text-[13px] font-semibold text-text-tertiary w-[100px] text-right h-auto">
-                                Ações
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {teamMembers.map((member, index) => (
-                            <TableRow
-                                key={index}
-                                className="border-b border-border-light last:border-0 hover:bg-background-card/50 transition-colors"
-                            >
-                                <TableCell className="py-4 px-6">
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="w-10 h-10 border border-border-light">
-                                            <AvatarImage src={member.avatar} alt={member.name} />
-                                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col">
-                                            <span className="text-[14px] font-semibold text-text-primary">
-                                                {member.name}
-                                            </span>
-                                            <span className="text-[13px] text-text-tertiary">
-                                                {member.status}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="py-4 px-6 text-[14px] font-medium text-text-secondary">
-                                    {member.role}
-                                </TableCell>
-                                <TableCell className="py-4 px-6 text-right">
-                                    <Button variant="ghost" size="icon" className="text-text-muted hover:text-text-secondary">
-                                        <MoreHorizontal className="w-5 h-5" />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
+  const totalActiveMembers = useMemo(
+    () => teamMembers.filter((member) => member.status === "Ativo").length,
+    [teamMembers],
+  );
+
+  const resetForm = () => {
+    setForm(EMPTY_TEAM_FORM);
+    setEditingMemberId(null);
+  };
+
+  const openCreateDialog = () => {
+    resetForm();
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (member: TeamMember) => {
+    setEditingMemberId(member.id);
+    setForm({
+      name: member.name,
+      email: member.email,
+      phone: member.phone,
+      role: member.role,
+      status: member.status,
+    });
+    setDialogOpen(true);
+  };
+
+  const handleDialogChange = (open: boolean) => {
+    if (!open) {
+      resetForm();
+    }
+
+    setDialogOpen(open);
+  };
+
+  const handleSaveMember = () => {
+    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
+      toast.error("Preencha nome, e-mail e telefone da equipe.");
+      return;
+    }
+
+    if (editingMemberId) {
+      setTeamMembers((current) =>
+        current.map((member) =>
+          member.id === editingMemberId
+            ? {
+                ...member,
+                ...form,
+              }
+            : member,
+        ),
+      );
+      toast.success("Cadastro da equipe atualizado com sucesso!");
+    } else {
+      setTeamMembers((current) => [
+        {
+          id: `team-${Date.now()}`,
+          avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(form.email)}`,
+          ...form,
+        },
+        ...current,
+      ]);
+      toast.success("Novo funcionário adicionado com sucesso!");
+    }
+
+    handleDialogChange(false);
+  };
+
+  const handleDeleteMember = (memberId: string) => {
+    setTeamMembers((current) => current.filter((member) => member.id !== memberId));
+    toast.success("Funcionário removido com sucesso!");
+  };
+
+  return (
+    <>
+      <div className="w-full overflow-hidden rounded-[14px] border border-border-light bg-white p-4 shadow-sm sm:p-6 md:p-8">
+        <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-[20px] font-bold leading-[28px] text-text-primary">
+              Gestão de Equipe
+            </h2>
+            <p className="mt-1 text-[14px] font-medium text-text-tertiary">
+              Cadastre funcionários, organize cargos e mantenha o time alinhado.
+            </p>
+          </div>
+          <Button
+            onClick={openCreateDialog}
+            className="h-10 rounded-lg bg-brand-primary px-4 text-white shadow-sm hover:bg-brand-dark"
+          >
+            <UserPlus className="mr-2 h-4 w-4" />
+            Adicionar Funcionário
+          </Button>
         </div>
-    );
+
+        <div className="mb-6 grid gap-4 md:mb-8 md:grid-cols-2">
+          <div className="rounded-2xl border border-border-light bg-background-card p-5">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+              Total na Equipe
+            </p>
+            <p className="mt-2 text-[24px] font-bold text-text-primary">
+              {teamMembers.length}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border-light bg-background-card p-5">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+              Ativos no Sistema
+            </p>
+            <p className="mt-2 text-[24px] font-bold text-success-text">
+              {totalActiveMembers}
+            </p>
+          </div>
+        </div>
+
+        <TeamMembersTable
+          teamMembers={teamMembers}
+          onEdit={openEditDialog}
+          onDelete={handleDeleteMember}
+        />
+      </div>
+
+      <TeamMemberDialog
+        open={dialogOpen}
+        editingMemberId={editingMemberId}
+        form={form}
+        onOpenChange={handleDialogChange}
+        onFormChange={setForm}
+        onSave={handleSaveMember}
+      />
+    </>
+  );
 }

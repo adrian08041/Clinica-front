@@ -97,10 +97,10 @@ function StatCard({
         <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[var(--color-brand-teal-surface)] text-[var(--color-brand-teal)]">
           {icon}
         </div>
-        {badge ? <span className={`rounded-full px-3 py-1 text-[11px] font-black ${badgeColor}`}>{badge}</span> : null}
+        {badge ? <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${badgeColor}`}>{badge}</span> : null}
       </div>
-      <p className="mt-5 text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">{title}</p>
-      <p className="mt-2 text-[22px] font-black text-[var(--color-ink-panel)]">{value}</p>
+      <p className="mt-5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">{title}</p>
+      <p className="mt-2 text-[22px] font-bold text-[var(--color-ink-panel)]">{value}</p>
     </div>
   );
 }
@@ -133,7 +133,7 @@ export function FinanceContent() {
       <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-1 py-2">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
-            <h1 className="text-[28px] font-black tracking-tight text-[var(--color-ink-panel)]">Financeiro</h1>
+            <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink-panel)]">Financeiro</h1>
             <p className="mt-1 text-[15px] font-medium text-[var(--color-text-panel-soft)]">
               Visão geral do faturamento e controle de caixa.
             </p>
@@ -186,7 +186,7 @@ export function FinanceContent() {
           <section className="rounded-[28px] border border-[var(--color-border-panel)] bg-white p-6 shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)] md:p-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <h2 className="text-[18px] font-black text-[var(--color-ink-panel)]">Faturamento</h2>
+                <h2 className="text-[18px] font-bold text-[var(--color-ink-panel)]">Faturamento</h2>
                 <p className="mt-2 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Evolução mensal nos últimos 6 meses.</p>
               </div>
               <select className="h-10 rounded-[14px] border border-[var(--color-border-soft)] bg-white px-4 text-[14px] font-bold text-[var(--color-ink-panel)] outline-none">
@@ -239,7 +239,7 @@ export function FinanceContent() {
               <div className="relative h-52 w-52 rounded-full" style={{ background: buildPaymentMethodsConicGradient(FINANCE_PAYMENT_METHODS) }}>
                 <div className="absolute inset-[24px] flex flex-col items-center justify-center rounded-full bg-white text-center">
                   <CreditCard className="h-8 w-8 text-[var(--color-text-dim)]" />
-                  <p className="mt-2 text-[13px] font-black uppercase tracking-[0.14em] text-[var(--color-text-dim)]">Geral</p>
+                  <p className="mt-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-dim)]">Geral</p>
                 </div>
               </div>
             </div>
@@ -251,7 +251,7 @@ export function FinanceContent() {
                     <span className="h-3 w-3 rounded-full" style={{ backgroundColor: method.color }} />
                     <span className="text-[15px] font-bold text-[var(--color-ink-panel)]">{method.label}</span>
                   </div>
-                  <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{method.value}%</span>
+                  <span className="text-[15px] font-bold text-[var(--color-ink-panel)]">{method.value}%</span>
                 </div>
               ))}
             </div>
@@ -261,7 +261,7 @@ export function FinanceContent() {
         <section className="overflow-hidden rounded-[28px] border border-[var(--color-border-panel)] bg-white shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)]">
           <div className="flex flex-col gap-4 border-b border-[var(--color-border-panel-alt)] px-6 py-6 md:flex-row md:items-start md:justify-between md:px-8">
             <div>
-              <h2 className="text-[18px] font-black text-[var(--color-ink-panel)]">Contas a Receber</h2>
+              <h2 className="text-[18px] font-bold text-[var(--color-ink-panel)]">Contas a Receber</h2>
               <p className="mt-2 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Listagem de faturas pendentes e pagas recentemente.</p>
             </div>
             <div className="flex gap-3">
@@ -284,7 +284,7 @@ export function FinanceContent() {
           </div>
 
           <div className="hidden lg:block">
-            <div className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_90px] gap-4 border-b border-[var(--color-border-panel-alt)] px-6 py-4 text-[11px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)] md:px-8">
+            <div className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_90px] gap-4 border-b border-[var(--color-border-panel-alt)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)] md:px-8">
               <span>Paciente</span>
               <span>Descrição</span>
               <span>Valor</span>
@@ -297,12 +297,12 @@ export function FinanceContent() {
                 key={item.id}
                 className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_90px] gap-4 border-b border-[var(--color-border-panel-lite)] px-6 py-5 last:border-b-0 md:px-8"
               >
-                <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{item.patient}</span>
+                <span className="text-[15px] font-semibold text-[var(--color-ink-panel)]">{item.patient}</span>
                 <span className="text-[15px] font-medium text-[var(--color-text-panel)]">{item.description}</span>
-                <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</span>
-                <span className="text-[15px] font-black text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</span>
+                <span className="text-[15px] font-bold text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</span>
+                <span className="text-[15px] font-semibold text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</span>
                 <span>
-                  <span className={`rounded-full px-3 py-1 text-[11px] font-black uppercase ${statusClass(item.status)}`}>{item.status}</span>
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${statusClass(item.status)}`}>{item.status}</span>
                 </span>
                 <span className="text-right text-[15px] font-bold text-[var(--color-text-panel)]">...</span>
               </div>
@@ -314,19 +314,19 @@ export function FinanceContent() {
               <div key={item.id} className="rounded-[20px] border border-[var(--color-border-section)] p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[16px] font-black text-[var(--color-ink-panel)]">{item.patient}</p>
+                    <p className="text-[16px] font-semibold text-[var(--color-ink-panel)]">{item.patient}</p>
                     <p className="mt-1 text-[14px] font-medium text-[var(--color-text-panel)]">{item.description}</p>
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-[11px] font-black uppercase ${statusClass(item.status)}`}>{item.status}</span>
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${statusClass(item.status)}`}>{item.status}</span>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-4 text-[14px]">
                   <div>
-                    <p className="font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Valor</p>
-                    <p className="mt-1 font-black text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</p>
+                    <p className="font-semibold uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Valor</p>
+                    <p className="mt-1 font-bold text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</p>
                   </div>
                   <div>
-                    <p className="font-black uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Vencimento</p>
-                    <p className="mt-1 font-black text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</p>
+                    <p className="font-semibold uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">Vencimento</p>
+                    <p className="mt-1 font-semibold text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</p>
                   </div>
                 </div>
               </div>

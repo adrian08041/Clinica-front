@@ -1,98 +1,144 @@
-import { MessageCircle, Zap, CreditCard, ExternalLink, Plus, CheckCircle2, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+"use client";
 
-const integrations = [
-    {
-        name: "WhatsApp (UAZAPI)",
-        description: "Envio automático de lembretes e confirmações.",
-        status: "CONECTADO",
-        icon: MessageCircle,
-        color: "text-success-text",
-        connected: true,
-    },
-    {
-        name: "n8n Automation",
-        description: "Integração de fluxos de trabalho e dados.",
-        status: "CONECTADO",
-        icon: Zap,
-        color: "text-danger-text",
-        connected: true,
-    },
-    {
-        name: "Gateway de Pagamento",
-        description: "Processamento de cartões e boletos direto no app.",
-        status: "PENDENTE",
-        icon: CreditCard,
-        color: "text-blue-500",
-        connected: false,
-    },
-];
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { IntegrationCard } from "./integracoes/integration-card";
+import { IntegrationDialog } from "./integracoes/integration-dialog";
+import {
+  EMPTY_INTEGRATION_FORM,
+  INITIAL_INTEGRATIONS,
+  getIntegrationVisual,
+  type Integration,
+  type IntegrationFormState,
+} from "./integracoes/integration-shared";
 
 export function IntegracoesSettings() {
-    return (
-        <div className="bg-white rounded-[14px] border border-border-light shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
-            <div className="mb-6 md:mb-8">
-                <h2 className="text-[18px] sm:text-[20px] font-bold text-text-primary leading-[28px]">
-                    Ecossistema de Integrações
-                </h2>
-                <p className="text-[14px] text-text-tertiary font-medium mt-1">
-                    Conecte o OdontoFlow com as suas ferramentas favoritas.
-                </p>
-            </div>
+  const [integrations, setIntegrations] = useState<Integration[]>(INITIAL_INTEGRATIONS);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingIntegrationId, setEditingIntegrationId] = useState<string | null>(null);
+  const [form, setForm] = useState<IntegrationFormState>(EMPTY_INTEGRATION_FORM);
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {integrations.map((integration, idx) => {
-                    const Icon = integration.icon;
+  const handleDialogChange = (open: boolean) => {
+    if (!open) {
+      setEditingIntegrationId(null);
+      setForm(EMPTY_INTEGRATION_FORM);
+    }
 
-                    return (
-                        <div
-                            key={idx}
-                            className="flex flex-col border border-border-light rounded-[24px] p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.02)] transition-shadow bg-white"
-                        >
-                            <div className="flex justify-between items-start mb-6">
-                                <div className={cn("w-[52px] h-[52px] rounded-full border border-border-light flex items-center justify-center bg-white shadow-sm", integration.color)}>
-                                    <Icon className="w-6 h-6" />
-                                </div>
-                                <span
-                                    className={cn(
-                                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-wider",
-                                        integration.connected
-                                            ? "bg-success-bg text-success-text border-success-border"
-                                            : "bg-amber-50 text-amber-600 border-amber-100"
-                                    )}
-                                >
-                                    {integration.connected ? <CheckCircle2 className="w-[14px] h-[14px]" /> : <AlertCircle className="w-[14px] h-[14px]" />}
-                                    {integration.status}
-                                </span>
-                            </div>
-                            <h3 className="text-[18px] font-bold text-text-primary mb-1">
-                                {integration.name}
-                            </h3>
-                            <p className="text-[14px] font-medium text-text-tertiary mb-6 flex-1 line-clamp-2">
-                                {integration.description}
-                            </p>
-                            <Button variant="outline" className="w-full rounded-full border-border-light text-[13px] font-semibold text-text-secondary hover:bg-background-card">
-                                Configurar Integração
-                                <ExternalLink className="w-[14px] h-[14px] ml-2 text-text-muted" />
-                            </Button>
-                        </div>
-                    );
-                })}
+    setDialogOpen(open);
+  };
 
-                {/* Marketplace Card Placeholder */}
-                <div className="flex flex-col items-center justify-center border-2 border-dashed border-border-light rounded-[24px] p-6 bg-background-card/50 hover:bg-background-card transition-colors cursor-pointer text-center min-h-[268px]">
-                    <div className="w-[52px] h-[52px] bg-background-hover rounded-full flex items-center justify-center mb-6">
-                        <Plus className="w-6 h-6 text-text-muted" />
-                    </div>
-                    <h3 className="text-[18px] font-bold text-text-muted mb-1">
-                        Explorar Marketplace
-                    </h3>
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                        Breve: Novas conexões
-                    </p>
-                </div>
-            </div>
-        </div>
+  const openCreateDialog = () => {
+    setEditingIntegrationId(null);
+    setForm(EMPTY_INTEGRATION_FORM);
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (integration: Integration) => {
+    setEditingIntegrationId(integration.id);
+    setForm({
+      name: integration.name,
+      description: integration.description,
+      category: integration.category,
+      endpoint: integration.endpoint,
+    });
+    setDialogOpen(true);
+  };
+
+  const toggleConnection = (integrationId: string) => {
+    setIntegrations((current) =>
+      current.map((integration) =>
+        integration.id === integrationId
+          ? {
+              ...integration,
+              connected: !integration.connected,
+              status: integration.connected ? "Pendente" : "Conectado",
+            }
+          : integration,
+      ),
     );
+  };
+
+  const handleSaveIntegration = () => {
+    if (!form.name.trim() || !form.description.trim() || !form.endpoint.trim()) {
+      toast.error("Preencha nome, descrição e endpoint da integração.");
+      return;
+    }
+
+    const integrationVisual = getIntegrationVisual(form.category);
+
+    if (editingIntegrationId) {
+      setIntegrations((current) =>
+        current.map((integration) =>
+          integration.id === editingIntegrationId
+            ? {
+                ...integration,
+                ...form,
+                ...integrationVisual,
+              }
+            : integration,
+        ),
+      );
+      toast.success("Integração atualizada com sucesso!");
+    } else {
+      setIntegrations((current) => [
+        {
+          id: `integration-${Date.now()}`,
+          connected: false,
+          status: "Pendente",
+          ...integrationVisual,
+          ...form,
+        },
+        ...current,
+      ]);
+      toast.success("Integração adicionada com sucesso!");
+    }
+
+    handleDialogChange(false);
+  };
+
+  return (
+    <>
+      <div className="w-full overflow-hidden rounded-[14px] border border-border-light bg-white p-4 shadow-sm sm:p-6 md:p-8">
+        <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-[20px] font-bold leading-[28px] text-text-primary">
+              Ecossistema de Integrações
+            </h2>
+            <p className="mt-1 text-[14px] font-medium text-text-tertiary">
+              Centralize conexões com comunicação, automação e serviços financeiros.
+            </p>
+          </div>
+          <Button
+            onClick={openCreateDialog}
+            className="h-10 rounded-lg bg-brand-primary px-4 text-white shadow-sm hover:bg-brand-dark"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Nova Integração
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {integrations.map((integration) => (
+            <IntegrationCard
+              key={integration.id}
+              integration={integration}
+              onEdit={openEditDialog}
+              onToggleConnection={toggleConnection}
+            />
+          ))}
+        </div>
+      </div>
+
+      <IntegrationDialog
+        open={dialogOpen}
+        editingIntegrationId={editingIntegrationId}
+        form={form}
+        onOpenChange={handleDialogChange}
+        onFormChange={setForm}
+        onSave={handleSaveIntegration}
+      />
+    </>
+  );
 }
