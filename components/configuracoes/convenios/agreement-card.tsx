@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   Pencil,
   ShieldPlus,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +22,14 @@ type AgreementCardProps = {
   agreement: Agreement;
   onEdit: (agreement: Agreement) => void;
   onToggleStatus: (agreementId: string) => void;
+  onDelete: (agreementId: string) => void;
 };
 
 export function AgreementCard({
   agreement,
   onEdit,
   onToggleStatus,
+  onDelete,
 }: AgreementCardProps) {
   return (
     <div className="rounded-[24px] border border-border-light bg-white p-5 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.02)] transition-colors hover:bg-background-card/40">
@@ -74,6 +77,13 @@ export function AgreementCard({
             >
               <ShieldPlus className="h-4 w-4" />
               {agreement.status === "Ativo" ? "Desativar convênio" : "Ativar convênio"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onDelete(agreement.id)}
+              className="cursor-pointer rounded-lg px-3 py-2 text-danger-text focus:text-danger-text"
+            >
+              <Trash2 className="h-4 w-4" />
+              Remover convênio
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

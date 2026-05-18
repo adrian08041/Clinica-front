@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, User, Calendar, Stethoscope, Banknote, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PATIENT_TIMELINE, PATIENT_FINANCIAL_RECORDS, PATIENT_DOCUMENTS } from "@/lib/mock-data";
+import { PATIENT_TIMELINE, PATIENT_FINANCIAL_RECORDS } from "@/lib/mock-data";
 import { PatientProfileHeader } from "@/components/pacientes/patient-profile-header";
 import { PatientTabs } from "@/components/pacientes/patient-tabs";
 import { PatientPersonalDataTab } from "@/components/pacientes/patient-personal-data-tab";
 import { PatientTimelineTab } from "@/components/pacientes/patient-timeline-tab";
 import { PatientFinancialTab } from "@/components/pacientes/patient-financial-tab";
 import { PatientDocumentsTab } from "@/components/pacientes/patient-documents-tab";
-import { api } from "@/lib/api";
-import type { Patient } from "@/lib/types";
+import { usePatient } from "@/lib/queries/patients";
 
 const TABS = [
   { id: "Dados Pessoais", label: "Dados Pessoais", icon: User },
@@ -27,22 +26,12 @@ export default function PatientProfilePage() {
   const router = useRouter();
   const id = String(params.id);
   const [activeTab, setActiveTab] = useState("Consultas");
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const { data: patient, isLoading, isError } = usePatient(id);
 
   useEffect(() => {
-    async function fetchPatient() {
-      try {
-        const data = await api<Patient>(`/patients/${id}`);
-        setPatient(data);
-      } catch {
-        router.push("/pacientes");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchPatient();
-  }, [id, router]);
+    if (isError) router.push("/pacientes");
+  }, [isError, router]);
 
   if (isLoading) {
     return (
@@ -69,7 +58,7 @@ export default function PatientProfilePage() {
       {activeTab === "Dados Pessoais" && <PatientPersonalDataTab patient={patient} />}
       {activeTab === "Consultas" && <PatientTimelineTab entries={PATIENT_TIMELINE} />}
       {activeTab === "Financeiro" && <PatientFinancialTab records={PATIENT_FINANCIAL_RECORDS} />}
-      {activeTab === "Documentos" && <PatientDocumentsTab documents={PATIENT_DOCUMENTS} />}
+      {activeTab === "Documentos" && <PatientDocumentsTab patientId={id} />}
     </div>
   );
 }

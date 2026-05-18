@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { toast } from "sonner";
-import { MOCK_APPOINTMENTS } from "@/lib/mock-data";
+import {
+  useAppointments,
+  useRescheduleAppointment,
+} from "@/lib/queries/appointments";
 import type { Appointment, AgendaView } from "@/lib/types";
 
 import { getWeekDays, getMonthCalendarWeeks } from "./agenda-utils";
@@ -15,27 +18,40 @@ export function AgendaSection() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 17));
   const [activeView, setActiveView] = useState<AgendaView>("week");
   const [selectedDentist, setSelectedDentist] = useState<string | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(
-    MOCK_APPOINTMENTS.find((a) => a.id === "a4") ?? null
-  );
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
+  const appointmentsQuery = useAppointments(
+    selectedDentist ? { dentistId: selectedDentist } : {},
+  );
+  const rescheduleAppointment = useRescheduleAppointment();
+
+  const filteredAppointments = useMemo(
+    () => appointmentsQuery.data ?? [],
+    [appointmentsQuery.data],
+  );
+
   const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate]);
 
-  const filteredAppointments = useMemo(() => {
-    if (!selectedDentist) return appointments;
-    return appointments.filter((a) => a.dentistId === selectedDentist);
-  }, [selectedDentist, appointments]);
+  // Keep the details panel in sync with the freshest data.
+  useEffect(() => {
+    if (!selectedAppointment) return;
+    const fresh = filteredAppointments.find((a) => a.id === selectedAppointment.id);
+    if (fresh && fresh !== selectedAppointment) {
+      setSelectedAppointment(fresh);
+    } else if (!fresh) {
+      setSelectedAppointment(null);
+    }
+  }, [filteredAppointments, selectedAppointment]);
 
   const getAppointmentForCell = useCallback(
     (time: string, date: string) => {
       return filteredAppointments.find((a) => a.time === time && a.date === date);
     },
-    [filteredAppointments]
+    [filteredAppointments],
   );
 
   function navigate(direction: number) {
@@ -52,7 +68,7 @@ export function AgendaSection() {
 
   const monthWeeks = useMemo(
     () => getMonthCalendarWeeks(currentDate.getFullYear(), currentDate.getMonth()),
-    [currentDate]
+    [currentDate],
   );
 
   const appointmentsByDate = useMemo(() => {
@@ -87,15 +103,19 @@ export function AgendaSection() {
     setDropTarget(null);
   }
 
-  function handleDrop(e: React.DragEvent, targetTime: string, targetDate: string) {
+  async function handleDrop(
+    e: React.DragEvent,
+    targetTime: string,
+    targetDate: string,
+  ) {
     e.preventDefault();
     setDropTarget(null);
 
     const appointmentId = e.dataTransfer.getData("text/plain");
     if (!appointmentId) return;
 
-    const existing = appointments.find(
-      (a) => a.time === targetTime && a.date === targetDate && a.id !== appointmentId
+    const existing = filteredAppointments.find(
+      (a) => a.time === targetTime && a.date === targetDate && a.id !== appointmentId,
     );
 
     if (existing) {
@@ -104,7 +124,7 @@ export function AgendaSection() {
       return;
     }
 
-    const dragged = appointments.find((a) => a.id === appointmentId);
+    const dragged = filteredAppointments.find((a) => a.id === appointmentId);
     if (!dragged) return;
 
     if (dragged.time === targetTime && dragged.date === targetDate) {
@@ -112,25 +132,35 @@ export function AgendaSection() {
       return;
     }
 
-    const dayNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    const dayNames = [
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+    ];
     const d = new Date(targetDate + "T12:00:00");
     const dayName = dayNames[d.getDay()];
 
-    setAppointments((prev) =>
-      prev.map((a) =>
-        a.id === appointmentId
-          ? { ...a, time: targetTime, date: targetDate }
-          : a
-      )
-    );
+    try {
+      await rescheduleAppointment.mutateAsync({
+        id: appointmentId,
+        payload: { date: targetDate, time: targetTime },
+      });
 
-    const updated = { ...dragged, time: targetTime, date: targetDate };
-    if (selectedAppointment?.id === appointmentId) {
-      setSelectedAppointment(updated);
+      if (selectedAppointment?.id === appointmentId) {
+        setSelectedAppointment({ ...dragged, time: targetTime, date: targetDate });
+      }
+
+      toast.success(`Agendamento movido para ${dayName} às ${targetTime}`);
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao reagendar agendamento");
+    } finally {
+      setDraggedId(null);
     }
-
-    toast.success(`Agendamento movido para ${dayName} às ${targetTime}`);
-    setDraggedId(null);
   }
 
   return (

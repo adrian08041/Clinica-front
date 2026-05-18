@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldPlus } from "lucide-react";
+import { Loader2, ShieldPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +26,7 @@ import type {
 type AgreementDialogProps = {
   editingAgreementId: string | null;
   form: AgreementFormState;
+  isSaving?: boolean;
   onFormChange: (form: AgreementFormState) => void;
   onOpenChange: (open: boolean) => void;
   onSave: () => void;
@@ -35,6 +36,7 @@ type AgreementDialogProps = {
 export function AgreementDialog({
   editingAgreementId,
   form,
+  isSaving = false,
   onFormChange,
   onOpenChange,
   onSave,
@@ -156,14 +158,17 @@ export function AgreementDialog({
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={isSaving}
               className="h-10 rounded-lg border-border-light px-6 text-sm font-semibold text-text-secondary"
             >
               Cancelar
             </Button>
             <Button
               onClick={onSave}
+              disabled={isSaving}
               className="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white hover:bg-brand-dark"
             >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {editingAgreementId ? "Salvar alterações" : "Salvar convênio"}
             </Button>
           </div>

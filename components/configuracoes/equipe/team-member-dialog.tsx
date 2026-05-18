@@ -1,6 +1,6 @@
 "use client";
 
-import { BriefcaseBusiness, UsersRound } from "lucide-react";
+import { BriefcaseBusiness, Loader2, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +22,7 @@ import type { TeamFormState, TeamRole, TeamStatus } from "./team-shared";
 type TeamMemberDialogProps = {
   editingMemberId: string | null;
   form: TeamFormState;
+  isSaving?: boolean;
   onFormChange: (form: TeamFormState) => void;
   onOpenChange: (open: boolean) => void;
   onSave: () => void;
@@ -31,6 +32,7 @@ type TeamMemberDialogProps = {
 export function TeamMemberDialog({
   editingMemberId,
   form,
+  isSaving = false,
   onFormChange,
   onOpenChange,
   onSave,
@@ -134,15 +136,21 @@ export function TeamMemberDialog({
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={isSaving}
               className="h-10 rounded-lg border-border-light px-6 text-sm font-semibold text-text-secondary"
             >
               Cancelar
             </Button>
             <Button
               onClick={onSave}
+              disabled={isSaving}
               className="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white hover:bg-brand-dark"
             >
-              <BriefcaseBusiness className="h-4 w-4" />
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <BriefcaseBusiness className="h-4 w-4" />
+              )}
               {editingMemberId ? "Salvar alterações" : "Salvar funcionário"}
             </Button>
           </div>

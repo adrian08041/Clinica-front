@@ -1,28 +1,67 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { UserPlus } from "lucide-react";
+import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  useCreateDentist,
+  useDeleteDentist,
+  useDentists,
+  useUpdateDentist,
+} from "@/lib/queries/dentists";
+import type { Dentist } from "@/lib/types";
 import { TeamMemberDialog } from "./equipe/team-member-dialog";
 import { TeamMembersTable } from "./equipe/team-members-table";
 import {
   EMPTY_TEAM_FORM,
-  INITIAL_TEAM_MEMBERS,
   type TeamFormState,
   type TeamMember,
+  type TeamRole,
 } from "./equipe/team-shared";
 
+const VALID_ROLES: TeamRole[] = [
+  "Administrador",
+  "Dentista",
+  "Recepcionista",
+  "Auxiliar",
+  "Financeiro",
+];
+
+function isTeamRole(value: string): value is TeamRole {
+  return (VALID_ROLES as string[]).includes(value);
+}
+
+function dentistToMember(dentist: Dentist): TeamMember {
+  return {
+    id: dentist.id,
+    name: dentist.name,
+    email: "",
+    phone: "",
+    role: isTeamRole(dentist.specialty) ? dentist.specialty : "Dentista",
+    status: "Ativo",
+    avatar: "",
+  };
+}
+
 export function EquipeSettings() {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(INITIAL_TEAM_MEMBERS);
+  const dentistsQuery = useDentists();
+  const createDentist = useCreateDentist();
+  const updateDentist = useUpdateDentist();
+  const deleteDentist = useDeleteDentist();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [form, setForm] = useState<TeamFormState>(EMPTY_TEAM_FORM);
 
-  const totalActiveMembers = useMemo(
-    () => teamMembers.filter((member) => member.status === "Ativo").length,
-    [teamMembers],
+  const teamMembers: TeamMember[] = useMemo(
+    () => (dentistsQuery.data ?? []).map(dentistToMember),
+    [dentistsQuery.data],
   );
+
+  const totalActiveMembers = teamMembers.filter((member) => member.status === "Ativo").length;
+  const isLoading = dentistsQuery.isLoading;
+  const isSaving = createDentist.isPending || updateDentist.isPending;
 
   const resetForm = () => {
     setForm(EMPTY_TEAM_FORM);
@@ -47,49 +86,55 @@ export function EquipeSettings() {
   };
 
   const handleDialogChange = (open: boolean) => {
-    if (!open) {
-      resetForm();
-    }
-
+    if (!open) resetForm();
     setDialogOpen(open);
   };
 
-  const handleSaveMember = () => {
-    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
-      toast.error("Preencha nome, e-mail e telefone da equipe.");
+  const handleSaveMember = async () => {
+    if (!form.name.trim()) {
+      toast.error("Informe o nome do colaborador.");
       return;
     }
 
-    if (editingMemberId) {
-      setTeamMembers((current) =>
-        current.map((member) =>
-          member.id === editingMemberId
-            ? {
-                ...member,
-                ...form,
-              }
-            : member,
-        ),
-      );
-      toast.success("Cadastro da equipe atualizado com sucesso!");
-    } else {
-      setTeamMembers((current) => [
-        {
-          id: `team-${Date.now()}`,
-          avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(form.email)}`,
-          ...form,
-        },
-        ...current,
-      ]);
-      toast.success("Novo funcionário adicionado com sucesso!");
-    }
+    const payload = {
+      name: form.name.trim(),
+      specialty: form.role,
+    };
 
-    handleDialogChange(false);
+    try {
+      if (editingMemberId) {
+        await updateDentist.mutateAsync({ id: editingMemberId, payload });
+        toast.success("Cadastro da equipe atualizado com sucesso!");
+      } else {
+        await createDentist.mutateAsync(payload);
+        toast.success("Novo funcionário adicionado com sucesso!");
+      }
+      handleDialogChange(false);
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(
+        apiError.message ||
+          (editingMemberId ? "Erro ao atualizar cadastro" : "Erro ao adicionar funcionário"),
+      );
+    }
   };
 
-  const handleDeleteMember = (memberId: string) => {
-    setTeamMembers((current) => current.filter((member) => member.id !== memberId));
-    toast.success("Funcionário removido com sucesso!");
+  const handleDeleteMember = async (memberId: string) => {
+    const target = teamMembers.find((member) => member.id === memberId);
+    const shouldDelete = window.confirm(
+      target
+        ? `Deseja remover o cadastro de ${target.name}?`
+        : "Deseja remover este funcionário?",
+    );
+    if (!shouldDelete) return;
+
+    try {
+      await deleteDentist.mutateAsync(memberId);
+      toast.success("Funcionário removido com sucesso!");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao remover funcionário");
+    }
   };
 
   return (
@@ -132,17 +177,28 @@ export function EquipeSettings() {
           </div>
         </div>
 
-        <TeamMembersTable
-          teamMembers={teamMembers}
-          onEdit={openEditDialog}
-          onDelete={handleDeleteMember}
-        />
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-brand-primary" />
+          </div>
+        ) : teamMembers.length === 0 ? (
+          <div className="flex h-[200px] items-center justify-center rounded-[14px] border border-dashed border-border-light text-text-tertiary">
+            <p className="text-[14px]">Nenhum funcionário cadastrado.</p>
+          </div>
+        ) : (
+          <TeamMembersTable
+            teamMembers={teamMembers}
+            onEdit={openEditDialog}
+            onDelete={handleDeleteMember}
+          />
+        )}
       </div>
 
       <TeamMemberDialog
         open={dialogOpen}
         editingMemberId={editingMemberId}
         form={form}
+        isSaving={isSaving}
         onOpenChange={handleDialogChange}
         onFormChange={setForm}
         onSave={handleSaveMember}

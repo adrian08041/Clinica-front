@@ -7,6 +7,7 @@ export const clinicaSchema = z.object({
     endereco: z.string().min(10, "Endereço incompleto"),
     email: z.string().email("E-mail inválido"),
     website: z.string().url("URL inválida").optional().or(z.literal("")),
+    logoUrl: z.string().optional().or(z.literal("")),
 });
 
 export type ClinicaFormData = z.infer<typeof clinicaSchema>;
