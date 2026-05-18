@@ -23,7 +23,7 @@ function parseJsonResponse<T>(responseText: string, status: number): T {
 }
 
 export async function api<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const token = localStorage.getItem("token");
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     headers: {

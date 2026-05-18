@@ -2,6 +2,7 @@ import * as z from "zod";
 import type { AppointmentType } from "@/lib/types";
 
 export const agendaNewDialogSchema = z.object({
+  patientId: z.string().min(1, "Selecione um paciente"),
   patientName: z.string().min(1, "Selecione um paciente"),
   dentistId: z.string().min(1, "Selecione um dentista"),
   date: z.number({ error: "Selecione uma data" }),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bell,
   ChevronDown,
@@ -10,7 +10,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { DASHBOARD_ALERTS } from "@/lib/mock-data";
+import { mapApiAlerts, useAlerts } from "@/lib/queries/dashboard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,6 +33,9 @@ interface HeaderProps {
 export function Header({ breadcrumbs }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
+  const alertsQuery = useAlerts();
+  const alerts = useMemo(() => mapApiAlerts(alertsQuery.data), [alertsQuery.data]);
+  const hasAlerts = alerts.length > 0;
 
   function getUserData() {
     try {
@@ -127,7 +130,9 @@ export function Header({ breadcrumbs }: HeaderProps) {
                   className="relative p-2 text-text-muted transition-colors hover:text-text-secondary"
                 >
                   <Bell className="h-5 w-5 text-text-secondary" />
-                  <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-danger-text" />
+                  {hasAlerts ? (
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-danger-text" />
+                  ) : null}
                   <span className="sr-only">Notificações</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -143,9 +148,19 @@ export function Header({ breadcrumbs }: HeaderProps) {
                 </div>
 
                 <div className="flex max-h-[320px] flex-col gap-3 overflow-y-auto p-4">
-                  {DASHBOARD_ALERTS.map((alert) => (
-                    <NotificationListItem key={alert.id} alert={alert} compact />
-                  ))}
+                  {alertsQuery.isLoading ? (
+                    <p className="px-1 py-6 text-center text-sm font-medium text-text-tertiary">
+                      Carregando alertas...
+                    </p>
+                  ) : hasAlerts ? (
+                    alerts.map((alert) => (
+                      <NotificationListItem key={alert.id} alert={alert} compact />
+                    ))
+                  ) : (
+                    <p className="px-1 py-6 text-center text-sm font-medium text-text-tertiary">
+                      Nenhum alerta no momento.
+                    </p>
+                  )}
                 </div>
 
                 <div className="border-t border-border-light p-3">
@@ -243,7 +258,7 @@ export function Header({ breadcrumbs }: HeaderProps) {
       <NotificationsDialog
         open={notificationsDialogOpen}
         onOpenChange={setNotificationsDialogOpen}
-        alerts={DASHBOARD_ALERTS}
+        alerts={alerts}
       />
     </>
   );

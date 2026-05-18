@@ -1,15 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
+import {
+  useCreatePatient,
+  useDeletePatient,
+  useInsurances,
+  usePatients,
+  useUpdatePatient,
+} from "@/lib/queries/patients";
 import { patientSchema, type PatientFormData } from "@/lib/schemas/patient-schema";
-import type { PageResponse, Patient } from "@/lib/types";
+import type { Patient } from "@/lib/types";
 import { PatientDialog } from "./patients/patient-dialog";
 import { PatientsFilters } from "./patients/patients-filters";
 import { PatientsPagination } from "./patients/patients-pagination";
@@ -32,20 +38,33 @@ const EMPTY_FORM: PatientFormData = {
 export function PatientsSection() {
   const router = useRouter();
 
-  const [patients, setPatients] = useState<Patient[]>([]);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [insuranceFilter, setInsuranceFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [sortBy, setSortBy] = useState("name,asc");
-  const [insurances, setInsurances] = useState<string[]>([]);
   const [step, setStep] = useState(1);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
-  const [deletingPatientId, setDeletingPatientId] = useState<string | null>(null);
+
+  const patientsQuery = usePatients({
+    page,
+    size: 20,
+    sort: sortBy,
+    search,
+    insurance: insuranceFilter,
+    status: statusFilter,
+  });
+  const insurancesQuery = useInsurances();
+  const createPatient = useCreatePatient();
+  const updatePatient = useUpdatePatient();
+  const deletePatient = useDeletePatient();
+
+  const patients = patientsQuery.data?.content ?? [];
+  const totalPages = patientsQuery.data?.totalPages ?? 0;
+  const totalElements = patientsQuery.data?.totalElements ?? 0;
+  const isLoading = patientsQuery.isLoading;
+  const insurances = insurancesQuery.data ?? [];
 
   const {
     register,
@@ -76,56 +95,16 @@ export function PatientsSection() {
     [editingPatient],
   );
 
-  const fetchInsurances = useCallback(async () => {
-    try {
-      const data = await api<string[]>("/patients/insurances");
-      setInsurances(Array.isArray(data) ? data : []);
-    } catch {
-      setInsurances([]);
-    }
-  }, []);
-
-  const fetchPatients = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-      const insuranceParam = insuranceFilter ? `&insurance=${encodeURIComponent(insuranceFilter)}` : "";
-      const statusParam = statusFilter ? `&status=${encodeURIComponent(statusFilter)}` : "";
-
-      const data = await api<PageResponse<Patient>>(
-        `/patients?page=${page}&size=20&sort=${sortBy}${searchParam}${insuranceParam}${statusParam}`,
-      );
-
-      setPatients(Array.isArray(data?.content) ? data.content : []);
-      setTotalPages(typeof data?.totalPages === "number" ? data.totalPages : 0);
-      setTotalElements(typeof data?.totalElements === "number" ? data.totalElements : 0);
-    } catch {
-      toast.error("Erro ao carregar pacientes");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [insuranceFilter, page, search, sortBy, statusFilter]);
-
-  useEffect(() => {
-    void fetchInsurances();
-  }, [fetchInsurances]);
-
-  useEffect(() => {
-    void fetchPatients();
-  }, [fetchPatients]);
-
-  const resetDialogState = useCallback(() => {
+  const resetDialogState = () => {
     setStep(1);
     setEditingPatient(null);
     reset(EMPTY_FORM);
-  }, [reset]);
+  };
 
   const handleDialogChange = (open: boolean) => {
     if (!open) {
       resetDialogState();
     }
-
     setIsDialogOpen(open);
   };
 
@@ -172,21 +151,13 @@ export function PatientsSection() {
 
     try {
       if (editingPatient) {
-        await api<Patient>(`/patients/${editingPatient.id}`, {
-          method: "PUT",
-          body: JSON.stringify(payload),
-        });
+        await updatePatient.mutateAsync({ id: editingPatient.id, payload });
         toast.success("Paciente atualizado com sucesso!");
       } else {
-        await api<Patient>("/patients", {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
+        await createPatient.mutateAsync(payload);
         toast.success("Paciente adicionado com sucesso!");
       }
-
       handleDialogChange(false);
-      await Promise.all([fetchPatients(), fetchInsurances()]);
     } catch (error: unknown) {
       const apiError = error as { message?: string };
       toast.error(
@@ -220,20 +191,12 @@ export function PatientsSection() {
 
     if (!shouldDelete) return;
 
-    setDeletingPatientId(patient.id);
-
     try {
-      await api<void>(`/patients/${patient.id}`, {
-        method: "DELETE",
-      });
-
+      await deletePatient.mutateAsync(patient.id);
       toast.success("Paciente excluído com sucesso!");
-      await Promise.all([fetchPatients(), fetchInsurances()]);
     } catch (error: unknown) {
       const apiError = error as { message?: string };
       toast.error(apiError.message || "Erro ao excluir paciente");
-    } finally {
-      setDeletingPatientId(null);
     }
   };
 
@@ -261,7 +224,7 @@ export function PatientsSection() {
           errors={errors}
           isEditing={Boolean(editingPatient)}
           isOpen={isDialogOpen}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSubmitting || createPatient.isPending || updatePatient.isPending}
           name={watchedName}
           cpf={watchedCpf}
           insurance={watchedInsurance}
@@ -301,7 +264,7 @@ export function PatientsSection() {
         />
 
         <PatientsTable
-          deletingPatientId={deletingPatientId}
+          deletingPatientId={deletePatient.isPending ? deletePatient.variables ?? null : null}
           isLoading={isLoading}
           onDelete={(patient) => void handleDeletePatient(patient)}
           onEdit={openEditDialog}

@@ -1,15 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CircleDot, Clock3, MoreVertical, Plus, Search, Stethoscope } from "lucide-react";
+import { toast } from "sonner";
 import { NewPlanDialog, type ProcedureDraft } from "@/components/tratamentos/new-plan-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { TREATMENT_INITIAL_PLANS } from "@/lib/mock-data";
-import type { TreatmentPlan, TreatmentProcedure } from "@/lib/types";
+import {
+  useApproveStep,
+  useCreateTreatment,
+  useTreatment,
+  useTreatments,
+  type TreatmentPlanResponse,
+  type TreatmentProcedureRequest,
+} from "@/lib/queries/treatments";
 import { formatDatePtBr } from "@/lib/utils/date";
 
-const currency = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const currency = (value: number) =>
+  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 function MiniStat({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
@@ -35,20 +43,39 @@ function StatusBadge({ paid }: { paid: boolean }) {
 }
 
 export function TreatmentsContent() {
-  const [plans, setPlans] = useState<TreatmentPlan[]>(TREATMENT_INITIAL_PLANS);
-  const [selectedId, setSelectedId] = useState(TREATMENT_INITIAL_PLANS[0].id);
   const [search, setSearch] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const filteredPlans = useMemo(
-    () => plans.filter((plan) => `${plan.patient} ${plan.title}`.toLowerCase().includes(search.toLowerCase())),
-    [plans, search],
+  const treatmentsQuery = useTreatments({ page: 0, size: 20, search });
+  const plans = useMemo<TreatmentPlanResponse[]>(
+    () => treatmentsQuery.data?.content ?? [],
+    [treatmentsQuery.data],
   );
 
-  const selectedPlan = filteredPlans.find((plan) => plan.id === selectedId) ?? filteredPlans[0];
-  const totalPaid = selectedPlan?.procedures.filter((item) => item.paid).reduce((sum, item) => sum + item.value, 0) ?? 0;
+  useEffect(() => {
+    if (plans.length === 0) {
+      if (selectedId !== null) setSelectedId(null);
+      return;
+    }
+    if (!selectedId || !plans.some((plan) => plan.id === selectedId)) {
+      setSelectedId(plans[0].id);
+    }
+  }, [plans, selectedId]);
 
-  const handleCreatePlan = (payload: {
+  const selectedDetailQuery = useTreatment(selectedId ?? undefined);
+  const selectedPlan: TreatmentPlanResponse | undefined =
+    selectedDetailQuery.data ?? plans.find((plan) => plan.id === selectedId);
+
+  const createTreatment = useCreateTreatment();
+  const approveStep = useApproveStep();
+
+  const totalPaid =
+    selectedPlan?.procedures
+      .filter((item) => item.paid)
+      .reduce((sum, item) => sum + Number(item.value ?? 0), 0) ?? 0;
+
+  const handleCreatePlan = async (payload: {
     patient: string;
     planName: string;
     startDate: string;
@@ -56,34 +83,46 @@ export function TreatmentsContent() {
     notes: string;
     procedures: ProcedureDraft[];
   }) => {
-    const procedures: TreatmentProcedure[] = payload.procedures.map((procedure, index) => ({
-      id: `generated-${Date.now()}-${index}`,
-      tooth: procedure.tooth || "-",
+    const procedures: TreatmentProcedureRequest[] = payload.procedures.map((procedure) => ({
+      tooth: procedure.tooth || null,
       name: procedure.name || "-",
       value: Number(procedure.value) || 0,
       paid: false,
       done: false,
     }));
 
-    const total = procedures.reduce((sum, item) => sum + item.value, 0);
-    const plan: TreatmentPlan = {
-      id: `plan-${Date.now()}`,
-      patient: payload.patient || "Paciente não informado",
-      title: payload.planName || "Novo Plano",
-      createdAt: new Date().toLocaleDateString("pt-BR"),
-      startDate: payload.startDate || undefined,
-      endDate: payload.endDate || undefined,
-      notes: payload.notes || undefined,
-      total,
-      completed: 0,
-      totalProcedures: procedures.length,
-      procedures,
-    };
-
-    setPlans((current) => [plan, ...current]);
-    setSelectedId(plan.id);
-    setDialogOpen(false);
+    try {
+      const created = await createTreatment.mutateAsync({
+        patient: payload.patient || null,
+        title: payload.planName || "Novo Plano",
+        startDate: payload.startDate || null,
+        endDate: payload.endDate || null,
+        notes: payload.notes || null,
+        procedures,
+      });
+      setSelectedId(created.id);
+      setDialogOpen(false);
+      toast.success("Plano de tratamento criado!");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao criar plano de tratamento");
+    }
   };
+
+  const handleApproveStep = async () => {
+    if (!selectedPlan) return;
+    try {
+      await approveStep.mutateAsync(selectedPlan.id);
+      toast.success("Etapa aprovada!");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao aprovar etapa");
+    }
+  };
+
+  const isListLoading = treatmentsQuery.isLoading;
+  const hasNoPendingStep =
+    selectedPlan != null && selectedPlan.completed >= selectedPlan.totalProcedures;
 
   return (
     <>
@@ -117,53 +156,67 @@ export function TreatmentsContent() {
             </div>
 
             <div className="mt-5 space-y-4">
-              {filteredPlans.map((plan) => {
-                const selected = selectedPlan?.id === plan.id;
-                const progress = plan.totalProcedures > 0 ? (plan.completed / plan.totalProcedures) * 100 : 0;
+              {isListLoading ? (
+                <div className="rounded-[22px] border border-dashed border-[var(--color-border-section)] bg-white p-8 text-center text-[14px] font-medium text-[var(--color-text-caption)]">
+                  Carregando planos...
+                </div>
+              ) : plans.length === 0 ? (
+                <div className="rounded-[22px] border border-dashed border-[var(--color-border-section)] bg-white p-8 text-center text-[14px] font-medium text-[var(--color-text-caption)]">
+                  Nenhum plano encontrado.
+                </div>
+              ) : (
+                plans.map((plan) => {
+                  const selected = selectedPlan?.id === plan.id;
+                  const progress =
+                    plan.totalProcedures > 0
+                      ? (plan.completed / plan.totalProcedures) * 100
+                      : 0;
+                  const patientLabel = plan.patientName ?? "Paciente não informado";
 
-                return (
-                  <button
-                    key={plan.id}
-                    type="button"
-                    onClick={() => setSelectedId(plan.id)}
-                    className={`w-full rounded-[22px] border p-5 text-left shadow-[0_6px_18px_rgba(var(--shadow-panel-rgb),0.04)] ${
-                      selected
-                        ? "border-[var(--color-brand-teal-border)] bg-[var(--color-surface-panel-tint)]"
-                        : "border-[var(--color-border-section)] bg-white"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--color-surface-map-top)_0%,var(--color-surface-muted-alt)_100%)] text-[var(--color-brand-teal)]">
-                          <Stethoscope className="h-5 w-5" />
+                  return (
+                    <button
+                      key={plan.id}
+                      type="button"
+                      onClick={() => setSelectedId(plan.id)}
+                      className={`w-full rounded-[22px] border p-5 text-left shadow-[0_6px_18px_rgba(var(--shadow-panel-rgb),0.04)] ${
+                        selected
+                          ? "border-[var(--color-brand-teal-border)] bg-[var(--color-surface-panel-tint)]"
+                          : "border-[var(--color-border-section)] bg-white"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--color-surface-map-top)_0%,var(--color-surface-muted-alt)_100%)] text-[var(--color-brand-teal)]">
+                            <Stethoscope className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-[16px] font-semibold text-[var(--color-ink-panel)]">{patientLabel}</p>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-brand-teal)]">{plan.title}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[16px] font-semibold text-[var(--color-ink-panel)]">{plan.patient}</p>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-brand-teal)]">{plan.title}</p>
+                        <MoreVertical className="h-5 w-5 text-[var(--color-text-subtle)]" />
+                      </div>
+
+                      <div className="mt-5">
+                        <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">
+                          <span>Progresso</span>
+                          <span className="text-[var(--color-brand-teal)]">
+                            {plan.completed}/{plan.totalProcedures} concluídos
+                          </span>
+                        </div>
+                        <div className="h-2.5 rounded-full bg-[var(--color-border-panel-soft)]">
+                          <div className="h-2.5 rounded-full bg-[var(--color-brand-teal)]" style={{ width: `${progress}%` }} />
                         </div>
                       </div>
-                      <MoreVertical className="h-5 w-5 text-[var(--color-text-subtle)]" />
-                    </div>
 
-                    <div className="mt-5">
-                      <div className="mb-2 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">
-                        <span>Progresso</span>
-                        <span className="text-[var(--color-brand-teal)]">
-                          {plan.completed}/{plan.totalProcedures} concluídos
-                        </span>
+                      <div className="mt-5 flex items-center justify-between text-[12px] font-bold text-[var(--color-text-caption)]">
+                        <span>{currency(Number(plan.total ?? 0))}</span>
+                        <span>Criado em {formatDatePtBr(plan.createdAt)}</span>
                       </div>
-                      <div className="h-2.5 rounded-full bg-[var(--color-border-panel-soft)]">
-                        <div className="h-2.5 rounded-full bg-[var(--color-brand-teal)]" style={{ width: `${progress}%` }} />
-                      </div>
-                    </div>
-
-                    <div className="mt-5 flex items-center justify-between text-[12px] font-bold text-[var(--color-text-caption)]">
-                      <span>{currency(plan.total)}</span>
-                      <span>Criado em {plan.createdAt}</span>
-                    </div>
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })
+              )}
             </div>
           </section>
 
@@ -179,7 +232,9 @@ export function TreatmentsContent() {
                       <h2 className="text-[20px] font-bold text-[var(--color-ink-panel)]">{selectedPlan.title}</h2>
                       <p className="mt-1 text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--color-text-faint-alt)]">
                         Paciente:
-                        <span className="ml-2 normal-case tracking-normal text-[var(--color-brand-teal)]">{selectedPlan.patient}</span>
+                        <span className="ml-2 normal-case tracking-normal text-[var(--color-brand-teal)]">
+                          {selectedPlan.patientName ?? "Não informado"}
+                        </span>
                       </p>
                       {selectedPlan.startDate || selectedPlan.endDate ? (
                         <p className="mt-2 text-[13px] font-medium text-[var(--color-text-caption)]">
@@ -200,9 +255,13 @@ export function TreatmentsContent() {
                 </div>
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  <MiniStat label="Valor Total" value={currency(selectedPlan.total)} />
+                  <MiniStat label="Valor Total" value={currency(Number(selectedPlan.total ?? 0))} />
                   <MiniStat label="Total Pago" value={currency(totalPaid)} color="text-[var(--color-success-strong)]" />
-                  <MiniStat label="Restante" value={currency(selectedPlan.total - totalPaid)} color="text-[var(--color-danger-action)]" />
+                  <MiniStat
+                    label="Restante"
+                    value={currency(Number(selectedPlan.total ?? 0) - totalPaid)}
+                    color="text-[var(--color-danger-action)]"
+                  />
                 </div>
               </div>
 
@@ -213,7 +272,7 @@ export function TreatmentsContent() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-3">
                           <span className="inline-flex min-w-8 items-center justify-center rounded-md bg-[var(--color-surface-section-alt)] px-2 py-1 text-[12px] font-semibold text-[var(--color-text-subtle-alt)]">
-                            {procedure.tooth}
+                            {procedure.tooth ?? "-"}
                           </span>
                           <p className="text-[15px] font-semibold text-[var(--color-ink-panel)]">{procedure.name}</p>
                         </div>
@@ -224,7 +283,9 @@ export function TreatmentsContent() {
                       </div>
                       <StatusBadge paid={procedure.paid} />
                     </div>
-                    <div className="mt-4 text-[15px] font-bold text-[var(--color-ink-panel)]">{currency(procedure.value)}</div>
+                    <div className="mt-4 text-[15px] font-bold text-[var(--color-ink-panel)]">
+                      {currency(Number(procedure.value ?? 0))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -243,7 +304,7 @@ export function TreatmentsContent() {
                   >
                     <div className="flex items-center">
                       <span className="inline-flex min-w-8 items-center justify-center rounded-md bg-[var(--color-surface-section-alt)] px-2 py-1 text-[12px] font-semibold text-[var(--color-text-subtle-alt)]">
-                        {procedure.tooth}
+                        {procedure.tooth ?? "-"}
                       </span>
                     </div>
                     <div className="min-w-0">
@@ -253,7 +314,9 @@ export function TreatmentsContent() {
                         {procedure.done ? "Realizado" : "Aguardando"}
                       </p>
                     </div>
-                    <div className="flex items-center text-[15px] font-bold text-[var(--color-ink-panel)]">{currency(procedure.value)}</div>
+                    <div className="flex items-center text-[15px] font-bold text-[var(--color-ink-panel)]">
+                      {currency(Number(procedure.value ?? 0))}
+                    </div>
                     <div className="flex items-center justify-end">
                       <StatusBadge paid={procedure.paid} />
                     </div>
@@ -264,14 +327,21 @@ export function TreatmentsContent() {
               <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-6 py-5 md:px-8 xl:flex-row xl:items-center xl:justify-between">
                 <p className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--color-text-caption)]">
                   <Clock3 className="h-4 w-4 text-[var(--color-text-faint-alt)]" />
-                  Última atualização: Hoje às 14:30
+                  Atualizado em {formatDatePtBr(selectedPlan.createdAt)}
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-                  <Button variant="outline" className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]">
+                  <Button
+                    variant="outline"
+                    className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
+                  >
                     Imprimir
                   </Button>
-                  <Button className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white hover:bg-[var(--color-brand-teal-dark)]">
-                    Aprovar Etapa
+                  <Button
+                    onClick={() => void handleApproveStep()}
+                    disabled={approveStep.isPending || hasNoPendingStep}
+                    className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white hover:bg-[var(--color-brand-teal-dark)] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {approveStep.isPending ? "Aprovando..." : "Aprovar Etapa"}
                   </Button>
                 </div>
               </div>
@@ -280,7 +350,11 @@ export function TreatmentsContent() {
         </div>
       </div>
 
-      <NewPlanDialog open={dialogOpen} onOpenChange={setDialogOpen} onCreatePlan={handleCreatePlan} />
+      <NewPlanDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onCreatePlan={(payload) => void handleCreatePlan(payload)}
+      />
     </>
   );
 }

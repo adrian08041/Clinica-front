@@ -4,7 +4,7 @@ import { Controller, type Control, type FieldErrors, type UseFormTrigger } from 
 import { Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { MOCK_DENTISTS } from "@/lib/mock-data";
+import { useDentists } from "@/lib/queries/dentists";
 import { cn } from "@/lib/utils";
 import { getPersonInitials, type AgendaNewDialogValues } from "./agenda-new-dialog-shared";
 
@@ -20,6 +20,7 @@ type AgendaInfoStepProps = {
   filteredPatients: PatientSearchOption[];
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  onSelectPatient: (patient: PatientSearchOption) => void;
   trigger: UseFormTrigger<AgendaNewDialogValues>;
 };
 
@@ -29,8 +30,12 @@ export function AgendaInfoStep({
   filteredPatients,
   searchQuery,
   onSearchChange,
+  onSelectPatient,
   trigger,
 }: AgendaInfoStepProps) {
+  const dentistsQuery = useDentists();
+  const dentists = dentistsQuery.data ?? [];
+
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8 md:px-8">
       <div>
@@ -62,7 +67,7 @@ export function AgendaInfoStep({
         </div>
 
         <Controller
-          name="patientName"
+          name="patientId"
           control={control}
           render={({ field }) => (
             <>
@@ -73,12 +78,13 @@ export function AgendaInfoStep({
                       key={patient.id}
                       type="button"
                       onClick={() => {
-                        field.onChange(patient.name);
-                        void trigger("patientName");
+                        onSelectPatient(patient);
+                        field.onChange(patient.id);
+                        void trigger(["patientId", "patientName"]);
                       }}
                       className={cn(
                         "flex w-full items-center gap-3 rounded-[14px] border p-3 text-left transition-colors",
-                        field.value === patient.name
+                        field.value === patient.id
                           ? "border-[var(--color-brand-teal)] bg-[var(--color-brand-teal-surface)]"
                           : "border-[var(--color-border-panel-alt)] bg-white hover:border-[var(--color-brand-teal)]",
                       )}
@@ -101,8 +107,8 @@ export function AgendaInfoStep({
                 <p className="mt-3 text-sm text-text-muted">Nenhum paciente encontrado.</p>
               ) : null}
 
-              {errors.patientName ? (
-                <p className="mt-2 text-sm text-danger-text">{errors.patientName.message}</p>
+              {errors.patientId ? (
+                <p className="mt-2 text-sm text-danger-text">{errors.patientId.message}</p>
               ) : null}
             </>
           )}
@@ -119,7 +125,7 @@ export function AgendaInfoStep({
           render={({ field }) => (
             <>
               <div className="grid gap-3 sm:grid-cols-2">
-                {MOCK_DENTISTS.map((dentist) => (
+                {dentists.map((dentist) => (
                   <button
                     key={dentist.id}
                     type="button"

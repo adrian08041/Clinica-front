@@ -32,7 +32,8 @@ export type NewTransactionPayload = {
 type NewTransactionDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreate: (payload: NewTransactionPayload) => void;
+  onCreate: (payload: NewTransactionPayload) => void | Promise<void>;
+  isPending?: boolean;
 };
 
 function StepDot({ active, done, value }: { active: boolean; done: boolean; value: number }) {
@@ -51,7 +52,7 @@ function StepDot({ active, done, value }: { active: boolean; done: boolean; valu
   );
 }
 
-export function NewTransactionDialog({ open, onOpenChange, onCreate }: NewTransactionDialogProps) {
+export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending = false }: NewTransactionDialogProps) {
   const [step, setStep] = useState(1);
   const [type, setType] = useState<TransactionType>("receita");
   const [patient, setPatient] = useState("");
@@ -77,13 +78,13 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate }: NewTransa
     setNotes("");
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 3) {
       setStep((current) => current + 1);
       return;
     }
 
-    onCreate({
+    await onCreate({
       type,
       patient,
       description,
@@ -94,8 +95,6 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate }: NewTransa
       installments,
       notes,
     });
-
-    close();
   };
 
   return (
@@ -370,6 +369,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate }: NewTransa
           <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
             <Button
               variant="outline"
+              disabled={isPending}
               onClick={() => (step === 1 ? close() : setStep((current) => current - 1))}
               className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
             >
@@ -384,10 +384,11 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate }: NewTransa
               ))}
             </div>
             <Button
-              onClick={handleNext}
-              className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)]"
+              onClick={() => void handleNext()}
+              disabled={isPending}
+              className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-60"
             >
-              {step < 3 ? "Próximo" : "Salvar Transação"}
+              {step < 3 ? "Próximo" : isPending ? "Salvando..." : "Salvar Transação"}
             </Button>
           </div>
         </div>

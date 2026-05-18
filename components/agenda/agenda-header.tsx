@@ -1,6 +1,6 @@
 import { Plus, ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MOCK_DENTISTS } from "@/lib/mock-data";
+import { useDentists } from "@/lib/queries/dentists";
 import { cn } from "@/lib/utils";
 import { formatDateLabel } from "./agenda-utils";
 import type { AgendaView } from "@/lib/types";
@@ -30,6 +30,9 @@ export function AgendaHeader({
   selectedDentist,
   setSelectedDentist,
 }: AgendaHeaderProps) {
+  const dentistsQuery = useDentists();
+  const dentists = dentistsQuery.data ?? [];
+
   return (
     <div className="flex flex-col gap-3 lg:gap-4">
       {/* Top Bar */}
@@ -107,7 +110,7 @@ export function AgendaHeader({
         >
           Todos os Dentistas
         </Button>
-        {MOCK_DENTISTS.map((dentist) => (
+        {dentists.map((dentist) => (
           <Button
             key={dentist.id}
             variant="outline"

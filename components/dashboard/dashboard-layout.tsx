@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { MobileNav } from "@/components/dashboard/mobile-nav";
-import { Toaster } from "@/components/ui/sonner";
 
 export function DashboardLayout({ children, breadcrumbs }: { children: React.ReactNode, breadcrumbs?: string[] }) {
     const router = useRouter();
@@ -46,7 +45,6 @@ export function DashboardLayout({ children, breadcrumbs }: { children: React.Rea
                 </div>
             </main>
             <MobileNav />
-            <Toaster position="bottom-right" />
         </div>
     );
 }

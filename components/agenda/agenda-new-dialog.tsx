@@ -7,7 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { FlowDialogFooter } from "@/components/ui/flow-dialog-footer";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
-import { MOCK_DENTISTS, MOCK_PATIENTS } from "@/lib/mock-data";
+import { useDentists } from "@/lib/queries/dentists";
+import { usePatients } from "@/lib/queries/patients";
+import {
+  TYPE_MAP_TO_BACK,
+  useCreateAppointment,
+  type AppointmentRequestPayload,
+} from "@/lib/queries/appointments";
 import { AgendaDetailsStep } from "./new-dialog/agenda-details-step";
 import { AgendaInfoStep } from "./new-dialog/agenda-info-step";
 import { AgendaReviewStep } from "./new-dialog/agenda-review-step";
@@ -25,6 +31,16 @@ import {
 } from "./new-dialog/agenda-new-dialog-shared";
 import { useForm, useWatch } from "react-hook-form";
 
+const DEFAULT_DURATION_MINUTES = 30;
+
+function pad2(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function toIsoDate(year: number, month: number, day: number) {
+  return `${year}-${pad2(month + 1)}-${pad2(day)}`;
+}
+
 export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
   const formContentRef = useRef<HTMLDivElement | null>(null);
   const [step, setStep] = useState(1);
@@ -35,11 +51,13 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
   const {
     control,
     reset,
+    setValue,
     formState: { errors },
     trigger,
   } = useForm<AgendaNewDialogValues>({
     resolver: zodResolver(agendaNewDialogSchema),
     defaultValues: {
+      patientId: "",
       patientName: "",
       dentistId: "",
       time: "",
@@ -48,6 +66,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
     mode: "onChange",
   });
 
+  const selectedPatientId = useWatch({ control, name: "patientId" });
   const selectedPatient = useWatch({ control, name: "patientName" });
   const selectedDentistId = useWatch({ control, name: "dentistId" });
   const selectedDate = useWatch({ control, name: "date" });
@@ -55,21 +74,30 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
   const selectedType = useWatch({ control, name: "type" });
   const selectedObservations = useWatch({ control, name: "observations" });
 
-  const filteredPatients = useMemo(() => {
-    if (!searchQuery.trim()) return [];
+  const dentistsQuery = useDentists();
+  const dentists = useMemo(() => dentistsQuery.data ?? [], [dentistsQuery.data]);
 
-    const query = searchQuery.toLowerCase();
-    return MOCK_PATIENTS.filter(
-      (patient) =>
-        patient.name.toLowerCase().includes(query) ||
-        patient.cpf.includes(query) ||
-        patient.phone.includes(query),
-    );
-  }, [searchQuery]);
+  const trimmedSearch = searchQuery.trim();
+  const patientsQuery = usePatients({
+    page: 0,
+    size: 10,
+    search: trimmedSearch,
+  });
+  const createAppointment = useCreateAppointment();
+
+  const filteredPatients = useMemo(() => {
+    if (!trimmedSearch) return [];
+    const list = patientsQuery.data?.content ?? [];
+    return list.map((patient) => ({
+      id: patient.id,
+      name: patient.name,
+      cpf: patient.cpf,
+    }));
+  }, [trimmedSearch, patientsQuery.data]);
 
   const selectedDentist = useMemo(
-    () => MOCK_DENTISTS.find((dentist) => dentist.id === selectedDentistId),
-    [selectedDentistId],
+    () => dentists.find((dentist) => dentist.id === selectedDentistId),
+    [dentists, selectedDentistId],
   );
 
   const selectedTypeLabel =
@@ -102,7 +130,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
 
   async function handleNextStep() {
     if (step === 1) {
-      const isValid = await trigger(["patientName", "dentistId"]);
+      const isValid = await trigger(["patientId", "patientName", "dentistId"]);
       if (!isValid) return;
       setStep(2);
       return;
@@ -140,9 +168,38 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
     setCalendarYear(nextYear);
   }
 
-  function onSubmit() {
-    toast.success("Agendamento criado com sucesso!");
-    handleClose();
+  async function onSubmit() {
+    if (
+      !selectedPatientId ||
+      !selectedDentistId ||
+      selectedDate === undefined ||
+      selectedDate === null ||
+      !selectedTime ||
+      !selectedType
+    ) {
+      return;
+    }
+
+    const payload: AppointmentRequestPayload = {
+      patientId: selectedPatientId,
+      dentistId: selectedDentistId,
+      date: toIsoDate(calendarYear, calendarMonth, selectedDate),
+      time: selectedTime,
+      duration: DEFAULT_DURATION_MINUTES,
+      type: TYPE_MAP_TO_BACK[selectedType],
+      procedure: selectedTypeLabel,
+      observations: selectedObservations ?? null,
+      status: "Pendente",
+    };
+
+    try {
+      await createAppointment.mutateAsync(payload);
+      toast.success("Agendamento criado com sucesso!");
+      handleClose();
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao criar agendamento");
+    }
   }
 
   async function handlePrimaryAction() {
@@ -151,7 +208,14 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
       return;
     }
 
-    const isValid = await trigger(["patientName", "dentistId", "date", "time", "type"]);
+    const isValid = await trigger([
+      "patientId",
+      "patientName",
+      "dentistId",
+      "date",
+      "time",
+      "type",
+    ]);
     if (!isValid) {
       if (!selectedPatient || !selectedDentistId) {
         setStep(1);
@@ -167,7 +231,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
       return;
     }
 
-    onSubmit();
+    await onSubmit();
   }
 
   return (
@@ -204,6 +268,9 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
                 filteredPatients={filteredPatients}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
+                onSelectPatient={(patient) => {
+                  setValue("patientName", patient.name, { shouldValidate: true });
+                }}
                 trigger={trigger}
               />
             ) : null}
@@ -240,6 +307,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
           </div>
 
           <FlowDialogFooter
+            isLoading={createAppointment.isPending}
             onBack={() => (step === 1 ? handleClose() : setStep((current) => current - 1))}
             onPrimaryAction={() => void handlePrimaryAction()}
             primaryLabel={
