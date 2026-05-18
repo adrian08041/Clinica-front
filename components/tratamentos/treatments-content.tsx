@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { CircleDot, Clock3, MoreVertical, Plus, Search, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
 import { NewPlanDialog, type ProcedureDraft } from "@/components/tratamentos/new-plan-dialog";
@@ -53,19 +53,15 @@ export function TreatmentsContent() {
     [treatmentsQuery.data],
   );
 
-  useEffect(() => {
-    if (plans.length === 0) {
-      if (selectedId !== null) setSelectedId(null);
-      return;
-    }
-    if (!selectedId || !plans.some((plan) => plan.id === selectedId)) {
-      setSelectedId(plans[0].id);
-    }
+  const effectiveSelectedId = useMemo(() => {
+    if (plans.length === 0) return null;
+    if (selectedId && plans.some((plan) => plan.id === selectedId)) return selectedId;
+    return plans[0].id;
   }, [plans, selectedId]);
 
-  const selectedDetailQuery = useTreatment(selectedId ?? undefined);
+  const selectedDetailQuery = useTreatment(effectiveSelectedId ?? undefined);
   const selectedPlan: TreatmentPlanResponse | undefined =
-    selectedDetailQuery.data ?? plans.find((plan) => plan.id === selectedId);
+    selectedDetailQuery.data ?? plans.find((plan) => plan.id === effectiveSelectedId);
 
   const createTreatment = useCreateTreatment();
   const approveStep = useApproveStep();
