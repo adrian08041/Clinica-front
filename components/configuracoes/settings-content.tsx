@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { Building2, Users, Clock, FileText, Link as LinkIcon, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isAdmin } from "@/lib/utils/auth";
+
+const subscribeNoop = () => () => {};
+const getIsAdminSnapshot = () => isAdmin();
+const getIsAdminServerSnapshot = () => false;
 import { ClinicaSettings } from "@/components/configuracoes/clinica-settings";
 import { EquipeSettings } from "@/components/configuracoes/equipe-settings";
 import { HorariosSettings } from "@/components/configuracoes/horarios-settings";
@@ -10,19 +15,32 @@ import { ConveniosSettings } from "@/components/configuracoes/convenios-settings
 import { IntegracoesSettings } from "@/components/configuracoes/integracoes-settings";
 import { LGPDSettings } from "@/components/configuracoes/lgpd-settings";
 
-const menuItems = [
-    { id: "clinica", label: "Clínica", icon: Building2 },
-    { id: "equipe", label: "Equipe", icon: Users },
-    { id: "horarios", label: "Horários", icon: Clock },
-    { id: "convenios", label: "Convênios", icon: FileText },
-    { id: "integracoes", label: "Integrações", icon: LinkIcon },
-    { id: "lgpd", label: "LGPD", icon: ShieldCheck },
+const ALL_MENU_ITEMS = [
+    { id: "clinica", label: "Clínica", icon: Building2, adminOnly: false },
+    { id: "equipe", label: "Equipe", icon: Users, adminOnly: false },
+    { id: "horarios", label: "Horários", icon: Clock, adminOnly: false },
+    { id: "convenios", label: "Convênios", icon: FileText, adminOnly: false },
+    { id: "integracoes", label: "Integrações", icon: LinkIcon, adminOnly: false },
+    { id: "lgpd", label: "LGPD", icon: ShieldCheck, adminOnly: true },
 ];
 
 export function SettingsContent() {
     const [activeTab, setActiveTab] = useState("clinica");
+    const admin = useSyncExternalStore(subscribeNoop, getIsAdminSnapshot, getIsAdminServerSnapshot);
+
+    const menuItems = useMemo(
+        () => ALL_MENU_ITEMS.filter((item) => admin || !item.adminOnly),
+        [admin],
+    );
 
     const renderContent = () => {
+        if (activeTab === "lgpd" && !admin) {
+            return (
+                <div className="flex h-[400px] flex-col items-center justify-center rounded-[14px] border border-dashed border-border-light bg-background-card text-text-tertiary">
+                    <p className="text-[14px] font-medium">Acesso restrito a administradores.</p>
+                </div>
+            );
+        }
         switch (activeTab) {
             case "clinica":
                 return <ClinicaSettings />;

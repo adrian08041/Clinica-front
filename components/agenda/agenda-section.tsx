@@ -13,9 +13,10 @@ import { AgendaHeader } from "./agenda-header";
 import { AgendaCalendarView } from "./agenda-calendar-view";
 import { AgendaDetails } from "./agenda-details";
 import { AgendaNewDialog } from "./agenda-new-dialog";
+import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 
 export function AgendaSection() {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 17));
+  const [currentDate, setCurrentDate] = useState(() => new Date());
   const [activeView, setActiveView] = useState<AgendaView>("week");
   const [selectedDentist, setSelectedDentist] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -167,6 +168,14 @@ export function AgendaSection() {
     <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 h-full">
       {/* Left: Calendar Area */}
       <div className="flex-1 flex flex-col gap-3 lg:gap-4 min-w-0">
+        {appointmentsQuery.isError ? (
+          <QueryErrorBanner
+            error={appointmentsQuery.error}
+            onRetry={() => void appointmentsQuery.refetch()}
+            isRetrying={appointmentsQuery.isFetching}
+          />
+        ) : null}
+
         <AgendaHeader
           activeView={activeView}
           setActiveView={setActiveView}

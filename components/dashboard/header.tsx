@@ -1,17 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import {
   Bell,
   ChevronDown,
   ChevronRight,
   LogOut,
-  Search,
+  Moon,
   Settings,
+  Sun,
+  Sunrise,
   User,
+  type LucideIcon,
 } from "lucide-react";
 import { mapApiAlerts, useAlerts } from "@/lib/queries/dashboard";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -30,8 +33,48 @@ interface HeaderProps {
   breadcrumbs?: string[];
 }
 
+type TimeState = {
+  greeting: string;
+  Icon: LucideIcon;
+  iconClass: string;
+  today: string;
+};
+
+let cachedTimeSnapshot: TimeState | null = null;
+
+function computeTimeState(): TimeState {
+  const now = new Date();
+  const hour = now.getHours();
+
+  let greeting = "Bom dia";
+  let Icon: LucideIcon = Sunrise;
+  let iconClass = "text-warning-accent";
+  if (hour >= 12 && hour < 18) {
+    greeting = "Boa tarde";
+    Icon = Sun;
+  } else if (hour >= 18 || hour < 5) {
+    greeting = "Boa noite";
+    Icon = Moon;
+    iconClass = "text-brand-primary";
+  }
+
+  const weekday = now.toLocaleDateString("pt-BR", { weekday: "long" });
+  const today = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} • ${now.toLocaleDateString("pt-BR")}`;
+
+  return { greeting, Icon, iconClass, today };
+}
+
+const subscribeNoop = () => () => {};
+const getTimeSnapshot = (): TimeState => {
+  if (cachedTimeSnapshot === null) {
+    cachedTimeSnapshot = computeTimeState();
+  }
+  return cachedTimeSnapshot;
+};
+const getTimeServerSnapshot = (): TimeState | null => null;
+
 export function Header({ breadcrumbs }: HeaderProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
   const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
   const alertsQuery = useAlerts();
   const alerts = useMemo(() => mapApiAlerts(alertsQuery.data), [alertsQuery.data]);
@@ -45,7 +88,7 @@ export function Header({ breadcrumbs }: HeaderProps) {
         const name = parsedUser.name || "";
         return {
           fullName: name,
-          firstName: name.split(" ").slice(0, 2).join(" "),
+          firstName: name.split(" ")[0] || "",
           role: parsedUser.role || "",
           email: parsedUser.email || "",
           initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
@@ -64,20 +107,9 @@ export function Header({ breadcrumbs }: HeaderProps) {
   const userEmail = userData.email;
   const userInitials = userData.initials;
 
-  const today = new Date().toLocaleDateString("pt-BR", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-  const currentHour = new Date().getHours();
-  let greeting = "Bom dia";
-  if (currentHour >= 12 && currentHour < 18) {
-    greeting = "Boa tarde";
-  } else if (currentHour >= 18 || currentHour < 5) {
-    greeting = "Boa noite";
-  }
+  // Greeting/data dependem da hora local — só disponível após hidratação pra evitar
+  // hydration mismatch (servidor pode estar em fuso diferente do cliente).
+  const timeState = useSyncExternalStore(subscribeNoop, getTimeSnapshot, getTimeServerSnapshot);
 
   return (
     <>
@@ -100,28 +132,29 @@ export function Header({ breadcrumbs }: HeaderProps) {
             </div>
           ) : (
             <div>
-              <h2 className="text-base font-semibold text-text-primary md:text-lg">
-                {greeting}, {userFirstName}
+              <h2 className="flex items-center gap-2 text-base font-semibold text-text-primary md:text-lg">
+                {timeState ? (
+                  <>
+                    <timeState.Icon className={`h-5 w-5 shrink-0 ${timeState.iconClass}`} />
+                    <span>
+                      {timeState.greeting}, {userFirstName}!
+                    </span>
+                  </>
+                ) : (
+                  <span>
+                    Olá{userFirstName ? `, ${userFirstName}` : ""}!
+                  </span>
+                )}
               </h2>
-              <p className="mt-1 hidden text-xs uppercase tracking-widest text-text-tertiary md:block">
-                {today}
+              <p className="mt-1 hidden text-xs font-medium text-text-tertiary md:block">
+                {timeState?.today ?? " "}
               </p>
             </div>
           )}
         </div>
 
         <div className="flex items-center space-x-4 md:space-x-6">
-          <div className="relative hidden sm:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-            <Input
-              placeholder="Buscar pacientes, agendamentos..."
-              className="h-9 w-48 rounded-full border-border-light bg-background-card pl-9 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0 md:w-64 lg:w-80"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </div>
-
-          <div className="flex items-center gap-4 border-l border-border-light pl-4">
+          <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -220,7 +253,10 @@ export function Header({ breadcrumbs }: HeaderProps) {
                     </div>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem className="cursor-pointer gap-3 rounded-xl p-3 hover:bg-background-card focus:bg-background-card">
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-3 rounded-xl p-3 hover:bg-background-card focus:bg-background-card"
+                    onClick={() => router.push("/configuracoes")}
+                  >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background-hover text-text-secondary">
                       <Settings className="h-5 w-5" />
                     </div>

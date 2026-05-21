@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, handleUnauthorized } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
@@ -94,6 +94,10 @@ async function uploadLogoRequest(file: File): Promise<LogoUploadResponse> {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      handleUnauthorized("/settings/clinic/logo");
+    }
+
     let message = "Erro ao enviar o logo";
     try {
       const body = await response.json();

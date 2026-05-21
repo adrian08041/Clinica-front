@@ -162,7 +162,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                     value={patient}
                     onChange={(e) => setPatient(e.target.value)}
                     placeholder="Selecione o paciente..."
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 text-[15px] shadow-none"
                   />
                 </div>
               </div>
@@ -177,7 +177,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                     value={planName}
                     onChange={(e) => setPlanName(e.target.value)}
                     placeholder="Ex: Ortodontia Preventiva, Reabilitação Estética"
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 text-[15px] shadow-none"
                   />
                 </div>
 
@@ -210,7 +210,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
                     />
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
                     />
                   </div>
                 </div>
@@ -239,7 +239,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Descreva detalhes importantes sobre o tratamento..."
-                  className="min-h-[110px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                  className="min-h-[110px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
                 />
               </div>
             </div>
@@ -273,7 +273,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                         value={procedure.name}
                         onChange={(e) => updateProcedure(procedure.id, "name", e.target.value)}
                         placeholder="Ex: Limpeza e Profilaxia"
-                        className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                        className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none"
                       />
                     </div>
 
@@ -285,7 +285,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                         value={procedure.tooth}
                         onChange={(e) => updateProcedure(procedure.id, "tooth", e.target.value)}
                         placeholder="Ex: 11, 21"
-                        className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                        className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none"
                       />
                     </div>
                   </div>
@@ -301,7 +301,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                       value={procedure.value}
                       onChange={(e) => updateProcedure(procedure.id, "value", e.target.value)}
                       placeholder="0,00"
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none"
                     />
                   </div>
                 </div>

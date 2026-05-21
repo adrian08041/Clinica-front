@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { MobileNav } from "@/components/dashboard/mobile-nav";
+import { UNAUTHORIZED_EVENT } from "@/lib/api";
 
 export function DashboardLayout({ children, breadcrumbs }: { children: React.ReactNode, breadcrumbs?: string[] }) {
     const router = useRouter();
@@ -15,6 +17,15 @@ export function DashboardLayout({ children, breadcrumbs }: { children: React.Rea
         if (!token) {
             router.replace("/login");
         }
+    }, [router]);
+
+    useEffect(() => {
+        const onUnauthorized = () => {
+            toast.error("Sessão expirada. Faça login novamente.");
+            router.replace("/login");
+        };
+        window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
+        return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
     }, [router]);
 
     return (

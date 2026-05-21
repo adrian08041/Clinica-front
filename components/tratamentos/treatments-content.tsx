@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { NewPlanDialog, type ProcedureDraft } from "@/components/tratamentos/new-plan-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useApproveStep,
   useCreateTreatment,
@@ -120,9 +121,25 @@ export function TreatmentsContent() {
   const hasNoPendingStep =
     selectedPlan != null && selectedPlan.completed >= selectedPlan.totalProcedures;
 
+  const hasError = treatmentsQuery.isError || selectedDetailQuery.isError;
+  const firstError = treatmentsQuery.error ?? selectedDetailQuery.error;
+  const isRetrying = treatmentsQuery.isFetching || selectedDetailQuery.isFetching;
+  const retryAll = () => {
+    void treatmentsQuery.refetch();
+    if (effectiveSelectedId) void selectedDetailQuery.refetch();
+  };
+
   return (
     <>
       <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-1 py-2">
+        {hasError ? (
+          <QueryErrorBanner
+            error={firstError}
+            onRetry={retryAll}
+            isRetrying={isRetrying}
+          />
+        ) : null}
+
         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink-panel)]">Planos de Tratamento</h1>
@@ -147,7 +164,7 @@ export function TreatmentsContent() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar paciente ou tratamento..."
-                className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white pl-11 text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white pl-11 text-[15px] shadow-none"
               />
             </div>
 

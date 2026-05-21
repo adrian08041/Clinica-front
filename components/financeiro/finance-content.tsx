@@ -17,6 +17,7 @@ import {
   type NewTransactionPayload as DialogTransactionPayload,
 } from "@/components/financeiro/new-transaction-dialog";
 import { Button } from "@/components/ui/button";
+import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useCreateTransaction,
   useFinanceStats,
@@ -226,9 +227,30 @@ export function FinanceContent() {
 
   const isReceivablesLoading = receivablesQuery.isLoading;
 
+  const financeQueries = [
+    receivablesQuery,
+    statsQuery,
+    revenueHistoryQuery,
+    paymentMethodsQuery,
+  ];
+  const hasError = financeQueries.some((q) => q.isError);
+  const firstError = financeQueries.find((q) => q.isError)?.error;
+  const isRetrying = financeQueries.some((q) => q.isFetching);
+  const retryAll = () => {
+    financeQueries.forEach((q) => void q.refetch());
+  };
+
   return (
     <>
       <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-8 px-1 py-2">
+        {hasError ? (
+          <QueryErrorBanner
+            error={firstError}
+            onRetry={retryAll}
+            isRetrying={isRetrying}
+          />
+        ) : null}
+
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink-panel)]">Financeiro</h1>

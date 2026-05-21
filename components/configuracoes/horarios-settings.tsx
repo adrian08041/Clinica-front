@@ -177,7 +177,7 @@ export function HorariosSettings() {
                                                     type="time"
                                                     {...register(`dias.${index}.start`)}
                                                     className={cn(
-                                                        "h-10 w-full rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary border-border-light"
+                                                        "h-10 w-full rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all border-border-light"
                                                     )}
                                                 />
                                             </div>
@@ -189,7 +189,7 @@ export function HorariosSettings() {
                                                     type="time"
                                                     {...register(`dias.${index}.end`)}
                                                     className={cn(
-                                                        "h-10 w-full rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary border-border-light"
+                                                        "h-10 w-full rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all border-border-light"
                                                     )}
                                                 />
                                             </div>
