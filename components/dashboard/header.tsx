@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -40,7 +40,24 @@ type TimeState = {
   today: string;
 };
 
+type UserData = {
+  fullName: string;
+  firstName: string;
+  role: string;
+  email: string;
+  initials: string;
+};
+
+const EMPTY_USER: UserData = {
+  fullName: "",
+  firstName: "",
+  role: "",
+  email: "",
+  initials: "",
+};
+
 let cachedTimeSnapshot: TimeState | null = null;
+let cachedUserSnapshot: UserData | null = null;
 
 function computeTimeState(): TimeState {
   const now = new Date();
@@ -73,6 +90,32 @@ const getTimeSnapshot = (): TimeState => {
 };
 const getTimeServerSnapshot = (): TimeState | null => null;
 
+function readUserFromStorage(): UserData {
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return EMPTY_USER;
+    const parsedUser = JSON.parse(storedUser);
+    const name = parsedUser.name || "";
+    return {
+      fullName: name,
+      firstName: name.split(" ")[0] || "",
+      role: parsedUser.role || "",
+      email: parsedUser.email || "",
+      initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
+    };
+  } catch {
+    return EMPTY_USER;
+  }
+}
+
+const getUserSnapshot = (): UserData => {
+  if (cachedUserSnapshot === null) {
+    cachedUserSnapshot = readUserFromStorage();
+  }
+  return cachedUserSnapshot;
+};
+const getUserServerSnapshot = (): UserData => EMPTY_USER;
+
 export function Header({ breadcrumbs }: HeaderProps) {
   const router = useRouter();
   const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
@@ -80,33 +123,9 @@ export function Header({ breadcrumbs }: HeaderProps) {
   const alerts = useMemo(() => mapApiAlerts(alertsQuery.data), [alertsQuery.data]);
   const hasAlerts = alerts.length > 0;
 
-  // userData lido do localStorage só após hidratação pra evitar mismatch
-  // (servidor não tem localStorage → "" / cliente tem → "Demo").
-  const [userData, setUserData] = useState({
-    fullName: "",
-    firstName: "",
-    role: "",
-    email: "",
-    initials: "",
-  });
-
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) return;
-      const parsedUser = JSON.parse(storedUser);
-      const name = parsedUser.name || "";
-      setUserData({
-        fullName: name,
-        firstName: name.split(" ")[0] || "",
-        role: parsedUser.role || "",
-        email: parsedUser.email || "",
-        initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
-      });
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
+  // userData lido do localStorage via useSyncExternalStore — servidor retorna
+  // EMPTY_USER, cliente lê após hidratação. Mesmo padrão usado pra timeState.
+  const userData = useSyncExternalStore(subscribeNoop, getUserSnapshot, getUserServerSnapshot);
 
   const userFullName = userData.fullName;
   const userFirstName = userData.firstName;
