@@ -2,6 +2,7 @@
 
 import { Mail, MoreHorizontal, Pencil, Phone, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,9 +20,13 @@ import {
 } from "@/components/ui/table";
 import {
   getTeamMemberInitials,
-  getTeamStatusClasses,
   type TeamMember,
+  type TeamStatus,
 } from "./team-shared";
+
+function statusVariant(status: TeamStatus) {
+  return status === "Ativo" ? ("success" as const) : ("neutral" as const);
+}
 
 type TeamMembersTableProps = {
   teamMembers: TeamMember[];
@@ -96,11 +101,7 @@ export function TeamMembersTable({
                 {member.role}
               </TableCell>
               <TableCell className="px-6 py-4">
-                <span
-                  className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${getTeamStatusClasses(member.status)}`}
-                >
-                  {member.status}
-                </span>
+                <Badge variant={statusVariant(member.status)}>{member.status}</Badge>
               </TableCell>
               <TableCell className="px-6 py-4 text-right">
                 <DropdownMenu>

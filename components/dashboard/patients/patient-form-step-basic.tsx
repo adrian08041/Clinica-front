@@ -3,8 +3,9 @@
 import { Controller, type Control, type FieldErrors, type UseFormRegister } from "react-hook-form";
 import { IdCard, UserRound } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { PatientFormData } from "@/lib/schemas/patient-schema";
-import { formatCpfInput, patientFieldClass } from "./patients-shared";
+import { formatCpfInput } from "./patients-shared";
 
 type PatientFormStepBasicProps = {
   control: Control<PatientFormData>;
@@ -29,15 +30,15 @@ export function PatientFormStepBasic({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           Nome completo *
-        </label>
+        </Label>
         <div className="relative">
           <UserRound className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
           <Input
             {...register("name")}
             placeholder="Ex: Ana Carolina Silva"
-            className={`${patientFieldClass} pl-11`}
+            className="pl-11"
           />
         </div>
         {errors.name ? (
@@ -46,9 +47,9 @@ export function PatientFormStepBasic({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           CPF *
-        </label>
+        </Label>
         <div className="relative">
           <IdCard className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
           <Controller
@@ -60,7 +61,7 @@ export function PatientFormStepBasic({
                 onChange={(event) => field.onChange(formatCpfInput(event.target.value))}
                 placeholder="123.456.789-00"
                 inputMode="numeric"
-                className={`${patientFieldClass} pl-11`}
+                className="pl-11"
               />
             )}
           />

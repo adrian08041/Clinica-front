@@ -4,12 +4,13 @@ import { BriefcaseBusiness, Loader2, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogTitle,
+  FlowDialogContent,
 } from "@/components/ui/dialog";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -42,10 +43,7 @@ export function TeamMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-[820px] overflow-hidden rounded-[24px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.22)]"
-        showCloseButton={false}
-      >
+      <FlowDialogContent className="max-w-[820px]">
         <div className="sr-only">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
@@ -63,41 +61,38 @@ export function TeamMemberDialog({
         <div className="space-y-6 bg-white px-6 py-8 md:px-8">
           <div className="grid gap-5 md:grid-cols-2">
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Nome completo
-              </label>
+              </Label>
               <Input
                 value={form.name}
                 onChange={(event) => onFormChange({ ...form, name: event.target.value })}
                 placeholder="Ex: Fernanda Souza"
-                className="h-12 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 E-mail corporativo
-              </label>
+              </Label>
               <Input
                 value={form.email}
                 onChange={(event) => onFormChange({ ...form, email: event.target.value })}
                 placeholder="nome@odontoflow.com"
-                className="h-12 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">Telefone</label>
+              <Label>Telefone</Label>
               <Input
                 value={form.phone}
                 onChange={(event) => onFormChange({ ...form, phone: event.target.value })}
                 placeholder="(11) 99999-9999"
-                className="h-12 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">Cargo</label>
+              <Label>Cargo</Label>
               <Select
                 value={form.role}
                 onValueChange={(value) => onFormChange({ ...form, role: value as TeamRole })}
@@ -116,7 +111,7 @@ export function TeamMemberDialog({
             </div>
 
             <div className="flex min-w-0 flex-col gap-2 md:col-span-2">
-              <label className="text-[13px] font-semibold text-text-secondary">Status</label>
+              <Label>Status</Label>
               <Select
                 value={form.status}
                 onValueChange={(value) => onFormChange({ ...form, status: value as TeamStatus })}
@@ -144,18 +139,18 @@ export function TeamMemberDialog({
             <Button
               onClick={onSave}
               disabled={isSaving}
-              className="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white hover:bg-brand-dark"
+              variant="brand"
             >
               {isSaving ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <BriefcaseBusiness className="h-4 w-4" />
+                <BriefcaseBusiness className="size-4" />
               )}
               {editingMemberId ? "Salvar alterações" : "Salvar funcionário"}
             </Button>
           </div>
         </div>
-      </DialogContent>
+      </FlowDialogContent>
     </Dialog>
   );
 }

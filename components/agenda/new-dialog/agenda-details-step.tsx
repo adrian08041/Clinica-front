@@ -2,6 +2,8 @@
 
 import { Controller, type Control, type FieldErrors, type UseFormTrigger } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { APPOINTMENT_TYPES, type AgendaNewDialogValues } from "./agenda-new-dialog-shared";
 
@@ -28,9 +30,9 @@ export function AgendaDetailsStep({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           Tipo de Agendamento *
-        </label>
+        </Label>
         <Controller
           name="type"
           control={control}
@@ -67,17 +69,17 @@ export function AgendaDetailsStep({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           Observações
-        </label>
+        </Label>
         <Controller
           name="observations"
           control={control}
           render={({ field }) => (
-            <textarea
+            <Textarea
               {...field}
               placeholder="Ex: Paciente relatou dor, trazer exames anteriores..."
-              className="min-h-[120px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
+              className="min-h-[120px]"
             />
           )}
         />

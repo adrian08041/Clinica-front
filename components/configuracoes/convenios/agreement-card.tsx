@@ -9,6 +9,7 @@ import {
   ShieldPlus,
   Trash2,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,7 +17,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getAgreementStatusClasses, type Agreement } from "./agreement-shared";
+import type { Agreement, AgreementStatus } from "./agreement-shared";
+
+function statusVariant(status: AgreementStatus) {
+  if (status === "Ativo") return "success" as const;
+  if (status === "Em análise") return "warning" as const;
+  return "neutral" as const;
+}
 
 type AgreementCardProps = {
   agreement: Agreement;
@@ -41,11 +48,9 @@ export function AgreementCard({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-[16px] font-semibold text-text-primary">{agreement.name}</h3>
-              <span
-                className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${getAgreementStatusClasses(agreement.status)}`}
-              >
+              <Badge variant={statusVariant(agreement.status)}>
                 {agreement.status}
-              </span>
+              </Badge>
             </div>
             <p className="mt-2 text-[13px] font-medium text-text-tertiary">
               Convênio habilitado para atendimento da clínica.

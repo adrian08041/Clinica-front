@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useCreatePatient,
@@ -25,7 +26,7 @@ import {
   formatCpfInput,
   formatPhoneInput,
   PATIENT_DIALOG_STEPS,
-  patientStatusClassMap,
+  patientStatusVariant,
   PHONE_PREFIX,
 } from "./patients/patients-shared";
 
@@ -88,11 +89,11 @@ export function PatientsSection() {
     ? "Revise as informações e ajuste o cadastro do paciente."
     : "Cadastre os dados principais do paciente com mais organização.";
 
-  const reviewBadgeClass = useMemo(
+  const reviewBadgeVariant = useMemo(
     () =>
       editingPatient?.status
-        ? patientStatusClassMap[editingPatient.status] ?? "bg-danger-bg text-danger-text"
-        : "bg-[var(--color-brand-teal)] text-white",
+        ? patientStatusVariant(editingPatient.status)
+        : ("brand" as const),
     [editingPatient],
   );
 
@@ -221,9 +222,10 @@ export function PatientsSection() {
 
         <Button
           onClick={openCreateDialog}
-          className="h-11 w-full rounded-[8px] bg-brand-dark px-5 font-semibold text-white shadow-sm hover:bg-brand-dark sm:w-auto"
+          variant="brand"
+          className="w-full sm:w-auto"
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="size-4" />
           Novo Paciente
         </Button>
 
@@ -244,13 +246,13 @@ export function PatientsSection() {
           onPrimaryAction={() => void handlePrimaryAction()}
           phone={watchedPhone}
           register={register}
-          reviewBadgeClass={reviewBadgeClass}
+          reviewBadgeVariant={reviewBadgeVariant}
           step={step}
           title={dialogTitle}
         />
       </div>
 
-      <div className="flex flex-col rounded-[14px] border border-border-light bg-white pt-2 shadow-sm">
+      <Card className="pt-2 gap-0">
         <PatientsFilters
           insuranceFilter={insuranceFilter}
           insurances={insurances}
@@ -288,7 +290,7 @@ export function PatientsSection() {
           totalElements={totalElements}
           totalPages={totalPages}
         />
-      </div>
+      </Card>
     </div>
   );
 }

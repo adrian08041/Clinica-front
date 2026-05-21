@@ -1,12 +1,13 @@
 "use client";
 
 import { AlertCircle, Bell, ChevronRight, CreditCard, Gift, type LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogTitle,
+  FlowDialogContent,
 } from "@/components/ui/dialog";
 import type { DashboardAlert } from "@/lib/types";
 
@@ -75,10 +76,7 @@ export function NotificationsDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="max-w-[620px] overflow-hidden rounded-[24px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.22)]"
-      >
+      <FlowDialogContent className="max-w-[620px]">
         <div className="sr-only">
           <DialogTitle>Todas as notificações</DialogTitle>
           <DialogDescription>
@@ -108,9 +106,7 @@ export function NotificationsDialog({
               </p>
               <p className="mt-1 text-[22px] font-bold text-text-primary">{alerts.length}</p>
             </div>
-            <span className="rounded-full bg-warning-bg px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-warning-text">
-              Atualizado agora
-            </span>
+            <Badge variant="warning">Atualizado agora</Badge>
           </div>
 
           <div className="flex max-h-[420px] flex-col gap-3 overflow-y-auto pr-1">
@@ -123,13 +119,13 @@ export function NotificationsDialog({
             <Button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="h-10 rounded-lg bg-brand-primary px-5 text-sm font-semibold text-white hover:bg-brand-dark"
+              variant="brand"
             >
               Fechar notificações
             </Button>
           </div>
         </div>
-      </DialogContent>
+      </FlowDialogContent>
     </Dialog>
   );
 }

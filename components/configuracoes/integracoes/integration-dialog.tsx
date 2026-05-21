@@ -4,12 +4,14 @@ import { Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogTitle,
+  FlowDialogContent,
 } from "@/components/ui/dialog";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -40,10 +42,7 @@ export function IntegrationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-[680px] overflow-hidden rounded-[24px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.22)]"
-        showCloseButton={false}
-      >
+      <FlowDialogContent className="max-w-[680px]">
         <div className="sr-only">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
@@ -61,19 +60,18 @@ export function IntegrationDialog({
         <div className="space-y-6 bg-white px-6 py-7 md:px-8">
           <div className="grid gap-5 md:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Nome da integração
-              </label>
+              </Label>
               <Input
                 value={form.name}
                 onChange={(event) => onFormChange({ ...form, name: event.target.value })}
                 placeholder="Ex: Agenda via WhatsApp"
-                className="h-11 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">Categoria</label>
+              <Label>Categoria</Label>
               <Select
                 value={form.category}
                 onValueChange={(value) =>
@@ -93,26 +91,25 @@ export function IntegrationDialog({
             </div>
 
             <div className="flex flex-col gap-2 md:col-span-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Endpoint ou URL
-              </label>
+              </Label>
               <Input
                 value={form.endpoint}
                 onChange={(event) => onFormChange({ ...form, endpoint: event.target.value })}
                 placeholder="https://api.exemplo.com/webhook"
-                className="h-11 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex flex-col gap-2 md:col-span-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Descrição
-              </label>
-              <textarea
+              </Label>
+              <Textarea
                 value={form.description}
                 onChange={(event) => onFormChange({ ...form, description: event.target.value })}
                 placeholder="Descreva o papel dessa integração na rotina da clínica."
-                className="min-h-[120px] rounded-lg border border-border-light bg-background-card/50 px-4 py-3 text-sm font-medium text-text-primary outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                className="min-h-[120px]"
               />
             </div>
           </div>
@@ -127,13 +124,13 @@ export function IntegrationDialog({
             </Button>
             <Button
               onClick={onSave}
-              className="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white hover:bg-brand-dark"
+              variant="brand"
             >
               {editingIntegrationId ? "Salvar alterações" : "Salvar integração"}
             </Button>
           </div>
         </div>
-      </DialogContent>
+      </FlowDialogContent>
     </Dialog>
   );
 }

@@ -10,7 +10,7 @@ interface PatientTimelineTabProps {
 
 export function PatientTimelineTab({ entries }: PatientTimelineTabProps) {
   return (
-    <Card className="bg-white border-border-light shadow-sm p-8 pt-7">
+    <Card className="p-8 pt-7">
       <div className="flex justify-between items-center mb-8">
         <h3 className="text-lg font-bold text-text-primary">
           Linha do Tempo
@@ -48,19 +48,9 @@ export function PatientTimelineTab({ entries }: PatientTimelineTabProps) {
                   </div>
                 </div>
                 {isUpcoming ? (
-                  <Badge
-                    variant="secondary"
-                    className="bg-background-hover text-text-secondary text-[11px] font-bold px-3 py-0.5 rounded-full"
-                  >
-                    confirmado
-                  </Badge>
+                  <Badge variant="neutral">confirmado</Badge>
                 ) : entry.paymentStatus === "paid" ? (
-                  <Badge
-                    variant="secondary"
-                    className="bg-success-bg text-success-text text-[11px] font-bold px-3 py-0.5 rounded-full"
-                  >
-                    Pago
-                  </Badge>
+                  <Badge variant="success">Pago</Badge>
                 ) : null}
               </div>
             </div>

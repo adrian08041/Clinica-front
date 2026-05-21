@@ -12,8 +12,17 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogDescription, DialogTitle, FlowDialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 export type TransactionType = "receita" | "despesa";
 
@@ -59,8 +68,8 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [method, setMethod] = useState("Selecione...");
-  const [category, setCategory] = useState("Selecione...");
+  const [method, setMethod] = useState("");
+  const [category, setCategory] = useState("");
   const [installments, setInstallments] = useState("À vista");
   const [notes, setNotes] = useState("");
 
@@ -72,8 +81,8 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
     setDescription("");
     setAmount("");
     setDueDate("");
-    setMethod("Selecione...");
-    setCategory("Selecione...");
+    setMethod("");
+    setCategory("");
     setInstallments("À vista");
     setNotes("");
   };
@@ -99,10 +108,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
 
   return (
     <Dialog open={open} onOpenChange={(next) => (!next ? close() : onOpenChange(true))}>
-      <DialogContent
-        className="max-w-[720px] overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]"
-        showCloseButton={false}
-      >
+      <FlowDialogContent className="max-w-[720px] max-h-[90vh] grid-rows-[auto_1fr_auto] gap-0">
         <div className="sr-only">
           <DialogTitle>Nova Transação</DialogTitle>
           <DialogDescription>Formulário em etapas para registrar uma nova receita ou despesa.</DialogDescription>
@@ -114,9 +120,16 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
               <h2 className="text-[20px] font-black md:text-[22px]">Nova Transação</h2>
               <p className="mt-2 text-[15px] text-white/85">Registre uma receita ou despesa no sistema</p>
             </div>
-            <button type="button" onClick={close} aria-label="Fechar" className="rounded-full p-2 hover:bg-white/10">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={close}
+              aria-label="Fechar"
+              className="rounded-full text-white hover:bg-white/10 hover:text-white"
+            >
               <X className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
 
           <div className="mt-8 flex items-center justify-center gap-3 text-center">
@@ -132,7 +145,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
           </div>
         </div>
 
-        <div className="bg-white">
+        <div className="bg-white overflow-y-auto">
           {step === 1 ? (
             <div className="space-y-6 px-6 py-8 md:px-8">
               <div>
@@ -141,13 +154,14 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setType("receita")}
-                  className={`rounded-[22px] border p-6 text-left transition ${
+                  className={`h-auto flex-col items-start justify-start gap-0 rounded-[22px] border p-6 text-left whitespace-normal shadow-none transition ${
                     type === "receita"
-                      ? "border-[var(--color-brand-teal)] bg-[var(--color-brand-teal-surface)] shadow-[0_10px_24px_rgba(14,158,149,0.10)]"
-                      : "border-[var(--color-border-panel)] bg-white hover:border-[var(--color-brand-teal)]"
+                      ? "border-[var(--color-brand-teal)] bg-[var(--color-brand-teal-surface)] shadow-[0_10px_24px_rgba(14,158,149,0.10)] hover:bg-[var(--color-brand-teal-surface)]"
+                      : "border-[var(--color-border-panel)] bg-white hover:border-[var(--color-brand-teal)] hover:bg-white"
                   }`}
                 >
                   <div
@@ -161,15 +175,16 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                   </div>
                   <p className="mt-6 text-[18px] font-black text-[var(--color-ink-panel)]">Receita</p>
                   <p className="mt-1 text-[14px] font-medium text-[var(--color-text-caption)]">Pagamentos recebidos</p>
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setType("despesa")}
-                  className={`rounded-[22px] border p-6 text-left transition ${
+                  className={`h-auto flex-col items-start justify-start gap-0 rounded-[22px] border p-6 text-left whitespace-normal shadow-none transition ${
                     type === "despesa"
-                      ? "border-[var(--color-brand-teal)] bg-[var(--color-brand-teal-surface)] shadow-[0_10px_24px_rgba(14,158,149,0.10)]"
-                      : "border-[var(--color-border-panel)] bg-white hover:border-[var(--color-brand-teal)]"
+                      ? "border-[var(--color-brand-teal)] bg-[var(--color-brand-teal-surface)] shadow-[0_10px_24px_rgba(14,158,149,0.10)] hover:bg-[var(--color-brand-teal-surface)]"
+                      : "border-[var(--color-border-panel)] bg-white hover:border-[var(--color-brand-teal)] hover:bg-white"
                   }`}
                 >
                   <div
@@ -183,29 +198,28 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                   </div>
                   <p className="mt-6 text-[18px] font-black text-[var(--color-ink-panel)]">Despesa</p>
                   <p className="mt-1 text-[14px] font-medium text-[var(--color-text-caption)]">Gastos e custos</p>
-                </button>
+                </Button>
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</label>
+                <Label className="mb-2">Paciente</Label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                   <Input
                     value={patient}
                     onChange={(e) => setPatient(e.target.value)}
                     placeholder="Nome do paciente"
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
+                    className="pl-11"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</label>
+                <Label className="mb-2">Descrição</Label>
                 <Input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Ex: Limpeza e Profilaxia"
-                  className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none"
                 />
               </div>
             </div>
@@ -220,80 +234,76 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
 
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Valor (R$)</label>
+                  <Label className="mb-2">Valor (R$)</Label>
                   <Input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0,00"
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none"
-                  />
+                    />
                 </div>
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Vencimento</label>
+                  <Label className="mb-2">Vencimento</Label>
                   <div className="relative">
                     <CalendarDays className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                     <Input
                       type="date"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
+                      className="pl-11"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Método de Pagamento</label>
-                  <div className="relative">
-                    <CreditCard className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <select
-                      value={method}
-                      onChange={(e) => setMethod(e.target.value)}
-                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
-                    >
-                      <option>Selecione...</option>
-                      <option>Dinheiro</option>
-                      <option>PIX</option>
-                      <option>Cartão de Crédito</option>
-                      <option>Cartão de Débito</option>
-                      <option>Boleto</option>
-                      <option>Transferência Bancária</option>
-                    </select>
-                  </div>
+                  <Label className="mb-2">Método de Pagamento</Label>
+                  <Select value={method} onValueChange={setMethod}>
+                    <SelectTrigger className="w-full">
+                      <CreditCard />
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Dinheiro">Dinheiro</SelectItem>
+                      <SelectItem value="PIX">PIX</SelectItem>
+                      <SelectItem value="Cartão de Crédito">Cartão de Crédito</SelectItem>
+                      <SelectItem value="Cartão de Débito">Cartão de Débito</SelectItem>
+                      <SelectItem value="Boleto">Boleto</SelectItem>
+                      <SelectItem value="Transferência Bancária">Transferência Bancária</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Categoria</label>
-                  <div className="relative">
-                    <Tag className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
-                    >
-                      <option>Selecione...</option>
-                      <option>Consulta</option>
-                      <option>Procedimento</option>
-                      <option>Ortodontia</option>
-                      <option>Limpeza</option>
-                      <option>Implante</option>
-                      <option>Clareamento</option>
-                    </select>
-                  </div>
+                  <Label className="mb-2">Categoria</Label>
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="w-full">
+                      <Tag />
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Consulta">Consulta</SelectItem>
+                      <SelectItem value="Procedimento">Procedimento</SelectItem>
+                      <SelectItem value="Ortodontia">Ortodontia</SelectItem>
+                      <SelectItem value="Limpeza">Limpeza</SelectItem>
+                      <SelectItem value="Implante">Implante</SelectItem>
+                      <SelectItem value="Clareamento">Clareamento</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Número de Parcelas</label>
-                <select
-                  value={installments}
-                  onChange={(e) => setInstallments(e.target.value)}
-                  className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
-                >
-                  <option>À vista</option>
-                  <option>2x</option>
-                  <option>3x</option>
-                  <option>6x</option>
-                  <option>12x</option>
-                </select>
+                <Label className="mb-2">Número de Parcelas</Label>
+                <Select value={installments} onValueChange={setInstallments}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="À vista">À vista</SelectItem>
+                    <SelectItem value="2x">2x</SelectItem>
+                    <SelectItem value="3x">3x</SelectItem>
+                    <SelectItem value="6x">6x</SelectItem>
+                    <SelectItem value="12x">12x</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           ) : null}
@@ -355,44 +365,43 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Observações (Opcional)</label>
-                <textarea
+                <Label className="mb-2">Observações (Opcional)</Label>
+                <Textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Adicione informações complementares..."
-                  className="min-h-[120px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
+                  className="min-h-[120px]"
                 />
               </div>
             </div>
           ) : null}
-
-          <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
-            <Button
-              variant="outline"
-              disabled={isPending}
-              onClick={() => (step === 1 ? close() : setStep((current) => current - 1))}
-              className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
-            >
-              {step === 1 ? "Cancelar" : "Voltar"}
-            </Button>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3].map((item) => (
-                <span
-                  key={item}
-                  className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`}
-                />
-              ))}
-            </div>
-            <Button
-              onClick={() => void handleNext()}
-              disabled={isPending}
-              className="h-11 rounded-[16px] border-2 border-[var(--color-brand-teal-deep)] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_12px_24px_rgba(14,158,149,0.22)] hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-60"
-            >
-              {step < 3 ? "Próximo" : isPending ? "Salvando..." : "Salvar Transação"}
-            </Button>
-          </div>
         </div>
-      </DialogContent>
+
+        <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] bg-white px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
+          <Button
+            variant="outline"
+            disabled={isPending}
+            onClick={() => (step === 1 ? close() : setStep((current) => current - 1))}
+          >
+            {step === 1 ? "Cancelar" : "Voltar"}
+          </Button>
+          <div className="flex items-center gap-2">
+            {[1, 2, 3].map((item) => (
+              <span
+                key={item}
+                className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`}
+              />
+            ))}
+          </div>
+          <Button
+            onClick={() => void handleNext()}
+            disabled={isPending}
+            variant="brand"
+          >
+            {step < 3 ? "Próximo" : isPending ? "Salvando..." : "Salvar Transação"}
+          </Button>
+        </div>
+      </FlowDialogContent>
     </Dialog>
   );
 }

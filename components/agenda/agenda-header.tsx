@@ -43,18 +43,19 @@ export function AgendaHeader({
           {/* View Switcher */}
           <div className="flex items-center bg-white border border-border-light rounded-xl p-1 h-9 lg:h-10">
             {VIEWS.map((view) => (
-              <button
+              <Button
                 key={view.value}
+                variant="ghost"
                 onClick={() => setActiveView(view.value)}
                 className={cn(
                   "px-3 lg:px-5 h-full text-xs lg:text-sm font-bold transition-all cursor-pointer rounded-lg",
                   activeView === view.value
-                    ? "bg-brand-primary text-white shadow-sm"
+                    ? "bg-brand-primary text-white shadow-sm hover:bg-brand-primary hover:text-white"
                     : "text-text-tertiary hover:text-text-secondary"
                 )}
               >
                 {view.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -86,7 +87,7 @@ export function AgendaHeader({
           {/* New Appointment Button */}
           <Button
             onClick={() => setDialogOpen(true)}
-            className="bg-brand-primary hover:bg-brand-dark text-white font-bold gap-2 cursor-pointer h-9 lg:h-10 text-xs lg:text-sm"
+            variant="brand"
           >
             <Plus className="size-4" />
             <span className="hidden sm:inline">Novo Agendamento</span>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   useCreateInsurance,
   useDeleteInsurance,
@@ -159,7 +160,7 @@ export function ConveniosSettings() {
 
   return (
     <>
-      <div className="w-full overflow-hidden rounded-[14px] border border-border-light bg-white p-4 shadow-sm sm:p-6 md:p-8">
+      <Card className="w-full overflow-hidden p-4 sm:p-6 md:p-8 gap-0">
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-start md:justify-between">
           <div>
             <h2 className="text-[20px] font-bold leading-[28px] text-text-primary">
@@ -171,9 +172,9 @@ export function ConveniosSettings() {
           </div>
           <Button
             onClick={openCreateDialog}
-            className="h-10 rounded-lg bg-brand-primary px-4 text-white shadow-sm hover:bg-brand-dark"
+            variant="brand"
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="size-4" />
             Novo Convênio
           </Button>
         </div>
@@ -199,7 +200,7 @@ export function ConveniosSettings() {
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       <AgreementDialog
         open={dialogOpen}

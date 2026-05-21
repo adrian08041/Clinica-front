@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   useCreateDentist,
   useDeleteDentist,
@@ -139,7 +140,7 @@ export function EquipeSettings() {
 
   return (
     <>
-      <div className="w-full overflow-hidden rounded-[14px] border border-border-light bg-white p-4 shadow-sm sm:p-6 md:p-8">
+      <Card className="w-full overflow-hidden p-4 sm:p-6 md:p-8 gap-0">
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-start md:justify-between">
           <div>
             <h2 className="text-[20px] font-bold leading-[28px] text-text-primary">
@@ -151,30 +152,30 @@ export function EquipeSettings() {
           </div>
           <Button
             onClick={openCreateDialog}
-            className="h-10 rounded-lg bg-brand-primary px-4 text-white shadow-sm hover:bg-brand-dark"
+            variant="brand"
           >
-            <UserPlus className="mr-2 h-4 w-4" />
+            <UserPlus className="size-4" />
             Adicionar Funcionário
           </Button>
         </div>
 
         <div className="mb-6 grid gap-4 md:mb-8 md:grid-cols-2">
-          <div className="rounded-2xl border border-border-light bg-background-card p-5">
+          <Card className="bg-background-card p-5 gap-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-text-muted">
               Total na Equipe
             </p>
             <p className="mt-2 text-[24px] font-bold text-text-primary">
               {teamMembers.length}
             </p>
-          </div>
-          <div className="rounded-2xl border border-border-light bg-background-card p-5">
+          </Card>
+          <Card className="bg-background-card p-5 gap-0">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-text-muted">
               Ativos no Sistema
             </p>
             <p className="mt-2 text-[24px] font-bold text-success-text">
               {totalActiveMembers}
             </p>
-          </div>
+          </Card>
         </div>
 
         {isLoading ? (
@@ -192,7 +193,7 @@ export function EquipeSettings() {
             onDelete={handleDeleteMember}
           />
         )}
-      </div>
+      </Card>
 
       <TeamMemberDialog
         open={dialogOpen}

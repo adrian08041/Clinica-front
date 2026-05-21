@@ -6,6 +6,13 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { WeeklyChartBar } from "@/lib/types"
 
 const BAR_COLORS: Record<WeeklyChartBar["variant"], string> = {
@@ -28,7 +35,7 @@ export function WeeklyChart({ title, subtitle, bars }: WeeklyChartProps) {
   const spacing = (100 - barWidth * totalBars) / (totalBars + 1)
 
   return (
-    <Card className="gap-8 p-6 bg-white border-border-light shadow-sm h-[410px] flex flex-col">
+    <Card className="gap-8 p-6 h-[410px] flex flex-col">
       <CardHeader className="p-0 flex-row items-start justify-between">
         <div className="flex flex-col gap-1">
           <CardTitle className="text-text-primary text-lg leading-7">
@@ -38,10 +45,15 @@ export function WeeklyChart({ title, subtitle, bars }: WeeklyChartProps) {
             {subtitle}
           </CardDescription>
         </div>
-        <select className="bg-white border border-border-light rounded-md h-[29px] w-[152px] text-sm text-text-tertiary px-2 outline-none font-medium cursor-pointer">
-          <option>Esta Semana</option>
-          <option>Semana Passada</option>
-        </select>
+        <Select defaultValue="esta-semana">
+          <SelectTrigger className="w-[152px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="esta-semana">Esta Semana</SelectItem>
+            <SelectItem value="semana-passada">Semana Passada</SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
 
       <div className="relative w-full flex-1 min-h-[200px]">

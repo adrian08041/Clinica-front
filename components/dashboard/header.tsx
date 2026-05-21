@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -80,27 +80,34 @@ export function Header({ breadcrumbs }: HeaderProps) {
   const alerts = useMemo(() => mapApiAlerts(alertsQuery.data), [alertsQuery.data]);
   const hasAlerts = alerts.length > 0;
 
-  function getUserData() {
+  // userData lido do localStorage só após hidratação pra evitar mismatch
+  // (servidor não tem localStorage → "" / cliente tem → "Demo").
+  const [userData, setUserData] = useState({
+    fullName: "",
+    firstName: "",
+    role: "",
+    email: "",
+    initials: "",
+  });
+
+  useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        const name = parsedUser.name || "";
-        return {
-          fullName: name,
-          firstName: name.split(" ")[0] || "",
-          role: parsedUser.role || "",
-          email: parsedUser.email || "",
-          initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
-        };
-      }
+      if (!storedUser) return;
+      const parsedUser = JSON.parse(storedUser);
+      const name = parsedUser.name || "";
+      setUserData({
+        fullName: name,
+        firstName: name.split(" ")[0] || "",
+        role: parsedUser.role || "",
+        email: parsedUser.email || "",
+        initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
+      });
     } catch {
       // ignore parse errors
     }
-    return { fullName: "", firstName: "", role: "", email: "", initials: "" };
-  }
+  }, []);
 
-  const userData = getUserData();
   const userFullName = userData.fullName;
   const userFirstName = userData.firstName;
   const userRole = userData.role;
@@ -200,7 +207,8 @@ export function Header({ breadcrumbs }: HeaderProps) {
                   <Button
                     type="button"
                     onClick={() => setNotificationsDialogOpen(true)}
-                    className="h-10 w-full rounded-xl bg-brand-primary text-sm font-semibold text-white hover:bg-brand-dark"
+                    variant="brand"
+                    className="w-full"
                   >
                     Ver todas as notificações
                   </Button>

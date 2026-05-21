@@ -4,6 +4,7 @@ import { Controller, type Control, type FieldErrors, type UseFormTrigger } from 
 import { Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useDentists } from "@/lib/queries/dentists";
 import { cn } from "@/lib/utils";
 import { getPersonInitials, type AgendaNewDialogValues } from "./agenda-new-dialog-shared";
@@ -48,12 +49,9 @@ export function AgendaInfoStep({
       </div>
 
       <div>
-        <label
-          className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]"
-          htmlFor="patient-search"
-        >
+        <Label htmlFor="patient-search" className="mb-2">
           Paciente *
-        </label>
+        </Label>
         <div className="relative">
           <Input
             id="patient-search"
@@ -61,7 +59,7 @@ export function AgendaInfoStep({
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Busque por nome, CPF ou celular..."
-            className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-4 pr-10 text-[15px] shadow-none"
+            className="pr-10"
           />
           <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-icon-muted)]" />
         </div>
@@ -116,9 +114,9 @@ export function AgendaInfoStep({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           Profissional *
-        </label>
+        </Label>
         <Controller
           name="dentistId"
           control={control}

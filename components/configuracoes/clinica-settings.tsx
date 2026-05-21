@@ -10,6 +10,8 @@ import { clinicaSchema, type ClinicaFormData } from "@/lib/schemas/clinica-schem
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
     useClinic,
     useUpdateClinic,
@@ -121,7 +123,7 @@ export function ClinicaSettings() {
     const isUploading = uploadLogo.isPending;
 
     return (
-        <div className="bg-white rounded-[14px] border border-border-light shadow-sm p-4 sm:p-6 md:p-8 w-full overflow-hidden">
+        <Card className="p-4 sm:p-6 md:p-8 w-full overflow-hidden gap-0">
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center mb-8 md:mb-10">
                 <div className="flex flex-col items-center gap-3 shrink-0">
                     <div className="w-[80px] h-[80px] md:w-[96px] md:h-[96px] bg-background-card border border-border-light rounded-2xl flex items-center justify-center text-brand-primary shadow-sm overflow-hidden">
@@ -180,59 +182,47 @@ export function ClinicaSettings() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                         {/* Linha 1 */}
                         <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-semibold text-text-secondary">Nome Fantasia</label>
+                            <Label>Nome Fantasia</Label>
                             <Input
                                 type="text"
                                 {...register("nomeFantasia")}
-                                className={cn(
-                                    "h-11 rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all",
-                                    errors.nomeFantasia ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
-                                )}
+                                className={cn(errors.nomeFantasia && "border-danger-text focus-visible:ring-danger-text")}
                             />
                             {errors.nomeFantasia && <span className="text-xs text-danger-text">{errors.nomeFantasia.message}</span>}
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-[13px] font-semibold text-text-secondary">CNPJ</label>
+                            <Label>CNPJ</Label>
                             <Input
                                 type="text"
                                 {...register("cnpj")}
-                                className={cn(
-                                    "h-11 rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all",
-                                    errors.cnpj ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
-                                )}
+                                className={cn(errors.cnpj && "border-danger-text focus-visible:ring-danger-text")}
                             />
                             {errors.cnpj && <span className="text-xs text-danger-text">{errors.cnpj.message}</span>}
                         </div>
 
                         {/* Linha 2 */}
                         <div className="flex flex-col gap-2 relative">
-                            <label className="text-[13px] font-semibold text-text-secondary">Telefone de Contato</label>
+                            <Label>Telefone de Contato</Label>
                             <div className="relative">
                                 <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                                 <Input
                                     type="text"
                                     {...register("telefone")}
-                                    className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
-                                        errors.telefone ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
-                                    )}
+                                    className={cn("pl-10", errors.telefone && "border-danger-text focus-visible:ring-danger-text")}
                                 />
                             </div>
                             {errors.telefone && <span className="text-xs text-danger-text">{errors.telefone.message}</span>}
                         </div>
 
                         <div className="flex flex-col gap-2 relative">
-                            <label className="text-[13px] font-semibold text-text-secondary">Endereço Completo</label>
+                            <Label>Endereço Completo</Label>
                             <div className="relative">
                                 <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                                 <Input
                                     type="text"
                                     {...register("endereco")}
-                                    className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
-                                        errors.endereco ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
-                                    )}
+                                    className={cn("pl-10", errors.endereco && "border-danger-text focus-visible:ring-danger-text")}
                                 />
                             </div>
                             {errors.endereco && <span className="text-xs text-danger-text">{errors.endereco.message}</span>}
@@ -240,32 +230,26 @@ export function ClinicaSettings() {
 
                         {/* Linha 3 */}
                         <div className="flex flex-col gap-2 relative">
-                            <label className="text-[13px] font-semibold text-text-secondary">E-mail Clínico</label>
+                            <Label>E-mail Clínico</Label>
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                                 <Input
                                     type="email"
                                     {...register("email")}
-                                    className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
-                                        errors.email ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
-                                    )}
+                                    className={cn("pl-10", errors.email && "border-danger-text focus-visible:ring-danger-text")}
                                 />
                             </div>
                             {errors.email && <span className="text-xs text-danger-text">{errors.email.message}</span>}
                         </div>
 
                         <div className="flex flex-col gap-2 relative">
-                            <label className="text-[13px] font-semibold text-text-secondary">Website</label>
+                            <Label>Website</Label>
                             <div className="relative">
                                 <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                                 <Input
                                     type="text"
                                     {...register("website")}
-                                    className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
-                                        errors.website ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
-                                    )}
+                                    className={cn("pl-10", errors.website && "border-danger-text focus-visible:ring-danger-text")}
                                 />
                             </div>
                             {errors.website && <span className="text-xs text-danger-text">{errors.website.message}</span>}
@@ -285,14 +269,14 @@ export function ClinicaSettings() {
                         <Button
                             type="submit"
                             disabled={isSaving}
-                            className="h-10 px-6 rounded-lg bg-brand-primary text-white font-semibold text-sm hover:bg-brand-dark shadow-sm"
+                            variant="brand"
                         >
-                            {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                            {isSaving && <Loader2 className="size-4 animate-spin" />}
                             {isSaving ? "Salvando..." : "Salvar Alterações"}
                         </Button>
                     </div>
                 </form>
             )}
-        </div>
+        </Card>
     );
 }

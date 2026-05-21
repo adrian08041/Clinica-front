@@ -11,7 +11,6 @@ import {
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TodayScheduleTable } from "@/components/dashboard/today-schedule-table";
 import { GoalsSection } from "@/components/dashboard/goals-section";
-import { NewRecordCta } from "@/components/dashboard/new-record-cta";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { WeeklyChart } from "@/components/dashboard/weekly-chart";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
@@ -302,14 +301,11 @@ export default function Dashboard() {
             <TodayScheduleTable entries={schedule} />
           )}
 
-          <div className="flex flex-col md:flex-row items-stretch gap-6 md:gap-8 md:h-[204px]">
-            {goalsQuery.isLoading ? (
-              <SkeletonBlock className="h-[204px] flex-1 rounded-xl" />
-            ) : (
-              <GoalsSection title={goalsTitle} goals={goals} />
-            )}
-            <NewRecordCta />
-          </div>
+          {goalsQuery.isLoading ? (
+            <SkeletonBlock className="h-[204px] w-full rounded-xl" />
+          ) : (
+            <GoalsSection title={goalsTitle} goals={goals} />
+          )}
         </div>
 
         <div className="flex flex-col gap-6 md:gap-8 w-full xl:min-w-[380px] xl:w-[380px] shrink-0 min-w-0">

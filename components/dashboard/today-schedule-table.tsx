@@ -1,4 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -13,32 +14,16 @@ import type { ScheduleEntry, ScheduleStatus } from "@/lib/types"
 
 const STATUS_CONFIG: Record<
   ScheduleStatus,
-  { label: string; className: string }
+  { label: string; variant: "success" | "warning" | "danger" }
 > = {
-  confirmed: {
-    label: "Confirmado",
-    className: "bg-success-bg border-success-border text-success-text",
-  },
-  pending: {
-    label: "Pendente",
-    className: "bg-warning-bg border-warning-border text-warning-text",
-  },
-  cancelled: {
-    label: "Cancelado",
-    className: "bg-danger-bg border-danger-border text-danger-text",
-  },
+  confirmed: { label: "Confirmado", variant: "success" },
+  pending: { label: "Pendente", variant: "warning" },
+  cancelled: { label: "Cancelado", variant: "danger" },
 }
 
 function StatusBadge({ status }: { status: ScheduleStatus }) {
   const config = STATUS_CONFIG[status]
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold whitespace-nowrap ${config.className}`}
-    >
-      {config.label}
-    </span>
-  )
+  return <Badge variant={config.variant}>{config.label}</Badge>
 }
 
 function getInitials(name: string) {
@@ -56,7 +41,7 @@ interface TodayScheduleTableProps {
 
 export function TodayScheduleTable({ entries }: TodayScheduleTableProps) {
   return (
-    <Card className="gap-0 p-0 bg-white border-border-light shadow-sm overflow-hidden">
+    <Card className="gap-0 p-0 overflow-hidden">
       <div className="border-b border-border-light h-[77px] px-6 flex items-center justify-between">
         <h3 className="font-semibold text-text-primary text-lg leading-7">
           Agenda de Hoje

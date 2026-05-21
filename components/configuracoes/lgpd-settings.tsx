@@ -3,8 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   Activity,
-  ChevronDown,
-  ChevronUp,
   Eye,
   Lock,
   RefreshCw,
@@ -12,8 +10,17 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AuditLogDetailDialog } from "@/components/configuracoes/audit-log-detail-dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Label } from "@/components/ui/label";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   Select,
@@ -30,9 +37,6 @@ import {
 import { AUDIT_ENTITIES, entityLabel, formatIp } from "@/lib/utils/audit-helpers";
 import { cn } from "@/lib/utils";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Controle de Privacidade (toggles cosméticos — feature visual existente)
-// ─────────────────────────────────────────────────────────────────────────────
 
 type PrivacySetting = {
   id: string;
@@ -118,9 +122,9 @@ function PrivacyControlsSection() {
         {settings.map((setting) => {
           const Icon = getIcon(setting.icon);
           return (
-            <div
+            <Card
               key={setting.id}
-              className="flex flex-col gap-3 rounded-xl border border-border-light bg-background-card p-4 md:flex-row md:items-center md:justify-between"
+              className="gap-3 bg-background-card p-4 md:flex-row md:items-center md:justify-between"
             >
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-text-muted shadow-sm">
@@ -154,7 +158,7 @@ function PrivacyControlsSection() {
                   )}
                 />
               </button>
-            </div>
+            </Card>
           );
         })}
       </div>
@@ -162,9 +166,6 @@ function PrivacyControlsSection() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Logs de Auditoria
-// ─────────────────────────────────────────────────────────────────────────────
 
 const ACTION_LABEL: Record<AuditAction, string> = {
   CREATE: "Criação",
@@ -174,12 +175,12 @@ const ACTION_LABEL: Record<AuditAction, string> = {
   LOGOUT: "Logout",
 };
 
-const ACTION_BADGE: Record<AuditAction, string> = {
-  CREATE: "bg-[var(--color-success-bg)] text-[var(--color-success-strong)]",
-  UPDATE: "bg-[var(--color-surface-warning-soft)] text-[var(--color-warning-strong)]",
-  DELETE: "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]",
-  LOGIN: "bg-[var(--color-brand-teal-surface)] text-[var(--color-brand-teal)]",
-  LOGOUT: "bg-[var(--color-surface-status-neutral)] text-[var(--color-text-disabled)]",
+const ACTION_VARIANT: Record<AuditAction, "success" | "warning" | "danger" | "neutral"> = {
+  CREATE: "success",
+  UPDATE: "warning",
+  DELETE: "danger",
+  LOGIN: "neutral",
+  LOGOUT: "neutral",
 };
 
 const PAGE_SIZE = 25;
@@ -260,7 +261,7 @@ function AuditLogsSection() {
     <div className="flex flex-col gap-5">
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         <div className="flex min-w-0 flex-col gap-2">
-          <label className="text-[13px] font-semibold text-text-secondary">Ação</label>
+          <Label>Ação</Label>
           <Select
             value={action || ALL_SENTINEL}
             onValueChange={(value) =>
@@ -284,9 +285,9 @@ function AuditLogsSection() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-2">
-          <label className="text-[13px] font-semibold text-text-secondary">
+          <Label>
             Entidade
-          </label>
+          </Label>
           <Select
             value={entityClass || ALL_SENTINEL}
             onValueChange={(value) =>
@@ -308,7 +309,7 @@ function AuditLogsSection() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-2">
-          <label className="text-[13px] font-semibold text-text-secondary">De</label>
+          <Label>De</Label>
           <DatePicker
             value={startDate}
             onChange={onChangeFilter<Date | undefined>(setStartDate)}
@@ -317,7 +318,7 @@ function AuditLogsSection() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-2">
-          <label className="text-[13px] font-semibold text-text-secondary">Até</label>
+          <Label>Até</Label>
           <DatePicker
             value={endDate}
             onChange={onChangeFilter<Date | undefined>(setEndDate)}
@@ -396,14 +397,9 @@ function AuditLogsSection() {
                   {log.userName || "—"}
                 </span>
                 <span>
-                  <span
-                    className={cn(
-                      "rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em]",
-                      ACTION_BADGE[log.action],
-                    )}
-                  >
+                  <Badge variant={ACTION_VARIANT[log.action]}>
                     {ACTION_LABEL[log.action]}
-                  </span>
+                  </Badge>
                 </span>
                 <span className="flex min-w-0 flex-col">
                   <span className="truncate text-[13px] font-medium text-text-secondary">
@@ -460,14 +456,9 @@ function AuditLogsSection() {
                       {formatTimestamp(log.timestamp)}
                     </p>
                   </div>
-                  <span
-                    className={cn(
-                      "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em]",
-                      ACTION_BADGE[log.action],
-                    )}
-                  >
+                  <Badge variant={ACTION_VARIANT[log.action]} className="shrink-0">
                     {ACTION_LABEL[log.action]}
-                  </span>
+                  </Badge>
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-2">
                   <div className="min-w-0">
@@ -546,58 +537,50 @@ function AuditLogsSection() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface AccordionSectionProps {
+  value: string;
   title: string;
   description?: string;
   icon: React.ReactNode;
-  defaultOpen?: boolean;
   children: React.ReactNode;
 }
 
 function AccordionSection({
+  value,
   title,
   description,
   icon,
-  defaultOpen = false,
   children,
 }: AccordionSectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
-  const Chevron = open ? ChevronUp : ChevronDown;
-
   return (
-    <section className="overflow-hidden rounded-[14px] border border-border-light bg-white shadow-sm">
-      <button
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition-colors hover:bg-background-card sm:px-6"
-        aria-expanded={open}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary">
-            {icon}
+    <Card asChild className="overflow-hidden gap-0 py-0">
+      <AccordionItem value={value} className="border-b-0">
+        <AccordionTrigger className="px-4 py-4 sm:px-6 rounded-none hover:no-underline hover:bg-background-card [&>svg]:size-5 [&>svg]:text-text-muted">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary">
+              {icon}
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-text-primary">{title}</p>
+              {description ? (
+                <p className="mt-0.5 text-[12px] font-medium text-text-tertiary">
+                  {description}
+                </p>
+              ) : null}
+            </div>
           </div>
-          <div>
-            <p className="text-[15px] font-bold text-text-primary">{title}</p>
-            {description ? (
-              <p className="mt-0.5 text-[12px] font-medium text-text-tertiary">
-                {description}
-              </p>
-            ) : null}
-          </div>
-        </div>
-        <Chevron className="h-5 w-5 shrink-0 text-text-muted" />
-      </button>
-
-      {open ? (
-        <div className="border-t border-border-light px-4 py-5 sm:px-6">{children}</div>
-      ) : null}
-    </section>
+        </AccordionTrigger>
+        <AccordionContent className="border-t border-border-light px-4 py-5 sm:px-6">
+          {children}
+        </AccordionContent>
+      </AccordionItem>
+    </Card>
   );
 }
 
 export function LGPDSettings() {
   return (
     <div className="flex w-full max-w-4xl flex-col gap-4">
-      <div className="rounded-[14px] border border-border-light bg-white p-4 shadow-sm sm:p-6">
+      <Card className="p-4 sm:p-6 gap-0">
         <h2 className="text-[18px] font-bold leading-[28px] text-text-primary">
           LGPD &amp; Auditoria
         </h2>
@@ -605,25 +588,31 @@ export function LGPDSettings() {
           Controles de privacidade e trilha de auditoria do sistema. Acesso
           restrito a administradores.
         </p>
-      </div>
+      </Card>
 
-      <AccordionSection
-        title="Controle de Privacidade"
-        description="Recursos visuais de LGPD"
-        icon={<ShieldCheck className="h-5 w-5" />}
-        defaultOpen={false}
+      <Accordion
+        type="multiple"
+        defaultValue={["audit-logs"]}
+        className="flex flex-col gap-4"
       >
-        <PrivacyControlsSection />
-      </AccordionSection>
+        <AccordionSection
+          value="privacy-controls"
+          title="Controle de Privacidade"
+          description="Recursos visuais de LGPD"
+          icon={<ShieldCheck className="h-5 w-5" />}
+        >
+          <PrivacyControlsSection />
+        </AccordionSection>
 
-      <AccordionSection
-        title="Logs de Auditoria"
-        description="Histórico de criação, atualização, exclusão e acessos"
-        icon={<Activity className="h-5 w-5" />}
-        defaultOpen
-      >
-        <AuditLogsSection />
-      </AccordionSection>
+        <AccordionSection
+          value="audit-logs"
+          title="Logs de Auditoria"
+          description="Histórico de criação, atualização, exclusão e acessos"
+          icon={<Activity className="h-5 w-5" />}
+        >
+          <AuditLogsSection />
+        </AccordionSection>
+      </Accordion>
     </div>
   );
 }

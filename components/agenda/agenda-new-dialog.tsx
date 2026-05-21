@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Stethoscope } from "lucide-react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogDescription, DialogTitle, FlowDialogContent } from "@/components/ui/dialog";
 import { FlowDialogFooter } from "@/components/ui/flow-dialog-footer";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
 import { useDentists } from "@/lib/queries/dentists";
@@ -236,10 +236,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={(next) => (!next ? handleClose() : onOpenChange(true))}>
-      <DialogContent
-        showCloseButton={false}
-        className="flex max-h-[90vh] w-[calc(100vw-24px)] max-w-[760px] flex-col overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]"
-      >
+      <FlowDialogContent className="flex max-h-[90vh] w-[calc(100vw-24px)] max-w-[760px] flex-col">
         <div className="sr-only">
           <DialogTitle>Novo Agendamento</DialogTitle>
           <DialogDescription>
@@ -317,7 +314,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
             totalSteps={AGENDA_NEW_DIALOG_TOTAL_STEPS}
           />
         </form>
-      </DialogContent>
+      </FlowDialogContent>
     </Dialog>
   );
 }

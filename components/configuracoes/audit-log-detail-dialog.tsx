@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -22,12 +23,12 @@ import {
   formatIp,
 } from "@/lib/utils/audit-helpers";
 
-const ACTION_BADGE: Record<AuditAction, string> = {
-  CREATE: "bg-[var(--color-success-bg)] text-[var(--color-success-strong)]",
-  UPDATE: "bg-[var(--color-surface-warning-soft)] text-[var(--color-warning-strong)]",
-  DELETE: "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]",
-  LOGIN: "bg-[var(--color-brand-teal-surface)] text-[var(--color-brand-teal)]",
-  LOGOUT: "bg-[var(--color-surface-status-neutral)] text-[var(--color-text-disabled)]",
+const ACTION_VARIANT: Record<AuditAction, "success" | "warning" | "danger" | "neutral"> = {
+  CREATE: "success",
+  UPDATE: "warning",
+  DELETE: "danger",
+  LOGIN: "neutral",
+  LOGOUT: "neutral",
 };
 
 interface AuditLogDetailDialogProps {
@@ -130,11 +131,9 @@ export function AuditLogDetailDialog({
           <div className="flex flex-wrap items-center gap-3">
             <DialogTitle>Detalhe do log</DialogTitle>
             {log ? (
-              <span
-                className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${ACTION_BADGE[log.action]}`}
-              >
+              <Badge variant={ACTION_VARIANT[log.action]}>
                 {actionLabel(log.action)}
-              </span>
+              </Badge>
             ) : null}
           </div>
           <DialogDescription>

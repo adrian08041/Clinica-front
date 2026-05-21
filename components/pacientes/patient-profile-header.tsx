@@ -4,19 +4,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { Patient } from "@/lib/types"
+import { patientStatusVariant } from "@/components/dashboard/patients/patients-shared"
 
 interface PatientProfileHeaderProps {
   patient: Patient
-}
-
-function getStatusClasses(status?: string) {
-  if (status === "Ativo") {
-    return "bg-success-bg text-success-text border-success-border"
-  }
-  if (status === "Pendente") {
-    return "bg-warning-bg text-warning-text border-warning-border"
-  }
-  return "bg-danger-bg text-danger-text border-danger-border"
 }
 
 function calculateAge(birthDate?: string): string {
@@ -45,7 +36,7 @@ const INFO_FIELDS: { label: string; key: "cpf" | "phone" | "insurance"; fallback
 
 export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
   return (
-    <Card className="bg-white border-border-light shadow-sm p-6 flex flex-col md:flex-row gap-6 md:items-start justify-between">
+    <Card className="p-6 flex flex-col md:flex-row md:items-start justify-between">
       <div className="flex items-start gap-6">
         <div className="relative">
           <Avatar className="!w-[88px] !h-[88px] border-[3px] border-white shadow-sm shrink-0">
@@ -54,9 +45,14 @@ export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
               {patient.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <button className="absolute -bottom-1 -right-1 bg-brand-primary text-white p-2 rounded-full border-[3px] border-white shadow-sm hover:bg-brand-dark transition-colors">
+          <Button
+            variant="brand"
+            size="icon-sm"
+            aria-label="Editar avatar"
+            className="absolute -bottom-1 -right-1 rounded-full border-[3px] border-white shadow-sm"
+          >
             <PencilLine className="size-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-col gap-2 pt-1">
@@ -64,10 +60,7 @@ export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
             <h2 className="text-[22px] font-bold text-text-primary">
               {patient.name}
             </h2>
-            <Badge
-              variant="outline"
-              className={`text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap tracking-wide ${getStatusClasses(patient.status)}`}
-            >
+            <Badge variant={patientStatusVariant(patient.status)}>
               {patient.status || "Ativo"}
             </Badge>
           </div>
@@ -97,8 +90,8 @@ export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
           <MessageCircle className="size-4 mr-2 text-brand-primary" />
           WhatsApp
         </Button>
-        <Button className="bg-brand-dark hover:bg-brand-dark text-white shadow-sm font-semibold rounded-lg h-10 px-4">
-          <PencilLine className="size-4 mr-2" />
+        <Button variant="brand">
+          <PencilLine className="size-4" />
           Editar Perfil
         </Button>
       </div>

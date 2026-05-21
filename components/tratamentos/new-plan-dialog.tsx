@@ -2,9 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { CalendarDays, Check, Clock3, FileText, Plus, Stethoscope, User, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogDescription, DialogTitle, FlowDialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export type ProcedureDraft = {
   id: string;
@@ -96,10 +99,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent
-        className="max-w-[740px] overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]"
-        showCloseButton={false}
-      >
+      <FlowDialogContent className="max-w-[740px] max-h-[90vh] grid-rows-[auto_1fr_auto] gap-0">
         <div className="sr-only">
           <DialogTitle>Novo Plano de Tratamento</DialogTitle>
           <DialogDescription>Formulário em etapas para criar um novo plano de tratamento para o paciente.</DialogDescription>
@@ -144,7 +144,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
           </div>
         </div>
 
-        <div className="bg-white">
+        <div className="bg-white overflow-y-auto">
           {step === 1 ? (
             <div className="space-y-5 px-6 py-7 md:px-8">
               <div>
@@ -153,31 +153,31 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                <Label className="mb-2">
                   Paciente *
-                </label>
+                </Label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                   <Input
                     value={patient}
                     onChange={(e) => setPatient(e.target.value)}
                     placeholder="Selecione o paciente..."
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 text-[15px] shadow-none"
+                    className="pl-11"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                <Label className="mb-2">
                   Nome do Plano de Tratamento *
-                </label>
+                </Label>
                 <div className="relative">
                   <FileText className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                   <Input
                     value={planName}
                     onChange={(e) => setPlanName(e.target.value)}
                     placeholder="Ex: Ortodontia Preventiva, Reabilitação Estética"
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 text-[15px] shadow-none"
+                    className="pl-11"
                   />
                 </div>
 
@@ -201,45 +201,45 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
 
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                  <Label className="mb-2">
                     Data de Início *
-                  </label>
+                  </Label>
                   <div className="relative">
                     <CalendarDays className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                     <Input
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
+                      className="pl-11"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                  <Label className="mb-2">
                     Previsão de Término
-                  </label>
+                  </Label>
                   <div className="relative">
                     <Clock3 className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
                     <Input
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
+                      className="pl-11"
                     />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                <Label className="mb-2">
                   Observações
-                </label>
-                <textarea
+                </Label>
+                <Textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Descreva detalhes importantes sobre o tratamento..."
-                  className="min-h-[110px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
+                  className="min-h-[110px]"
                 />
               </div>
             </div>
@@ -266,34 +266,32 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
 
                   <div className="mt-4 grid gap-4 md:grid-cols-[1.2fr_0.65fr]">
                     <div>
-                      <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                      <Label className="mb-2">
                         Nome do Procedimento
-                      </label>
+                      </Label>
                       <Input
                         value={procedure.name}
                         onChange={(e) => updateProcedure(procedure.id, "name", e.target.value)}
                         placeholder="Ex: Limpeza e Profilaxia"
-                        className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                      <Label className="mb-2">
                         Dente
-                      </label>
+                      </Label>
                       <Input
                         value={procedure.tooth}
                         onChange={(e) => updateProcedure(procedure.id, "tooth", e.target.value)}
                         placeholder="Ex: 11, 21"
-                        className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none"
                       />
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                    <Label className="mb-2">
                       Valor (R$)
-                    </label>
+                    </Label>
                     <Input
                       type="number"
                       min="0"
@@ -301,7 +299,6 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                       value={procedure.value}
                       onChange={(e) => updateProcedure(procedure.id, "value", e.target.value)}
                       placeholder="0,00"
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white text-[15px] shadow-none"
                     />
                   </div>
                 </div>
@@ -333,9 +330,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                     <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Plano de Tratamento</p>
                     <p className="mt-2 text-[18px] font-black text-[var(--color-ink-panel)]">{planName || "-"}</p>
                   </div>
-                  <span className="rounded-full bg-[var(--color-brand-teal)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-white">
-                    Novo
-                  </span>
+                  <Badge variant="brand">Novo</Badge>
                 </div>
 
                 <div className="mt-5 grid gap-5 border-t border-[var(--color-brand-teal-border-pale)] pt-5 md:grid-cols-2">
@@ -386,35 +381,34 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
               </div>
             </div>
           ) : null}
-
-          <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
-            <Button
-              variant="outline"
-              onClick={() => (step === 1 ? close() : setStep((current) => current - 1))}
-              className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
-            >
-              {step === 1 ? "Cancelar" : "Voltar"}
-            </Button>
-
-            <div className="flex items-center gap-2">
-              {[1, 2, 3].map((item) => (
-                <span
-                  key={item}
-                  className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`}
-                />
-              ))}
-            </div>
-
-            <Button
-              onClick={handleNextStep}
-              disabled={step === 1 && isStepOneInvalid}
-              className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-8 text-[15px] font-bold text-white hover:bg-[var(--color-brand-teal-dark)] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {step < 3 ? "Próximo" : "Criar Plano de Tratamento"}
-            </Button>
-          </div>
         </div>
-      </DialogContent>
+
+        <div className="flex flex-col gap-4 border-t border-[var(--color-border-panel-alt)] bg-white px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
+          <Button
+            variant="outline"
+            onClick={() => (step === 1 ? close() : setStep((current) => current - 1))}
+          >
+            {step === 1 ? "Cancelar" : "Voltar"}
+          </Button>
+
+          <div className="flex items-center gap-2">
+            {[1, 2, 3].map((item) => (
+              <span
+                key={item}
+                className={`h-2.5 rounded-full ${item === step ? "w-7 bg-[var(--color-brand-teal)]" : "w-2.5 bg-[var(--color-ring-soft)]"}`}
+              />
+            ))}
+          </div>
+
+          <Button
+            onClick={handleNextStep}
+            disabled={step === 1 && isStepOneInvalid}
+            variant="brand"
+          >
+            {step < 3 ? "Próximo" : "Criar Plano de Tratamento"}
+          </Button>
+        </div>
+      </FlowDialogContent>
     </Dialog>
   );
 }
