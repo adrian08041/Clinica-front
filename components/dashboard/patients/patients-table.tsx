@@ -2,6 +2,7 @@
 
 import { Eye, Loader2, PencilLine, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Patient } from "@/lib/types";
-import { formatCpf, formatDate, patientStatusClassMap } from "./patients-shared";
+import { formatCpf, formatDate, patientStatusVariant } from "./patients-shared";
 
 type PatientsTableProps = {
   deletingPatientId: string | null;
@@ -72,11 +73,6 @@ export function PatientsTable({
             </TableRow>
           ) : (
             patients.map((patient) => {
-              const badgeClass =
-                patient.status && patientStatusClassMap[patient.status]
-                  ? patientStatusClassMap[patient.status]
-                  : "bg-danger-bg text-danger-text";
-
               return (
                 <TableRow
                   key={patient.id}
@@ -95,11 +91,12 @@ export function PatientsTable({
                         <p className="whitespace-nowrap text-[14px] font-semibold text-text-secondary">
                           {patient.name}
                         </p>
-                        <span
-                          className={`mt-1 w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-bold tracking-[0.2px] ${badgeClass}`}
+                        <Badge
+                          variant={patientStatusVariant(patient.status)}
+                          className="mt-1"
                         >
                           {patient.status || "Inativo"}
-                        </span>
+                        </Badge>
                       </div>
                     </div>
                   </TableCell>

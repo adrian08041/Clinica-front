@@ -63,14 +63,6 @@ export const EMPTY_TEAM_FORM: TeamFormState = {
   status: "Ativo",
 };
 
-export function getTeamStatusClasses(status: TeamStatus) {
-  if (status === "Ativo") {
-    return "bg-success-bg text-success-text border-success-border";
-  }
-
-  return "bg-background-hover text-text-tertiary border-border-light";
-}
-
 export function getTeamMemberInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
 

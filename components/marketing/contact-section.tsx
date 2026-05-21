@@ -3,6 +3,11 @@
 import { MapPin, Send } from "lucide-react";
 import { contactCards } from "@/components/marketing/landing-data";
 import { ScrollReveal } from "@/components/marketing/scroll-reveal";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export function ContactSection() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -10,113 +15,108 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contato" className="bg-[var(--color-surface-section)] py-24">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+    <section id="contato" className="bg-background-main py-24">
+      <div className="mx-auto grid max-w-7xl gap-6 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
         <ScrollReveal direction="left">
-          <div className="rounded-[2rem] bg-white p-8 shadow-[0_16px_38px_rgba(var(--shadow-marketing-rgb),0.06)] md:p-10">
-            <h2 className="text-5xl font-black tracking-tight text-[var(--color-ink-strong)]">
+          <Card className="p-6 md:p-8">
+            <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
               Fale Conosco
             </h2>
-            <p className="mt-4 max-w-xl text-lg leading-8 text-[var(--color-text-soft)]">
+            <p className="mt-3 max-w-xl text-base leading-7 text-text-secondary">
               Envie-nos uma mensagem e retornaremos em breve para tirar suas dúvidas
               ou agendar sua visita.
             </p>
-            <form onSubmit={handleSubmit} className="mt-10 space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-ink-strong)]">
-                    Nome Completo
-                  </span>
-                  <input
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Nome Completo</Label>
+                  <Input
+                    id="fullName"
                     type="text"
                     name="fullName"
                     autoComplete="name"
-                    className="mt-3 h-14 w-full rounded-2xl border border-[var(--color-border-panel-muted)] bg-[var(--color-background-card)] px-5 text-base text-[var(--color-ink-strong)] outline-none transition focus:border-[var(--color-brand-teal)]"
                     placeholder="Seu nome"
                   />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-ink-strong)]">
-                    Telefone
-                  </span>
-                  <input
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input
+                    id="phone"
                     type="tel"
                     name="phone"
                     autoComplete="tel"
-                    className="mt-3 h-14 w-full rounded-2xl border border-[var(--color-border-panel-muted)] bg-[var(--color-background-card)] px-5 text-base text-[var(--color-ink-strong)] outline-none transition focus:border-[var(--color-brand-teal)]"
                     placeholder="(11) 99999-9999"
                   />
-                </label>
+                </div>
               </div>
-              <label className="block">
-                <span className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-ink-strong)]">
-                  E-mail
-                </span>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
                   type="email"
                   name="email"
                   autoComplete="email"
-                  className="mt-3 h-14 w-full rounded-2xl border border-[var(--color-border-panel-muted)] bg-[var(--color-background-card)] px-5 text-base text-[var(--color-ink-strong)] outline-none transition focus:border-[var(--color-brand-teal)]"
                   placeholder="exemplo@email.com"
                 />
-              </label>
-              <label className="block">
-                <span className="text-sm font-black uppercase tracking-[0.18em] text-[var(--color-ink-strong)]">
-                  Mensagem
-                </span>
-                <textarea
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Mensagem</Label>
+                <Textarea
+                  id="message"
                   name="message"
                   autoComplete="off"
-                  className="mt-3 min-h-36 w-full rounded-2xl border border-[var(--color-border-panel-muted)] bg-[var(--color-background-card)] px-5 py-4 text-base text-[var(--color-ink-strong)] outline-none transition focus:border-[var(--color-brand-teal)]"
                   placeholder="Como podemos ajudar?"
+                  className="min-h-32"
                 />
-              </label>
-              <button
-                type="submit"
-                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--color-brand-teal)] px-8 py-4 text-lg font-extrabold text-white shadow-[0_14px_34px_var(--color-brand-teal-glow)] transition hover:bg-[var(--color-brand-teal-dark)]"
-              >
-                <Send className="h-5 w-5" />
+              </div>
+              <Button type="submit" variant="brand" size="lg" className="w-full">
+                <Send />
                 Enviar Mensagem
-              </button>
+              </Button>
             </form>
-          </div>
+          </Card>
         </ScrollReveal>
 
         <div className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             {contactCards.map(({ title, lines, icon: Icon }, index) => (
               <ScrollReveal key={title} delay={index * 100} direction="right">
-                <article className="h-full rounded-[2rem] bg-white p-6 shadow-[0_14px_32px_rgba(var(--shadow-marketing-rgb),0.06)] transition hover:-translate-y-1 hover:shadow-[0_18px_34px_rgba(var(--shadow-marketing-rgb),0.10)]">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-brand-teal-surface-strong)] text-[var(--color-brand-teal)]">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="mt-5 text-xl font-extrabold text-[var(--color-ink-strong)]">
-                    {title}
-                  </h3>
-                  <div className="mt-3 space-y-1 text-base leading-7 text-[var(--color-text-soft)]">
-                    {lines.map((line) => (
-                      <p key={line}>{line}</p>
-                    ))}
-                  </div>
-                </article>
+                <Card
+                  asChild
+                  className="h-full p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <article>
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-brand-primary/10">
+                      <Icon className="size-5 text-brand-primary" />
+                    </div>
+                    <h3 className="mt-4 text-base font-bold text-text-primary">
+                      {title}
+                    </h3>
+                    <div className="mt-2 space-y-1 text-sm leading-6 text-text-secondary">
+                      {lines.map((line) => (
+                        <p key={line}>{line}</p>
+                      ))}
+                    </div>
+                  </article>
+                </Card>
               </ScrollReveal>
             ))}
           </div>
 
           <ScrollReveal delay={200} direction="right">
-            <div className="overflow-hidden rounded-[2rem] bg-white p-3 shadow-[0_14px_32px_rgba(var(--shadow-marketing-rgb),0.06)]">
-              <div className="flex h-[300px] items-center justify-center rounded-[1.6rem] border border-[var(--color-border-panel-muted)] marketing-map-bg">
+            <Card className="overflow-hidden p-0">
+              <div className="flex h-[300px] items-center justify-center bg-background-card">
                 <div className="text-center">
-                  <MapPin className="mx-auto h-10 w-10 text-[var(--color-brand-teal)]" />
-                  <p className="mt-4 text-3xl font-black text-[var(--color-ink-strong)]">
+                  <MapPin className="mx-auto size-8 text-brand-primary" />
+                  <p className="mt-3 text-xl font-bold text-text-primary">
                     São Paulo
                   </p>
-                  <p className="mt-2 text-base text-[var(--color-text-soft)]">
+                  <p className="mt-1 text-sm text-text-muted">
                     Mapa ilustrativo da região da clínica
                   </p>
                 </div>
               </div>
-            </div>
+            </Card>
           </ScrollReveal>
         </div>
       </div>

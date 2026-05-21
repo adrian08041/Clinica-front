@@ -3,8 +3,9 @@
 import { Controller, type Control, type FieldErrors, type UseFormRegister } from "react-hook-form";
 import { Phone, ShieldPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { PatientFormData } from "@/lib/schemas/patient-schema";
-import { formatPhoneInput, patientFieldClass } from "./patients-shared";
+import { formatPhoneInput } from "./patients-shared";
 
 type PatientFormStepContactProps = {
   control: Control<PatientFormData>;
@@ -29,9 +30,9 @@ export function PatientFormStepContact({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           Telefone *
-        </label>
+        </Label>
         <div className="relative">
           <Phone className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
           <Controller
@@ -43,7 +44,7 @@ export function PatientFormStepContact({
                 onChange={(event) => field.onChange(formatPhoneInput(event.target.value))}
                 placeholder="(55) 34 99668-8345"
                 inputMode="numeric"
-                className={`${patientFieldClass} pl-11`}
+                className="pl-11"
               />
             )}
           />
@@ -54,15 +55,15 @@ export function PatientFormStepContact({
       </div>
 
       <div>
-        <label className="mb-2 block text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+        <Label className="mb-2">
           Convênio
-        </label>
+        </Label>
         <div className="relative">
           <ShieldPlus className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
           <Input
             {...register("insurance")}
             placeholder="Ex: Unimed, Bradesco, Particular"
-            className={`${patientFieldClass} pl-11`}
+            className="pl-11"
           />
         </div>
       </div>

@@ -81,6 +81,27 @@ function DialogContent({
   )
 }
 
+function FlowDialogContent({
+  className,
+  children,
+  ...props
+}: Omit<React.ComponentProps<typeof DialogPrimitive.Content>, "children"> & {
+  children: React.ReactNode
+}) {
+  return (
+    <DialogContent
+      showCloseButton={false}
+      className={cn(
+        "overflow-hidden rounded-[24px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.22)]",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </DialogContent>
+  )
+}
+
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -155,4 +176,5 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+  FlowDialogContent,
 }

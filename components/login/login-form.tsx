@@ -1,16 +1,17 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, type LoginFormData } from "@/lib/schemas/login-schema";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { api } from "@/lib/api";
 
 interface AuthResponse {
@@ -31,6 +32,7 @@ export function LoginForm() {
     register,
     handleSubmit,
     setError,
+    control,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -92,12 +94,7 @@ export function LoginForm() {
       >
         {/* Email Field */}
         <div className="flex flex-col gap-2 relative">
-          <label
-            htmlFor="email"
-            className="font-semibold text-[#364153] text-[14px] leading-[20px]"
-          >
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
               <Mail className="w-5 h-5 text-gray-400" />
@@ -107,10 +104,7 @@ export function LoginForm() {
               type="email"
               placeholder="seu@email.com"
               {...register("email")}
-              className={cn(
-                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
-                errors.email && "border-red-500 focus-visible:ring-red-500",
-              )}
+              className="pl-11"
               aria-invalid={errors.email ? "true" : "false"}
               aria-describedby={errors.email ? "email-error" : undefined}
             />
@@ -127,12 +121,7 @@ export function LoginForm() {
 
         {/* Password Field */}
         <div className="flex flex-col gap-2 relative">
-          <label
-            htmlFor="password"
-            className="font-semibold text-[#364153] text-[14px] leading-[20px]"
-          >
-            Senha
-          </label>
+          <Label htmlFor="password">Senha</Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
               <Lock className="w-5 h-5 text-gray-400" />
@@ -142,10 +131,7 @@ export function LoginForm() {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               {...register("password")}
-              className={cn(
-                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
-                errors.password && "border-red-500 focus-visible:ring-red-500",
-              )}
+              className="pl-11 pr-10"
               aria-invalid={errors.password ? "true" : "false"}
               aria-describedby={errors.password ? "password-error" : undefined}
             />
@@ -153,7 +139,7 @@ export function LoginForm() {
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute inset-y-0 right-0 h-[54px] w-[54px] flex items-center text-gray-400 hover:text-gray-600 focus:outline-none hover:bg-transparent"
+              className="absolute inset-y-0 right-0 h-9 w-9 text-gray-400 hover:text-gray-600 hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
@@ -176,18 +162,19 @@ export function LoginForm() {
         {/* Remember Me + Forgot Password */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <input
-              id="rememberMe"
-              type="checkbox"
-              {...register("rememberMe")}
-              className="w-5 h-5 rounded border-gray-300 text-[#0d9488] focus:ring-[#0d9488] cursor-pointer"
+            <Controller
+              control={control}
+              name="rememberMe"
+              render={({ field }) => (
+                <Checkbox
+                  id="rememberMe"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  className="size-5 cursor-pointer"
+                />
+              )}
             />
-            <label
-              htmlFor="rememberMe"
-              className="font-medium text-[#4a5565] text-[14px] leading-[20px] cursor-pointer"
-            >
-              Lembrar de mim
-            </label>
+            <Label htmlFor="rememberMe" className="cursor-pointer">Lembrar de mim</Label>
           </div>
           <Link
             href="/esqueci-senha"

@@ -165,12 +165,12 @@ export function PatientDocumentsTab({ patientId }: PatientDocumentsTabProps) {
           type="button"
           onClick={handlePickFile}
           disabled={uploadMutation.isPending}
-          className="bg-brand-primary hover:bg-brand-dark text-white shadow-none font-bold rounded-lg h-[38px] px-5"
+          variant="brand"
         >
           {uploadMutation.isPending ? (
-            <Loader2 className="size-4 mr-2 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : (
-            <Upload className="size-4 mr-2" />
+            <Upload className="size-4" />
           )}
           {uploadMutation.isPending ? "Enviando..." : "Enviar Novo"}
         </Button>

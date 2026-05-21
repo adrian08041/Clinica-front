@@ -125,7 +125,7 @@ export function AgendaDetails({
 
               {/* Action Buttons */}
               <div className="mt-auto space-y-2 lg:space-y-3 border-t border-border-light pt-3 lg:pt-4 shrink-0">
-                <Button className="w-full bg-brand-primary hover:bg-brand-dark text-white font-bold cursor-pointer text-xs lg:text-sm transition-colors">
+                <Button variant="brand" className="w-full">
                   Ver Prontuário
                 </Button>
                 <Button

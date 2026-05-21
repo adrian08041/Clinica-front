@@ -16,8 +16,17 @@ import {
   NewTransactionDialog,
   type NewTransactionPayload as DialogTransactionPayload,
 } from "@/components/financeiro/new-transaction-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   useCreateTransaction,
   useFinanceStats,
@@ -32,10 +41,10 @@ import {
 } from "@/lib/queries/finance";
 import { formatDatePtBr } from "@/lib/utils/date";
 
-function statusClass(status: FinanceStatus) {
-  if (status === "Pago") return "bg-[var(--color-success-bg)] text-[var(--color-success-strong)]";
-  if (status === "Atrasado") return "bg-[var(--color-danger-soft)] text-[var(--color-danger-action)]";
-  return "bg-[var(--color-surface-warning-soft)] text-[var(--color-warning-strong)]";
+function statusVariant(status: FinanceStatus): "success" | "warning" | "danger" {
+  if (status === "Pago") return "success";
+  if (status === "Atrasado") return "danger";
+  return "warning";
 }
 
 function formatCurrency(value: number) {
@@ -104,7 +113,7 @@ function StatCard({
   badgeColor?: string;
 }) {
   return (
-    <div className="rounded-[24px] border border-[var(--color-border-panel)] bg-white p-6 shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)]">
+    <Card className="p-6 gap-0">
       <div className="flex items-start justify-between gap-4">
         <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[var(--color-brand-teal-surface)] text-[var(--color-brand-teal)]">
           {icon}
@@ -113,7 +122,7 @@ function StatCard({
       </div>
       <p className="mt-5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">{title}</p>
       <p className="mt-2 text-[22px] font-bold text-[var(--color-ink-panel)]">{value}</p>
-    </div>
+    </Card>
   );
 }
 
@@ -260,18 +269,15 @@ export function FinanceContent() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button
-              variant="outline"
-              className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
-            >
-              <Download className="mr-2 h-4 w-4" />
+            <Button variant="outline">
+              <Download className="size-4" />
               Relatórios
             </Button>
             <Button
               onClick={() => setDialogOpen(true)}
-              className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white shadow-[0_12px_24px_var(--color-brand-teal-glow)] hover:bg-[var(--color-brand-teal-dark)]"
+              variant="brand"
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="size-4" />
               Nova Transação
             </Button>
           </div>
@@ -310,15 +316,21 @@ export function FinanceContent() {
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1.45fr_0.7fr]">
-          <section className="rounded-[28px] border border-[var(--color-border-panel)] bg-white p-6 shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)] md:p-8">
+          <Card asChild className="p-6 md:p-8 gap-0">
+            <section>
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <h2 className="text-[18px] font-bold text-[var(--color-ink-panel)]">Faturamento</h2>
                 <p className="mt-2 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Evolução mensal nos últimos 6 meses.</p>
               </div>
-              <select className="h-10 rounded-[14px] border border-[var(--color-border-soft)] bg-white px-4 text-[14px] font-bold text-[var(--color-ink-panel)] outline-none">
-                <option>Últimos 6 meses</option>
-              </select>
+              <Select defaultValue="6m">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="6m">Últimos 6 meses</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="mt-8 overflow-x-auto">
@@ -373,9 +385,11 @@ export function FinanceContent() {
                 </svg>
               </div>
             </div>
-          </section>
+            </section>
+          </Card>
 
-          <section className="rounded-[28px] border border-[var(--color-border-panel)] bg-white p-6 shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)] md:p-8">
+          <Card asChild className="p-6 md:p-8 gap-0">
+            <section>
             <h2 className="text-[18px] font-black text-[var(--color-ink-panel)]">Métodos de Pagamento</h2>
             <p className="mt-2 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Distribuição por volume de transação.</p>
 
@@ -403,26 +417,32 @@ export function FinanceContent() {
                 ))
               )}
             </div>
-          </section>
+            </section>
+          </Card>
         </div>
 
-        <section className="overflow-hidden rounded-[28px] border border-[var(--color-border-panel)] bg-white shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)]">
+        <Card asChild className="overflow-hidden gap-0 py-0">
+          <section>
           <div className="flex flex-col gap-4 border-b border-[var(--color-border-panel-alt)] px-6 py-6 md:flex-row md:items-start md:justify-between md:px-8">
             <div>
               <h2 className="text-[18px] font-bold text-[var(--color-ink-panel)]">Contas a Receber</h2>
               <p className="mt-2 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Listagem de faturas pendentes e pagas recentemente.</p>
             </div>
             <div className="flex gap-3">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as FinanceStatus | "")}
-                className="h-10 rounded-[14px] border border-[var(--color-border-soft)] bg-white px-3 text-[14px] font-bold text-[var(--color-ink-panel)] outline-none"
+              <Select
+                value={statusFilter || "all"}
+                onValueChange={(v) => setStatusFilter(v === "all" ? "" : (v as FinanceStatus))}
               >
-                <option value="">Todos</option>
-                <option value="Pendente">Pendente</option>
-                <option value="Pago">Pago</option>
-                <option value="Atrasado">Atrasado</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="Pendente">Pendente</SelectItem>
+                  <SelectItem value="Pago">Pago</SelectItem>
+                  <SelectItem value="Atrasado">Atrasado</SelectItem>
+                </SelectContent>
+              </Select>
               <Button
                 variant="outline"
                 size="icon"
@@ -459,7 +479,7 @@ export function FinanceContent() {
                   <span className="text-[15px] font-bold text-[var(--color-ink-panel)]">{formatCurrency(item.value)}</span>
                   <span className="text-[15px] font-semibold text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</span>
                   <span>
-                    <span className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${statusClass(item.status)}`}>{item.status}</span>
+                    <Badge variant={statusVariant(item.status)}>{item.status}</Badge>
                   </span>
                   <span className="text-right">
                     <Button
@@ -484,13 +504,13 @@ export function FinanceContent() {
               <p className="text-[15px] font-medium text-[var(--color-text-panel-soft)]">Nenhuma transação encontrada.</p>
             ) : (
               receivables.map((item) => (
-                <div key={item.id} className="rounded-[20px] border border-[var(--color-border-section)] p-5">
+                <Card key={item.id} className="p-5 gap-0">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[16px] font-semibold text-[var(--color-ink-panel)]">{item.patientName}</p>
                       <p className="mt-1 text-[14px] font-medium text-[var(--color-text-panel)]">{item.description}</p>
                     </div>
-                    <span className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase ${statusClass(item.status)}`}>{item.status}</span>
+                    <Badge variant={statusVariant(item.status)}>{item.status}</Badge>
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-4 text-[14px]">
                     <div>
@@ -513,11 +533,12 @@ export function FinanceContent() {
                       Avançar status
                     </Button>
                   </div>
-                </div>
+                </Card>
               ))
             )}
           </div>
-        </section>
+          </section>
+        </Card>
       </div>
 
       <NewTransactionDialog

@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import { CircleDot, Clock3, MoreVertical, Plus, Search, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
 import { NewPlanDialog, type ProcedureDraft } from "@/components/tratamentos/new-plan-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
@@ -22,24 +24,18 @@ const currency = (value: number) =>
 
 function MiniStat({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="rounded-[20px] border border-[var(--color-border-section)] bg-white p-5 shadow-[0_4px_14px_rgba(15,39,76,0.03)]">
+    <Card className="p-5 gap-0">
       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">{label}</p>
       <p className={`mt-2 text-[18px] font-bold ${color ?? "text-[var(--color-ink-panel)]"}`}>{value}</p>
-    </div>
+    </Card>
   );
 }
 
 function StatusBadge({ paid }: { paid: boolean }) {
   return (
-    <span
-      className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${
-        paid
-          ? "bg-[var(--color-success-bg)] text-[var(--color-success-strong)]"
-          : "bg-[var(--color-surface-status-neutral)] text-[var(--color-text-disabled)]"
-      }`}
-    >
+    <Badge variant={paid ? "success" : "neutral"}>
       {paid ? "Pago" : "Pendente"}
-    </span>
+    </Badge>
   );
 }
 
@@ -149,9 +145,9 @@ export function TreatmentsContent() {
           </div>
           <Button
             onClick={() => setDialogOpen(true)}
-            className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white shadow-[0_12px_24px_var(--color-brand-teal-glow)] hover:bg-[var(--color-brand-teal-dark)]"
+            variant="brand"
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="size-4" />
             Novo Plano
           </Button>
         </div>
@@ -164,17 +160,17 @@ export function TreatmentsContent() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar paciente ou tratamento..."
-                className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-white pl-11 text-[15px] shadow-none"
+                className="pl-11"
               />
             </div>
 
             <div className="mt-5 space-y-4">
               {isListLoading ? (
-                <div className="rounded-[22px] border border-dashed border-[var(--color-border-section)] bg-white p-8 text-center text-[14px] font-medium text-[var(--color-text-caption)]">
+                <div className="rounded-xl border border-dashed bg-card p-8 text-center text-[14px] font-medium text-[var(--color-text-caption)]">
                   Carregando planos...
                 </div>
               ) : plans.length === 0 ? (
-                <div className="rounded-[22px] border border-dashed border-[var(--color-border-section)] bg-white p-8 text-center text-[14px] font-medium text-[var(--color-text-caption)]">
+                <div className="rounded-xl border border-dashed bg-card p-8 text-center text-[14px] font-medium text-[var(--color-text-caption)]">
                   Nenhum plano encontrado.
                 </div>
               ) : (
@@ -187,15 +183,18 @@ export function TreatmentsContent() {
                   const patientLabel = plan.patientName ?? "Paciente não informado";
 
                   return (
-                    <button
+                    <Card
                       key={plan.id}
-                      type="button"
-                      onClick={() => setSelectedId(plan.id)}
-                      className={`w-full rounded-[22px] border p-5 text-left shadow-[0_6px_18px_rgba(var(--shadow-panel-rgb),0.04)] ${
+                      asChild
+                      className={`w-full p-5 gap-0 text-left ${
                         selected
                           ? "border-[var(--color-brand-teal-border)] bg-[var(--color-surface-panel-tint)]"
-                          : "border-[var(--color-border-section)] bg-white"
+                          : ""
                       }`}
+                    >
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(plan.id)}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-4">
@@ -227,6 +226,7 @@ export function TreatmentsContent() {
                         <span>Criado em {formatDatePtBr(plan.createdAt)}</span>
                       </div>
                     </button>
+                    </Card>
                   );
                 })
               )}
@@ -234,7 +234,8 @@ export function TreatmentsContent() {
           </section>
 
           {selectedPlan ? (
-            <section className="overflow-hidden rounded-[30px] border border-[var(--color-border-panel)] bg-white shadow-[0_8px_24px_rgba(var(--shadow-panel-rgb),0.06)]">
+            <Card asChild className="overflow-hidden gap-0 py-0">
+              <section>
               <div className="border-b border-[var(--color-border-panel-alt)] px-6 py-6 md:px-8">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
@@ -343,22 +344,20 @@ export function TreatmentsContent() {
                   Atualizado em {formatDatePtBr(selectedPlan.createdAt)}
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-                  <Button
-                    variant="outline"
-                    className="h-11 rounded-[16px] border-[var(--color-border-soft)] px-6 text-[15px] font-bold text-[var(--color-text-panel)]"
-                  >
+                  <Button variant="outline">
                     Imprimir
                   </Button>
                   <Button
                     onClick={() => void handleApproveStep()}
                     disabled={approveStep.isPending || hasNoPendingStep}
-                    className="h-11 rounded-[16px] bg-[var(--color-brand-teal)] px-6 text-[15px] font-bold text-white hover:bg-[var(--color-brand-teal-dark)] disabled:cursor-not-allowed disabled:opacity-60"
+                    variant="brand"
                   >
                     {approveStep.isPending ? "Aprovando..." : "Aprovar Etapa"}
                   </Button>
                 </div>
               </div>
-            </section>
+              </section>
+            </Card>
           ) : null}
         </div>
       </div>

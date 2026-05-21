@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
 
 export function ResetPasswordForm() {
@@ -95,12 +96,7 @@ export function ResetPasswordForm() {
             >
                 {/* Password Field */}
                 <div className="flex flex-col gap-2 relative">
-                    <label
-                        htmlFor="password"
-                        className="font-semibold text-[var(--color-text-secondary)] text-[14px] leading-[20px]"
-                    >
-                        Nova senha
-                    </label>
+                    <Label htmlFor="password">Nova senha</Label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                             <Lock className="w-5 h-5 text-gray-400" />
@@ -110,16 +106,13 @@ export function ResetPasswordForm() {
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
                             {...register("password")}
-                            className={cn(
-                                "bg-[var(--color-background-card)] border border-[var(--color-border-light)] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
-                                errors.password && "border-red-500 focus-visible:ring-red-500"
-                            )}
+                            className={cn("pl-11 pr-10", errors.password && "border-red-500 focus-visible:ring-red-500")}
                         />
                         <Button
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute inset-y-0 right-0 h-[54px] w-[54px] flex items-center text-gray-400 hover:text-gray-600 focus:outline-none hover:bg-transparent"
+                            className="absolute inset-y-0 right-0 h-9 w-9 text-gray-400 hover:text-gray-600 hover:bg-transparent"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -134,12 +127,7 @@ export function ResetPasswordForm() {
 
                 {/* Confirm Password Field */}
                 <div className="flex flex-col gap-2 relative">
-                    <label
-                        htmlFor="confirmPassword"
-                        className="font-semibold text-[var(--color-text-secondary)] text-[14px] leading-[20px]"
-                    >
-                        Confirme a nova senha
-                    </label>
+                    <Label htmlFor="confirmPassword">Confirme a nova senha</Label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                             <Lock className="w-5 h-5 text-gray-400" />
@@ -149,16 +137,13 @@ export function ResetPasswordForm() {
                             type={showConfirmPassword ? "text" : "password"}
                             placeholder="••••••••"
                             {...register("confirmPassword")}
-                            className={cn(
-                                "bg-[var(--color-background-card)] border border-[var(--color-border-light)] rounded-xl h-[54px] w-full pl-11 pr-12 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
-                                errors.confirmPassword && "border-red-500 focus-visible:ring-red-500"
-                            )}
+                            className={cn("pl-11 pr-10", errors.confirmPassword && "border-red-500 focus-visible:ring-red-500")}
                         />
                         <Button
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute inset-y-0 right-0 h-[54px] w-[54px] flex items-center text-gray-400 hover:text-gray-600 focus:outline-none hover:bg-transparent"
+                            className="absolute inset-y-0 right-0 h-9 w-9 text-gray-400 hover:text-gray-600 hover:bg-transparent"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                             {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

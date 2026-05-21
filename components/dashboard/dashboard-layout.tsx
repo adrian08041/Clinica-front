@@ -29,7 +29,7 @@ export function DashboardLayout({ children, breadcrumbs }: { children: React.Rea
     }, [router]);
 
     return (
-        <div className="flex h-screen w-full bg-background-card text-text-primary font-sans overflow-hidden">
+        <div className="flex h-screen w-full bg-background-card text-text-primary overflow-hidden">
             {/* Overlay for mobile */}
             {isSidebarOpen && (
                 <div

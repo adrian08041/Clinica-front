@@ -51,7 +51,7 @@ interface GoalsSectionProps {
 
 export function GoalsSection({ title, goals }: GoalsSectionProps) {
   return (
-    <Card className="gap-4 p-6 md:p-8 bg-white border-border-light shadow-sm flex-1">
+    <Card className="gap-4 p-6 md:p-8 flex-1">
       <CardHeader className="p-0">
         <CardTitle className="text-text-primary text-lg leading-7">
           {title}

@@ -1,11 +1,12 @@
 "use client";
 
 import { UserRound } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogTitle,
+  FlowDialogContent,
 } from "@/components/ui/dialog";
 import { FlowDialogFooter } from "@/components/ui/flow-dialog-footer";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
@@ -14,6 +15,8 @@ import type { PatientFormData } from "@/lib/schemas/patient-schema";
 import { PatientFormStepBasic } from "./patient-form-step-basic";
 import { PatientFormStepContact } from "./patient-form-step-contact";
 import { PATIENT_DIALOG_STEPS } from "./patients-shared";
+
+type PatientBadgeVariant = "success" | "warning" | "danger" | "brand";
 
 type PatientDialogProps = {
   control: Control<PatientFormData>;
@@ -30,7 +33,7 @@ type PatientDialogProps = {
   onPrimaryAction: () => void;
   phone?: string;
   register: UseFormRegister<PatientFormData>;
-  reviewBadgeClass: string;
+  reviewBadgeVariant: PatientBadgeVariant;
   step: number;
   title: string;
 };
@@ -50,7 +53,7 @@ export function PatientDialog({
   onPrimaryAction,
   phone,
   register,
-  reviewBadgeClass,
+  reviewBadgeVariant,
   step,
   title,
 }: PatientDialogProps) {
@@ -58,10 +61,7 @@ export function PatientDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="flex max-h-[90vh] w-[calc(100vw-24px)] max-w-[760px] flex-col overflow-hidden rounded-[26px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.28)]"
-      >
+      <FlowDialogContent className="flex max-h-[90vh] w-[calc(100vw-24px)] max-w-[760px] flex-col">
         <div className="sr-only">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
@@ -113,13 +113,12 @@ export function PatientDialog({
                       </p>
                     </div>
 
-                    <span
-                      className={`rounded-full px-4 py-2 text-[12px] font-black ${
-                        isEditing ? reviewBadgeClass : "bg-[var(--color-brand-teal)] text-white"
-                      }`}
+                    <Badge
+                      variant={isEditing ? reviewBadgeVariant : "brand"}
+                      className="px-4 py-2 text-[12px] font-black"
                     >
                       {isEditing ? "Atualização" : "Novo Cadastro"}
-                    </span>
+                    </Badge>
                   </div>
 
                   <div className="grid gap-5 pt-5 sm:grid-cols-2">
@@ -165,7 +164,7 @@ export function PatientDialog({
             totalSteps={3}
           />
         </form>
-      </DialogContent>
+      </FlowDialogContent>
     </Dialog>
   );
 }

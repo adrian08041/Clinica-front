@@ -1,4 +1,5 @@
 import { TrendingUp, type LucideIcon } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 
 interface StatCardProps {
@@ -20,7 +21,7 @@ export function StatCard({
   trend,
 }: StatCardProps) {
   return (
-    <Card className="group relative overflow-hidden border-border-light bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+    <Card className="group relative overflow-hidden p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-3">
           <p className="text-sm font-medium leading-5 text-text-tertiary">
@@ -44,12 +45,10 @@ export function StatCard({
 
       {trend && (
         <div className="mt-4 flex items-center gap-2 border-t border-border-light pt-4">
-          <div className="flex items-center gap-1 rounded-full bg-success-bg px-2 py-0.5">
-            <TrendingUp className="size-3 text-success-text" />
-            <span className="text-xs font-semibold leading-4 text-success-text">
-              {trend.value}
-            </span>
-          </div>
+          <Badge variant="success">
+            <TrendingUp />
+            {trend.value}
+          </Badge>
           <span className="text-xs leading-4 text-text-muted">
             {trend.label}
           </span>

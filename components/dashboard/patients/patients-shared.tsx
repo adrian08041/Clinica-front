@@ -2,13 +2,13 @@ export const PHONE_PREFIX = "(55) ";
 
 export const PATIENT_DIALOG_STEPS = ["Identificação", "Contato", "Revisão"];
 
-export const patientFieldClass =
-  "h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] text-[15px] shadow-none";
-
-export const patientStatusClassMap: Record<string, string> = {
-  Ativo: "bg-success-bg text-success-text",
-  Pendente: "bg-warning-bg text-warning-text",
-};
+export function patientStatusVariant(
+  status?: string,
+): "success" | "warning" | "danger" {
+  if (status === "Ativo") return "success";
+  if (status === "Pendente") return "warning";
+  return "danger";
+}
 
 export function formatCpf(cpf: string) {
   const digits = cpf.replace(/\D/g, "");

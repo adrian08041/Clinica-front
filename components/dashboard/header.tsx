@@ -40,7 +40,24 @@ type TimeState = {
   today: string;
 };
 
+type UserData = {
+  fullName: string;
+  firstName: string;
+  role: string;
+  email: string;
+  initials: string;
+};
+
+const EMPTY_USER: UserData = {
+  fullName: "",
+  firstName: "",
+  role: "",
+  email: "",
+  initials: "",
+};
+
 let cachedTimeSnapshot: TimeState | null = null;
+let cachedUserSnapshot: UserData | null = null;
 
 function computeTimeState(): TimeState {
   const now = new Date();
@@ -73,6 +90,32 @@ const getTimeSnapshot = (): TimeState => {
 };
 const getTimeServerSnapshot = (): TimeState | null => null;
 
+function readUserFromStorage(): UserData {
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return EMPTY_USER;
+    const parsedUser = JSON.parse(storedUser);
+    const name = parsedUser.name || "";
+    return {
+      fullName: name,
+      firstName: name.split(" ")[0] || "",
+      role: parsedUser.role || "",
+      email: parsedUser.email || "",
+      initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
+    };
+  } catch {
+    return EMPTY_USER;
+  }
+}
+
+const getUserSnapshot = (): UserData => {
+  if (cachedUserSnapshot === null) {
+    cachedUserSnapshot = readUserFromStorage();
+  }
+  return cachedUserSnapshot;
+};
+const getUserServerSnapshot = (): UserData => EMPTY_USER;
+
 export function Header({ breadcrumbs }: HeaderProps) {
   const router = useRouter();
   const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
@@ -80,27 +123,10 @@ export function Header({ breadcrumbs }: HeaderProps) {
   const alerts = useMemo(() => mapApiAlerts(alertsQuery.data), [alertsQuery.data]);
   const hasAlerts = alerts.length > 0;
 
-  function getUserData() {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        const name = parsedUser.name || "";
-        return {
-          fullName: name,
-          firstName: name.split(" ")[0] || "",
-          role: parsedUser.role || "",
-          email: parsedUser.email || "",
-          initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
-        };
-      }
-    } catch {
-      // ignore parse errors
-    }
-    return { fullName: "", firstName: "", role: "", email: "", initials: "" };
-  }
+  // userData lido do localStorage via useSyncExternalStore — servidor retorna
+  // EMPTY_USER, cliente lê após hidratação. Mesmo padrão usado pra timeState.
+  const userData = useSyncExternalStore(subscribeNoop, getUserSnapshot, getUserServerSnapshot);
 
-  const userData = getUserData();
   const userFullName = userData.fullName;
   const userFirstName = userData.firstName;
   const userRole = userData.role;
@@ -200,7 +226,8 @@ export function Header({ breadcrumbs }: HeaderProps) {
                   <Button
                     type="button"
                     onClick={() => setNotificationsDialogOpen(true)}
-                    className="h-10 w-full rounded-xl bg-brand-primary text-sm font-semibold text-white hover:bg-brand-dark"
+                    variant="brand"
+                    className="w-full"
                   >
                     Ver todas as notificações
                   </Button>

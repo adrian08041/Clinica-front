@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { api } from "@/lib/api";
 
 export function ForgotPasswordForm() {
@@ -92,12 +93,7 @@ export function ForgotPasswordForm() {
       >
         {/* Email Field */}
         <div className="flex flex-col gap-2 relative">
-          <label
-            htmlFor="email"
-            className="font-semibold text-[#364153] text-[14px] leading-[20px]"
-          >
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
               <Mail className="w-5 h-5 text-gray-400" />
@@ -107,10 +103,7 @@ export function ForgotPasswordForm() {
               type="email"
               placeholder="seu@email.com"
               {...register("email")}
-              className={cn(
-                "bg-[#f9fafb] border border-[#e5e7eb] rounded-xl h-[54px] w-full pl-11 pr-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-0 focus-visible:border-transparent transition-all",
-                errors.email && "border-red-500 focus-visible:ring-red-500",
-              )}
+              className={cn("pl-11", errors.email && "border-red-500 focus-visible:ring-red-500")}
               aria-invalid={errors.email ? "true" : "false"}
               aria-describedby={errors.email ? "email-error" : undefined}
             />

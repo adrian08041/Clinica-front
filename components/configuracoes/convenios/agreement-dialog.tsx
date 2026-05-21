@@ -2,11 +2,12 @@
 
 import { Loader2, ShieldPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogTitle,
+  FlowDialogContent,
 } from "@/components/ui/dialog";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
 import { Input } from "@/components/ui/input";
@@ -46,10 +47,7 @@ export function AgreementDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="max-w-[820px] overflow-hidden rounded-[24px] border-none p-0 shadow-[0_30px_80px_rgba(var(--shadow-panel-rgb),0.22)]"
-        showCloseButton={false}
-      >
+      <FlowDialogContent className="max-w-[820px]">
         <div className="sr-only">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
@@ -67,33 +65,31 @@ export function AgreementDialog({
         <div className="space-y-6 bg-white px-6 py-8 md:px-8">
           <div className="grid gap-5 md:grid-cols-2">
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Nome do convênio
-              </label>
+              </Label>
               <Input
                 value={form.name}
                 onChange={(event) => onFormChange({ ...form, name: event.target.value })}
                 placeholder="Ex: Unimed Odonto"
-                className="h-12 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Código interno
-              </label>
+              </Label>
               <Input
                 value={form.code}
                 onChange={(event) =>
                   onFormChange({ ...form, code: event.target.value.toUpperCase() })
                 }
                 placeholder="Ex: UNI-001"
-                className="h-12 rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium"
               />
             </div>
 
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">Tipo</label>
+              <Label>Tipo</Label>
               <Select
                 value={form.type}
                 onValueChange={(value) => onFormChange({ ...form, type: value as AgreementType })}
@@ -111,7 +107,7 @@ export function AgreementDialog({
             </div>
 
             <div className="flex min-w-0 flex-col gap-2">
-              <label className="text-[13px] font-semibold text-text-secondary">Status</label>
+              <Label>Status</Label>
               <Select
                 value={form.status}
                 onValueChange={(value) =>
@@ -130,9 +126,9 @@ export function AgreementDialog({
             </div>
 
             <div className="flex min-w-0 flex-col gap-2 md:col-span-2">
-              <label className="text-[13px] font-semibold text-text-secondary">
+              <Label>
                 Desconto (%)
-              </label>
+              </Label>
               <Select
                 value={form.discount}
                 onValueChange={(value) => onFormChange({ ...form, discount: value })}
@@ -166,14 +162,14 @@ export function AgreementDialog({
             <Button
               onClick={onSave}
               disabled={isSaving}
-              className="h-10 rounded-lg bg-brand-primary px-6 text-sm font-semibold text-white hover:bg-brand-dark"
+              variant="brand"
             >
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSaving && <Loader2 className="size-4 animate-spin" />}
               {editingAgreementId ? "Salvar alterações" : "Salvar convênio"}
             </Button>
           </div>
         </div>
-      </DialogContent>
+      </FlowDialogContent>
     </Dialog>
   );
 }

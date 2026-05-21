@@ -16,7 +16,7 @@ interface PatientFinancialTabProps {
 
 export function PatientFinancialTab({ records }: PatientFinancialTabProps) {
   return (
-    <Card className="bg-white border-border-light shadow-sm overflow-x-auto p-0">
+    <Card className="overflow-x-auto p-0">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent border-border-light">
@@ -55,14 +55,7 @@ export function PatientFinancialTab({ records }: PatientFinancialTabProps) {
                 {record.value}
               </TableCell>
               <TableCell className="py-5">
-                <Badge
-                  variant="secondary"
-                  className={`text-xs font-bold px-3 py-1 rounded-full ${
-                    record.status === "paid"
-                      ? "bg-success-bg text-success-text"
-                      : "bg-warning-bg text-warning-text"
-                  }`}
-                >
+                <Badge variant={record.status === "paid" ? "success" : "warning"}>
                   {record.status === "paid" ? "Pago" : "Pendente"}
                 </Badge>
               </TableCell>
