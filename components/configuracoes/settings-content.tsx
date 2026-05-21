@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { Building2, Users, Clock, FileText, Link as LinkIcon, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isAdmin } from "@/lib/utils/auth";
+
+const subscribeNoop = () => () => {};
+const getIsAdminSnapshot = () => isAdmin();
+const getIsAdminServerSnapshot = () => false;
 import { ClinicaSettings } from "@/components/configuracoes/clinica-settings";
 import { EquipeSettings } from "@/components/configuracoes/equipe-settings";
 import { HorariosSettings } from "@/components/configuracoes/horarios-settings";
@@ -22,11 +26,7 @@ const ALL_MENU_ITEMS = [
 
 export function SettingsContent() {
     const [activeTab, setActiveTab] = useState("clinica");
-    const [admin, setAdmin] = useState(false);
-
-    useEffect(() => {
-        setAdmin(isAdmin());
-    }, []);
+    const admin = useSyncExternalStore(subscribeNoop, getIsAdminSnapshot, getIsAdminServerSnapshot);
 
     const menuItems = useMemo(
         () => ALL_MENU_ITEMS.filter((item) => admin || !item.adminOnly),

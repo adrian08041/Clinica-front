@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -32,6 +32,46 @@ import {
 interface HeaderProps {
   breadcrumbs?: string[];
 }
+
+type TimeState = {
+  greeting: string;
+  Icon: LucideIcon;
+  iconClass: string;
+  today: string;
+};
+
+let cachedTimeSnapshot: TimeState | null = null;
+
+function computeTimeState(): TimeState {
+  const now = new Date();
+  const hour = now.getHours();
+
+  let greeting = "Bom dia";
+  let Icon: LucideIcon = Sunrise;
+  let iconClass = "text-warning-accent";
+  if (hour >= 12 && hour < 18) {
+    greeting = "Boa tarde";
+    Icon = Sun;
+  } else if (hour >= 18 || hour < 5) {
+    greeting = "Boa noite";
+    Icon = Moon;
+    iconClass = "text-brand-primary";
+  }
+
+  const weekday = now.toLocaleDateString("pt-BR", { weekday: "long" });
+  const today = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} • ${now.toLocaleDateString("pt-BR")}`;
+
+  return { greeting, Icon, iconClass, today };
+}
+
+const subscribeNoop = () => () => {};
+const getTimeSnapshot = (): TimeState => {
+  if (cachedTimeSnapshot === null) {
+    cachedTimeSnapshot = computeTimeState();
+  }
+  return cachedTimeSnapshot;
+};
+const getTimeServerSnapshot = (): TimeState | null => null;
 
 export function Header({ breadcrumbs }: HeaderProps) {
   const router = useRouter();
@@ -67,36 +107,9 @@ export function Header({ breadcrumbs }: HeaderProps) {
   const userEmail = userData.email;
   const userInitials = userData.initials;
 
-  // Greeting/data dependem da hora local — calculados só após mount pra evitar
+  // Greeting/data dependem da hora local — só disponível após hidratação pra evitar
   // hydration mismatch (servidor pode estar em fuso diferente do cliente).
-  const [timeState, setTimeState] = useState<{
-    greeting: string;
-    Icon: LucideIcon;
-    iconClass: string;
-    today: string;
-  } | null>(null);
-
-  useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-
-    let greeting = "Bom dia";
-    let Icon: LucideIcon = Sunrise;
-    let iconClass = "text-warning-accent";
-    if (hour >= 12 && hour < 18) {
-      greeting = "Boa tarde";
-      Icon = Sun;
-    } else if (hour >= 18 || hour < 5) {
-      greeting = "Boa noite";
-      Icon = Moon;
-      iconClass = "text-brand-primary";
-    }
-
-    const weekday = now.toLocaleDateString("pt-BR", { weekday: "long" });
-    const today = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} • ${now.toLocaleDateString("pt-BR")}`;
-
-    setTimeState({ greeting, Icon, iconClass, today });
-  }, []);
+  const timeState = useSyncExternalStore(subscribeNoop, getTimeSnapshot, getTimeServerSnapshot);
 
   return (
     <>
