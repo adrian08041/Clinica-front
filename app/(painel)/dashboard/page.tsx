@@ -14,6 +14,7 @@ import { GoalsSection } from "@/components/dashboard/goals-section";
 import { NewRecordCta } from "@/components/dashboard/new-record-cta";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { WeeklyChart } from "@/components/dashboard/weekly-chart";
+import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   mapApiAlerts,
   useAlerts,
@@ -252,8 +253,30 @@ export default function Dashboard() {
 
   const goalsTitle = `Metas de ${MONTH_NAMES[new Date().getMonth()]}`;
 
+  const dashboardQueries = [
+    summaryQuery,
+    agendaQuery,
+    goalsQuery,
+    alertsQuery,
+    chartQuery,
+  ];
+  const hasError = dashboardQueries.some((q) => q.isError);
+  const firstError = dashboardQueries.find((q) => q.isError)?.error;
+  const isRetrying = dashboardQueries.some((q) => q.isFetching);
+  const retryAll = () => {
+    dashboardQueries.forEach((q) => void q.refetch());
+  };
+
   return (
     <div className="flex flex-col gap-6 md:gap-8 w-full max-w-[1267px] mx-auto min-w-0">
+      {hasError ? (
+        <QueryErrorBanner
+          error={firstError}
+          onRetry={retryAll}
+          isRetrying={isRetrying}
+        />
+      ) : null}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {summaryQuery.isLoading
           ? Array.from({ length: 4 }).map((_, index) => (

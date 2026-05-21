@@ -41,7 +41,7 @@ export function PatientsFilters({
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Pesquisar por nome, CPF ou telefone..."
-          className="h-10 w-full rounded-xl border border-border-light bg-background-card/50 pl-9 text-[14px] placeholder:text-text-muted focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
+          className="h-10 w-full rounded-xl border border-border-light bg-background-card/50 pl-9 text-[14px] placeholder:text-text-muted"
           aria-label="Buscar pacientes"
         />
       </div>

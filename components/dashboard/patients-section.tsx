@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useCreatePatient,
   useDeletePatient,
@@ -202,6 +203,14 @@ export function PatientsSection() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 px-4 pb-4 pt-2 sm:px-6 md:space-y-6 md:pb-8 lg:px-8">
+      {patientsQuery.isError ? (
+        <QueryErrorBanner
+          error={patientsQuery.error}
+          onRetry={() => void patientsQuery.refetch()}
+          isRetrying={patientsQuery.isFetching}
+        />
+      ) : null}
+
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-[24px] font-bold leading-[32px] text-text-primary">Pacientes</h1>

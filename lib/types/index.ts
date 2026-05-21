@@ -1,3 +1,16 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Fonte única de tipos compartilhados do front.
+//
+// Payloads de request e DTOs específicos de wire format ficam em
+// `lib/queries/<feature>.ts` (ex.: PatientPayload, FinanceReceivableDTO,
+// BackendAppointment). Aqui ficam apenas:
+//   1. Shapes canônicos do back consumidos direto pela UI (Patient, Dentist)
+//   2. View models do front (Appointment achatado, Dashboard*, Schedule*)
+//   3. Genéricos (PageResponse)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Marketing (landing)
+
 export interface Service {
   id: string;
   title: string;
@@ -11,6 +24,8 @@ export interface Testimonial {
   role: string;
   content: string;
 }
+
+// Entidades do back consumidas direto pela UI
 
 export interface Patient {
   id: string;
@@ -28,6 +43,14 @@ export interface Patient {
   createdAt: string;
 }
 
+export interface Dentist {
+  id: string;
+  name: string;
+  specialty: string;
+}
+
+// Genérico do Spring Page
+
 export interface PageResponse<T> {
   content: T[];
   totalElements: number;
@@ -35,6 +58,8 @@ export interface PageResponse<T> {
   number: number;
   size: number;
 }
+
+// View model: Appointment achatado (traduzido via toAppointment em lib/queries/appointments.ts)
 
 export type AppointmentType = "evaluation" | "cleaning" | "procedure" | "return" | "urgency";
 
@@ -51,55 +76,9 @@ export interface Appointment {
   patientSince?: string;
 }
 
-export interface Dentist {
-  id: string;
-  name: string;
-  specialty: string;
-}
-
 export type AgendaView = "day" | "week" | "month";
 
-export type FinanceReceivableStatus = "Pendente" | "Pago" | "Atrasado";
-
-export interface FinanceReceivable {
-  id: string;
-  patient: string;
-  description: string;
-  value: number;
-  due: string;
-  status: FinanceReceivableStatus;
-}
-
-export interface FinancePaymentMethod {
-  label: string;
-  value: number;
-  color: string;
-}
-
-export interface TreatmentProcedure {
-  id: string;
-  tooth: string;
-  name: string;
-  value: number;
-  paid: boolean;
-  done: boolean;
-}
-
-export interface TreatmentPlan {
-  id: string;
-  patient: string;
-  title: string;
-  createdAt: string;
-  startDate?: string;
-  endDate?: string;
-  notes?: string;
-  total: number;
-  completed: number;
-  totalProcedures: number;
-  procedures: TreatmentProcedure[];
-}
-
-// Dashboard
+// Dashboard — view models
 
 export type ScheduleStatus = "confirmed" | "pending" | "cancelled";
 
@@ -145,32 +124,26 @@ export interface WeeklyChartBar {
   variant: "primary" | "dark" | "accent";
 }
 
-export type PatientTimelineStatus = "upcoming" | "completed"
-export type PatientPaymentStatus = "paid" | "pending"
+// Detalhe de paciente — view models alimentados por mock-data
+// (ainda não há endpoint dedicado no back)
+
+export type PatientTimelineStatus = "upcoming" | "completed";
+export type PatientPaymentStatus = "paid" | "pending";
 
 export interface PatientTimelineEntry {
-  id: string
-  label: string
-  status: PatientTimelineStatus
-  procedure: string
-  date: string
-  paymentStatus?: "paid" | "pending"
+  id: string;
+  label: string;
+  status: PatientTimelineStatus;
+  procedure: string;
+  date: string;
+  paymentStatus?: "paid" | "pending";
 }
 
 export interface PatientFinancialRecord {
-  id: string
-  description: string
-  date: string
-  value: string
-  status: PatientPaymentStatus
-  hasReceipt: boolean
-}
-
-export interface PatientDocument {
-  id: string
-  name: string
-  date: string
-  size: string
-  type: "image" | "pdf" | "photo"
-  previewUrl?: string
+  id: string;
+  description: string;
+  date: string;
+  value: string;
+  status: PatientPaymentStatus;
+  hasReceipt: boolean;
 }

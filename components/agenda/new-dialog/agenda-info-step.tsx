@@ -61,7 +61,7 @@ export function AgendaInfoStep({
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Busque por nome, CPF ou celular..."
-            className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-4 pr-10 text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+            className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-4 pr-10 text-[15px] shadow-none"
           />
           <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-icon-muted)]" />
         </div>

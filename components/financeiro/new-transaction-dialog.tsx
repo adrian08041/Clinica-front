@@ -194,7 +194,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                     value={patient}
                     onChange={(e) => setPatient(e.target.value)}
                     placeholder="Nome do paciente"
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
                   />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Ex: Limpeza e Profilaxia"
-                  className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                  className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none"
                 />
               </div>
             </div>
@@ -226,7 +226,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0,00"
-                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                    className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] shadow-none"
                   />
                 </div>
                 <div>
@@ -237,7 +237,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                       type="date"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30"
+                      className="h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 shadow-none"
                     />
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                     <select
                       value={method}
                       onChange={(e) => setMethod(e.target.value)}
-                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
                     >
                       <option>Selecione...</option>
                       <option>Dinheiro</option>
@@ -267,7 +267,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                      className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] pl-11 pr-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
                     >
                       <option>Selecione...</option>
                       <option>Consulta</option>
@@ -286,7 +286,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                 <select
                   value={installments}
                   onChange={(e) => setInstallments(e.target.value)}
-                  className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                  className="h-12 w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 text-[15px] font-medium text-[var(--color-ink-panel)] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
                 >
                   <option>À vista</option>
                   <option>2x</option>
@@ -360,7 +360,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Adicione informações complementares..."
-                  className="min-h-[120px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none focus:border-[var(--color-brand-teal)] focus:ring-2 focus:ring-[var(--color-brand-teal)]/30"
+                  className="min-h-[120px] w-full rounded-[16px] border border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] px-4 py-3 text-[15px] outline-none transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
                 />
               </div>
             </div>

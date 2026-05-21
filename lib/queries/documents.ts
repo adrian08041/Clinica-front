@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, handleUnauthorized } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
@@ -40,6 +40,10 @@ async function uploadMultipart(
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      handleUnauthorized(`/patients/${patientId}/documents`);
+    }
+
     const error: ApiError = {
       message: "Erro ao conectar com o servidor",
       status: response.status,

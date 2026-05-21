@@ -5,6 +5,17 @@ interface ApiError {
   status: number;
 }
 
+export const UNAUTHORIZED_EVENT = "auth:unauthorized";
+
+export function handleUnauthorized(endpoint: string): void {
+  if (typeof window === "undefined") return;
+  if (endpoint.startsWith("/auth/")) return;
+
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+}
+
 function parseJsonResponse<T>(responseText: string, status: number): T {
   const trimmedResponseText = responseText.trim();
 
@@ -34,6 +45,10 @@ export async function api<T>(endpoint: string, options?: RequestInit): Promise<T
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      handleUnauthorized(endpoint);
+    }
+
     const error: ApiError = {
       message: "Erro ao conectar com o servidor",
       status: response.status,

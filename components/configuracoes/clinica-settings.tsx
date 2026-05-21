@@ -185,7 +185,7 @@ export function ClinicaSettings() {
                                 type="text"
                                 {...register("nomeFantasia")}
                                 className={cn(
-                                    "h-11 rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary",
+                                    "h-11 rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all",
                                     errors.nomeFantasia ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
                                 )}
                             />
@@ -198,7 +198,7 @@ export function ClinicaSettings() {
                                 type="text"
                                 {...register("cnpj")}
                                 className={cn(
-                                    "h-11 rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary",
+                                    "h-11 rounded-lg bg-background-card/50 px-4 text-sm font-medium transition-all",
                                     errors.cnpj ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
                                 )}
                             />
@@ -214,7 +214,7 @@ export function ClinicaSettings() {
                                     type="text"
                                     {...register("telefone")}
                                     className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary",
+                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
                                         errors.telefone ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
                                     )}
                                 />
@@ -230,7 +230,7 @@ export function ClinicaSettings() {
                                     type="text"
                                     {...register("endereco")}
                                     className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary",
+                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
                                         errors.endereco ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
                                     )}
                                 />
@@ -247,7 +247,7 @@ export function ClinicaSettings() {
                                     type="email"
                                     {...register("email")}
                                     className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary",
+                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
                                         errors.email ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
                                     )}
                                 />
@@ -263,7 +263,7 @@ export function ClinicaSettings() {
                                     type="text"
                                     {...register("website")}
                                     className={cn(
-                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all focus-visible:border-brand-primary focus-visible:ring-1 focus-visible:ring-brand-primary",
+                                        "h-11 w-full rounded-lg bg-background-card/50 pl-10 pr-4 text-sm font-medium transition-all",
                                         errors.website ? "border-danger-text focus-visible:border-danger-text focus-visible:ring-danger-text" : "border-border-light"
                                     )}
                                 />

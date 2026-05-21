@@ -3,7 +3,7 @@ export const PHONE_PREFIX = "(55) ";
 export const PATIENT_DIALOG_STEPS = ["Identificação", "Contato", "Revisão"];
 
 export const patientFieldClass =
-  "h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] text-[15px] shadow-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-teal)]/30";
+  "h-12 rounded-[16px] border-[var(--color-border-soft)] bg-[var(--color-surface-panel)] text-[15px] shadow-none";
 
 export const patientStatusClassMap: Record<string, string> = {
   Ativo: "bg-success-bg text-success-text",

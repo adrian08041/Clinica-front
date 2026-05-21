@@ -19,6 +19,24 @@ function getStatusClasses(status?: string) {
   return "bg-danger-bg text-danger-text border-danger-border"
 }
 
+function calculateAge(birthDate?: string): string {
+  if (!birthDate) return "—"
+  const isoMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(birthDate)
+  const birth = isoMatch
+    ? new Date(Number(isoMatch[1]), Number(isoMatch[2]) - 1, Number(isoMatch[3]))
+    : new Date(birthDate)
+  if (Number.isNaN(birth.getTime())) return "—"
+
+  const today = new Date()
+  let years = today.getFullYear() - birth.getFullYear()
+  const monthDiff = today.getMonth() - birth.getMonth()
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    years -= 1
+  }
+  if (years < 0) return "—"
+  return `${years} ${years === 1 ? "ano" : "anos"}`
+}
+
 const INFO_FIELDS: { label: string; key: "cpf" | "phone" | "insurance"; fallback?: string }[] = [
   { label: "CPF", key: "cpf" },
   { label: "Telefone", key: "phone" },
@@ -57,7 +75,7 @@ export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
           <div className="flex flex-wrap md:gap-x-12 gap-x-6 gap-y-4 mt-2">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-text-muted font-medium">Idade</span>
-              <span className="text-sm text-text-secondary font-semibold">28 anos</span>
+              <span className="text-sm text-text-secondary font-semibold">{calculateAge(patient.birthDate)}</span>
             </div>
             {INFO_FIELDS.map((field) => (
               <div key={field.key} className="flex flex-col gap-1">
