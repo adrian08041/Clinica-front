@@ -44,7 +44,9 @@ function toIsoDate(year: number, month: number, day: number) {
 
 export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNewDialogProps) {
   const formContentRef = useRef<HTMLDivElement | null>(null);
-  const [step, setStep] = useState(1);
+  // Aberto a partir do perfil (com initialPatient) já começa na etapa de data/hora.
+  // O pai remonta via key a cada abertura, então o inicializador roda fresco.
+  const [step, setStep] = useState(initialPatient ? 2 : 1);
   const [searchQuery, setSearchQuery] = useState("");
   const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
   const [calendarYear, setCalendarYear] = useState(() => new Date().getFullYear());
@@ -58,8 +60,8 @@ export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNe
   } = useForm<AgendaNewDialogValues>({
     resolver: zodResolver(agendaNewDialogSchema),
     defaultValues: {
-      patientId: "",
-      patientName: "",
+      patientId: initialPatient?.id ?? "",
+      patientName: initialPatient?.name ?? "",
       dentistId: "",
       time: "",
       observations: "",
@@ -137,15 +139,6 @@ export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNe
   useEffect(() => {
     formContentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
-
-  // Aberto a partir do perfil do paciente: pré-seleciona e pula pra etapa de data/hora.
-  useEffect(() => {
-    if (open && initialPatient) {
-      setValue("patientId", initialPatient.id, { shouldValidate: true });
-      setValue("patientName", initialPatient.name, { shouldValidate: true });
-      setStep(2);
-    }
-  }, [open, initialPatient, setValue]);
 
   function resetForm() {
     setStep(1);

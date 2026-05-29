@@ -31,6 +31,7 @@ export default function PatientProfilePage() {
   const id = String(params.id);
   const [activeTab, setActiveTab] = useState("Consultas");
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [scheduleKey, setScheduleKey] = useState(0);
 
   const { data: patient, isLoading, isError } = usePatient(id);
 
@@ -100,7 +101,10 @@ export default function PatientProfilePage() {
       {activeTab === "Consultas" && (
         <PatientTimelineTab
           entries={timelineEntries}
-          onSchedule={() => setScheduleOpen(true)}
+          onSchedule={() => {
+            setScheduleKey((current) => current + 1);
+            setScheduleOpen(true);
+          }}
         />
       )}
       {activeTab === "Tratamentos" && <PatientTreatmentsTab patientId={id} />}
@@ -108,6 +112,7 @@ export default function PatientProfilePage() {
       {activeTab === "Documentos" && <PatientDocumentsTab patientId={id} />}
 
       <AgendaNewDialog
+        key={scheduleKey}
         open={scheduleOpen}
         onOpenChange={setScheduleOpen}
         initialPatient={initialPatient}

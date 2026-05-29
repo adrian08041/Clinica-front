@@ -38,6 +38,7 @@ export function AgendaSection() {
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [rescheduleKey, setRescheduleKey] = useState(0);
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const appointmentsQuery = useAppointments(
@@ -192,6 +193,7 @@ export function AgendaSection() {
 
   function handleReschedule() {
     if (!selectedAppointment) return;
+    setRescheduleKey((current) => current + 1);
     setRescheduleOpen(true);
   }
 
@@ -270,6 +272,7 @@ export function AgendaSection() {
       <AgendaNewDialog open={dialogOpen} onOpenChange={setDialogOpen} />
 
       <AgendaRescheduleDialog
+        key={rescheduleKey}
         appointment={selectedAppointment}
         open={rescheduleOpen}
         onOpenChange={setRescheduleOpen}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -50,16 +50,12 @@ export function AgendaRescheduleDialog({
   onOpenChange,
 }: AgendaRescheduleDialogProps) {
   const reschedule = useRescheduleAppointment();
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [time, setTime] = useState<string>("");
-
-  // Pré-preenche com a data/hora atuais sempre que abrir para um agendamento.
-  useEffect(() => {
-    if (open && appointment) {
-      setDate(fromIsoDate(appointment.date));
-      setTime(appointment.time);
-    }
-  }, [open, appointment]);
+  // Inicializadores lazy: o componente é remontado (via key no pai) a cada
+  // abertura, então a data/hora atuais do agendamento entram já como default.
+  const [date, setDate] = useState<Date | undefined>(() =>
+    appointment ? fromIsoDate(appointment.date) : undefined,
+  );
+  const [time, setTime] = useState<string>(() => appointment?.time ?? "");
 
   async function handleConfirm() {
     if (!appointment || !date || !time) return;
