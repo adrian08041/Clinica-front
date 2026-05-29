@@ -9,6 +9,8 @@ import {
   Download,
   Funnel,
   Plus,
+  Search,
+  Trash2,
   TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -19,6 +21,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Input } from "@/components/ui/input";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   Select,
@@ -29,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import {
   useCreateTransaction,
+  useDeleteTransaction,
   useFinanceStats,
   usePaymentMethods,
   useReceivables,
@@ -180,16 +185,19 @@ function buildYAxisLabels(maxValue: number) {
 
 export function FinanceContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<FinanceStatus | "">("");
   const [page] = useState(0);
+  const [transactionToDelete, setTransactionToDelete] = useState<FinanceReceivableDTO | null>(null);
 
-  const receivablesQuery = useReceivables({ status: statusFilter, page, size: 20 });
+  const receivablesQuery = useReceivables({ search, status: statusFilter, page, size: 20 });
   const statsQuery = useFinanceStats();
   const revenueHistoryQuery = useRevenueHistory(6);
   const paymentMethodsQuery = usePaymentMethods();
 
   const createTransaction = useCreateTransaction();
   const updateStatus = useUpdateTransactionStatus();
+  const deleteTransaction = useDeleteTransaction();
 
   const receivables: FinanceReceivableDTO[] = receivablesQuery.data?.content ?? [];
   const stats = statsQuery.data;
@@ -206,7 +214,8 @@ export function FinanceContent() {
     try {
       await createTransaction.mutateAsync({
         type: payload.type,
-        patient: payload.patient || null,
+        patientId: payload.patientId,
+        patient: payload.patientName || null,
         description: payload.description || (payload.type === "receita" ? "Nova receita" : "Nova despesa"),
         amount: payload.amount,
         dueDate: payload.dueDate || new Date().toISOString().slice(0, 10),
@@ -223,6 +232,18 @@ export function FinanceContent() {
     }
   };
 
+  const confirmDeleteTransaction = async () => {
+    if (!transactionToDelete) return;
+    try {
+      await deleteTransaction.mutateAsync(transactionToDelete.id);
+      setTransactionToDelete(null);
+      toast.success("Transação excluída com sucesso!");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao excluir transação");
+    }
+  };
+
   const handleCycleStatus = async (item: FinanceReceivableDTO) => {
     const target = nextStatus(item.status);
     try {
@@ -232,6 +253,94 @@ export function FinanceContent() {
       const apiError = error as { message?: string };
       toast.error(apiError.message || "Erro ao atualizar status");
     }
+  };
+
+  const handleExportReport = () => {
+    const escapeHtml = (value: string) =>
+      value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    const statsRows = stats
+      ? [
+          { label: "Faturamento Mensal", value: formatCurrency(stats.revenue) },
+          { label: "A Receber", value: formatCurrency(stats.toReceive) },
+          { label: "Inadimplência", value: formatCurrency(stats.overdue) },
+          { label: "Ticket Médio", value: formatCurrency(stats.avgTicket) },
+        ]
+      : [];
+
+    const summaryCards = statsRows
+      .map((item) => `<div><span>${escapeHtml(item.label)}</span>${item.value}</div>`)
+      .join("");
+
+    const rows = receivables
+      .map(
+        (item) => `
+          <tr>
+            <td>${escapeHtml(item.patientName)}</td>
+            <td>${escapeHtml(item.description)}</td>
+            <td>${escapeHtml(item.status)}</td>
+            <td>${formatDatePtBr(item.due)}</td>
+            <td class="value">${formatCurrency(Number(item.value ?? 0))}</td>
+          </tr>`,
+      )
+      .join("");
+
+    const statusLabel = statusFilter || "Todos";
+
+    const html = `<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Relatório Financeiro</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; margin: 32px; }
+      h1 { font-size: 22px; margin: 0 0 4px; }
+      .muted { color: #555; font-size: 13px; margin: 2px 0; }
+      .summary { display: flex; flex-wrap: wrap; gap: 24px; margin: 24px 0; }
+      .summary div { font-size: 16px; font-weight: 700; }
+      .summary span { display: block; font-size: 11px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.08em; color: #777; margin-bottom: 2px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+      th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e2e2e2; }
+      th { text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; color: #777; }
+      .value, td.value, th.value { text-align: right; }
+      @media print { body { margin: 0; } }
+    </style>
+  </head>
+  <body onload="window.print()">
+    <h1>Relatório Financeiro</h1>
+    <p class="muted">Contas a receber — filtro: ${escapeHtml(statusLabel)}</p>
+
+    ${summaryCards ? `<div class="summary">${summaryCards}</div>` : ""}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Descrição</th>
+          <th>Status</th>
+          <th>Vencimento</th>
+          <th class="value">Valor</th>
+        </tr>
+      </thead>
+      <tbody>${rows || '<tr><td colspan="5">Nenhuma transação encontrada.</td></tr>'}</tbody>
+    </table>
+  </body>
+</html>`;
+
+    const reportWindow = window.open("", "_blank", "width=900,height=700");
+    if (!reportWindow) {
+      toast.error("Não foi possível abrir o relatório. Verifique o bloqueador de pop-ups.");
+      return;
+    }
+
+    reportWindow.document.write(html);
+    reportWindow.document.close();
   };
 
   const isReceivablesLoading = receivablesQuery.isLoading;
@@ -269,7 +378,7 @@ export function FinanceContent() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExportReport}>
               <Download className="size-4" />
               Relatórios
             </Button>
@@ -428,7 +537,16 @@ export function FinanceContent() {
               <h2 className="text-[18px] font-bold text-[var(--color-ink-panel)]">Contas a Receber</h2>
               <p className="mt-2 text-[15px] font-medium text-[var(--color-text-panel-soft)]">Listagem de faturas pendentes e pagas recentemente.</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-faint-soft)]" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar paciente ou descrição..."
+                  className="pl-9 sm:w-64"
+                />
+              </div>
               <Select
                 value={statusFilter || "all"}
                 onValueChange={(v) => setStatusFilter(v === "all" ? "" : (v as FinanceStatus))}
@@ -456,7 +574,7 @@ export function FinanceContent() {
           </div>
 
           <div className="hidden lg:block">
-            <div className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_120px] gap-4 border-b border-[var(--color-border-panel-alt)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)] md:px-8">
+            <div className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_160px] gap-4 border-b border-[var(--color-border-panel-alt)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)] md:px-8">
               <span>Paciente</span>
               <span>Descrição</span>
               <span>Valor</span>
@@ -472,7 +590,7 @@ export function FinanceContent() {
               receivables.map((item) => (
                 <div
                   key={item.id}
-                  className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_120px] gap-4 border-b border-[var(--color-border-panel-lite)] px-6 py-5 last:border-b-0 md:px-8"
+                  className="grid grid-cols-[1.1fr_1.6fr_180px_180px_140px_160px] gap-4 border-b border-[var(--color-border-panel-lite)] px-6 py-5 last:border-b-0 md:px-8"
                 >
                   <span className="text-[15px] font-semibold text-[var(--color-ink-panel)]">{item.patientName}</span>
                   <span className="text-[15px] font-medium text-[var(--color-text-panel)]">{item.description}</span>
@@ -481,7 +599,7 @@ export function FinanceContent() {
                   <span>
                     <Badge variant={statusVariant(item.status)}>{item.status}</Badge>
                   </span>
-                  <span className="text-right">
+                  <span className="flex items-center justify-end gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -490,6 +608,16 @@ export function FinanceContent() {
                       className="h-8 rounded-[10px] border-[var(--color-border-soft)] px-3 text-[12px] font-bold text-[var(--color-text-panel)]"
                     >
                       Avançar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      aria-label="Excluir transação"
+                      title="Excluir transação"
+                      onClick={() => setTransactionToDelete(item)}
+                      className="h-8 w-8 rounded-[10px] border-[var(--color-border-soft)] text-[var(--color-danger-action)] hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger-action)]"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </span>
                 </div>
@@ -522,7 +650,7 @@ export function FinanceContent() {
                       <p className="mt-1 font-semibold text-[var(--color-ink-panel)]">{formatDatePtBr(item.due)}</p>
                     </div>
                   </div>
-                  <div className="mt-4 flex justify-end">
+                  <div className="mt-4 flex justify-end gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -531,6 +659,15 @@ export function FinanceContent() {
                       className="h-8 rounded-[10px] border-[var(--color-border-soft)] px-3 text-[12px] font-bold text-[var(--color-text-panel)]"
                     >
                       Avançar status
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setTransactionToDelete(item)}
+                      className="h-8 rounded-[10px] border-[var(--color-border-soft)] px-3 text-[12px] font-bold text-[var(--color-danger-action)] hover:bg-[var(--color-danger-soft)] hover:text-[var(--color-danger-action)]"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Excluir
                     </Button>
                   </div>
                 </Card>
@@ -546,6 +683,34 @@ export function FinanceContent() {
         onOpenChange={setDialogOpen}
         onCreate={handleCreateTransaction}
         isPending={createTransaction.isPending}
+      />
+
+      <ConfirmDialog
+        open={Boolean(transactionToDelete)}
+        onOpenChange={(open) => {
+          if (!open) setTransactionToDelete(null);
+        }}
+        onConfirm={() => void confirmDeleteTransaction()}
+        title="Excluir transação"
+        description={
+          <>
+            Tem certeza que deseja excluir a transação{" "}
+            <span className="font-semibold text-text-primary">
+              {transactionToDelete?.description}
+            </span>
+            {transactionToDelete?.patientName ? (
+              <>
+                {" "}de{" "}
+                <span className="font-semibold text-text-primary">
+                  {transactionToDelete.patientName}
+                </span>
+              </>
+            ) : null}
+            ? Essa ação não pode ser desfeita.
+          </>
+        }
+        confirmLabel="Excluir"
+        isLoading={deleteTransaction.isPending}
       />
     </>
   );

@@ -1,17 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CircleDot, Clock3, MoreVertical, Plus, Search, Stethoscope } from "lucide-react";
+import { CircleDot, Clock3, MoreVertical, Plus, Search, Stethoscope, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { NewPlanDialog, type ProcedureDraft } from "@/components/tratamentos/new-plan-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useApproveStep,
   useCreateTreatment,
+  useDeleteTreatment,
   useTreatment,
   useTreatments,
   type TreatmentPlanResponse,
@@ -43,6 +51,7 @@ export function TreatmentsContent() {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [planToDelete, setPlanToDelete] = useState<TreatmentPlanResponse | null>(null);
 
   const treatmentsQuery = useTreatments({ page: 0, size: 20, search });
   const plans = useMemo<TreatmentPlanResponse[]>(
@@ -62,6 +71,7 @@ export function TreatmentsContent() {
 
   const createTreatment = useCreateTreatment();
   const approveStep = useApproveStep();
+  const deleteTreatment = useDeleteTreatment();
 
   const totalPaid =
     selectedPlan?.procedures
@@ -69,7 +79,8 @@ export function TreatmentsContent() {
       .reduce((sum, item) => sum + Number(item.value ?? 0), 0) ?? 0;
 
   const handleCreatePlan = async (payload: {
-    patient: string;
+    patientId: string | null;
+    patientName: string;
     planName: string;
     startDate: string;
     endDate: string;
@@ -86,7 +97,8 @@ export function TreatmentsContent() {
 
     try {
       const created = await createTreatment.mutateAsync({
-        patient: payload.patient || null,
+        patientId: payload.patientId,
+        patient: payload.patientName || null,
         title: payload.planName || "Novo Plano",
         startDate: payload.startDate || null,
         endDate: payload.endDate || null,
@@ -102,6 +114,20 @@ export function TreatmentsContent() {
     }
   };
 
+  const confirmDeletePlan = async () => {
+    if (!planToDelete) return;
+
+    try {
+      await deleteTreatment.mutateAsync(planToDelete.id);
+      if (selectedId === planToDelete.id) setSelectedId(null);
+      setPlanToDelete(null);
+      toast.success("Plano de tratamento excluído!");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao excluir plano de tratamento");
+    }
+  };
+
   const handleApproveStep = async () => {
     if (!selectedPlan) return;
     try {
@@ -111,6 +137,97 @@ export function TreatmentsContent() {
       const apiError = error as { message?: string };
       toast.error(apiError.message || "Erro ao aprovar etapa");
     }
+  };
+
+  const handlePrintPlan = () => {
+    if (!selectedPlan) return;
+
+    const escapeHtml = (value: string) =>
+      value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+    const total = Number(selectedPlan.total ?? 0);
+    const remaining = total - totalPaid;
+
+    const periodParts = [
+      selectedPlan.startDate ? `Início: ${formatDatePtBr(selectedPlan.startDate)}` : null,
+      selectedPlan.endDate ? `Término: ${formatDatePtBr(selectedPlan.endDate)}` : null,
+    ].filter(Boolean);
+
+    const rows = selectedPlan.procedures
+      .map(
+        (procedure) => `
+          <tr>
+            <td>${escapeHtml(procedure.tooth ?? "-")}</td>
+            <td>${escapeHtml(procedure.name)}</td>
+            <td>${procedure.done ? "Realizado" : "Aguardando"}</td>
+            <td class="status">${procedure.paid ? "Pago" : "Pendente"}</td>
+            <td class="value">${currency(Number(procedure.value ?? 0))}</td>
+          </tr>`,
+      )
+      .join("");
+
+    const html = `<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(selectedPlan.title)}</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1a1a1a; margin: 32px; }
+      h1 { font-size: 22px; margin: 0 0 4px; }
+      .muted { color: #555; font-size: 13px; margin: 2px 0; }
+      .summary { display: flex; gap: 24px; margin: 24px 0; }
+      .summary div { font-size: 14px; }
+      .summary span { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #777; margin-bottom: 2px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+      th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e2e2e2; }
+      th { text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; color: #777; }
+      .value, td.value, th.value { text-align: right; }
+      .total { margin-top: 16px; text-align: right; font-size: 16px; font-weight: 700; }
+      @media print { body { margin: 0; } }
+    </style>
+  </head>
+  <body onload="window.print()">
+    <h1>${escapeHtml(selectedPlan.title)}</h1>
+    <p class="muted">Paciente: ${escapeHtml(selectedPlan.patientName ?? "Não informado")}</p>
+    ${periodParts.length ? `<p class="muted">${periodParts.join(" • ")}</p>` : ""}
+
+    <div class="summary">
+      <div><span>Valor Total</span>${currency(total)}</div>
+      <div><span>Total Pago</span>${currency(totalPaid)}</div>
+      <div><span>Restante</span>${currency(remaining)}</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Dente</th>
+          <th>Procedimento</th>
+          <th>Andamento</th>
+          <th>Pagamento</th>
+          <th class="value">Valor</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <p class="total">Valor Total do Plano: ${currency(total)}</p>
+  </body>
+</html>`;
+
+    const printWindow = window.open("", "_blank", "width=900,height=700");
+    if (!printWindow) {
+      toast.error("Não foi possível abrir a janela de impressão. Verifique o bloqueador de pop-ups.");
+      return;
+    }
+
+    printWindow.document.write(html);
+    printWindow.document.close();
   };
 
   const isListLoading = treatmentsQuery.isLoading;
@@ -258,14 +375,24 @@ export function TreatmentsContent() {
                       ) : null}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    aria-label="Ações do plano"
-                    aria-haspopup="menu"
-                    className="rounded-[14px] border border-[var(--color-border-section)] p-2 text-[var(--color-text-placeholder)]"
-                  >
-                    <MoreVertical className="h-5 w-5" />
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      aria-label="Ações do plano"
+                      className="cursor-pointer rounded-[14px] border border-[var(--color-border-section)] p-2 text-[var(--color-text-placeholder)] outline-none transition-colors hover:bg-[var(--color-surface-panel-alt)] focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
+                    >
+                      <MoreVertical className="h-5 w-5" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        variant="destructive"
+                        className="cursor-pointer"
+                        onSelect={() => setPlanToDelete(selectedPlan)}
+                      >
+                        <Trash2 className="size-4" />
+                        Excluir plano
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -344,7 +471,7 @@ export function TreatmentsContent() {
                   Atualizado em {formatDatePtBr(selectedPlan.createdAt)}
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-                  <Button variant="outline">
+                  <Button variant="outline" onClick={handlePrintPlan}>
                     Imprimir
                   </Button>
                   <Button
@@ -366,6 +493,34 @@ export function TreatmentsContent() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onCreatePlan={(payload) => void handleCreatePlan(payload)}
+      />
+
+      <ConfirmDialog
+        open={Boolean(planToDelete)}
+        onOpenChange={(open) => {
+          if (!open) setPlanToDelete(null);
+        }}
+        onConfirm={() => void confirmDeletePlan()}
+        title="Excluir plano de tratamento"
+        description={
+          <>
+            Tem certeza que deseja excluir o plano{" "}
+            <span className="font-semibold text-text-primary">
+              {planToDelete?.title}
+            </span>
+            {planToDelete?.patientName ? (
+              <>
+                {" "}de{" "}
+                <span className="font-semibold text-text-primary">
+                  {planToDelete.patientName}
+                </span>
+              </>
+            ) : null}
+            ? Essa ação não pode ser desfeita.
+          </>
+        }
+        confirmLabel="Excluir"
+        isLoading={deleteTreatment.isPending}
       />
     </>
   );

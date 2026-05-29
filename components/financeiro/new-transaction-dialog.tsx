@@ -7,9 +7,9 @@ import {
   Check,
   CreditCard,
   Tag,
-  User,
   X,
 } from "lucide-react";
+import { PatientCombobox, type PatientOption } from "@/components/pacientes/patient-combobox";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Dialog, DialogDescription, DialogTitle, FlowDialogContent } from "@/components/ui/dialog";
@@ -29,7 +29,8 @@ export type TransactionType = "receita" | "despesa";
 
 export type NewTransactionPayload = {
   type: TransactionType;
-  patient: string;
+  patientId: string | null;
+  patientName: string;
   description: string;
   amount: number;
   dueDate: string;
@@ -65,7 +66,7 @@ function StepDot({ active, done, value }: { active: boolean; done: boolean; valu
 export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending = false }: NewTransactionDialogProps) {
   const [step, setStep] = useState(1);
   const [type, setType] = useState<TransactionType>("receita");
-  const [patient, setPatient] = useState("");
+  const [patient, setPatient] = useState<PatientOption | null>(null);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -78,7 +79,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
     onOpenChange(false);
     setStep(1);
     setType("receita");
-    setPatient("");
+    setPatient(null);
     setDescription("");
     setAmount("");
     setDueDate("");
@@ -96,7 +97,8 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
 
     await onCreate({
       type,
-      patient,
+      patientId: patient?.id ?? null,
+      patientName: patient?.name ?? "",
       description,
       amount: Number(amount) || 0,
       dueDate,
@@ -204,15 +206,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
 
               <div>
                 <Label className="mb-2">Paciente</Label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                  <Input
-                    value={patient}
-                    onChange={(e) => setPatient(e.target.value)}
-                    placeholder="Nome do paciente"
-                    className="pl-11"
-                  />
-                </div>
+                <PatientCombobox value={patient} onChange={setPatient} />
               </div>
 
               <div>
@@ -332,7 +326,7 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                 <div className="grid gap-5 pt-5 sm:grid-cols-2">
                   <div>
                     <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</p>
-                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient || "-"}</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient?.name || "-"}</p>
                   </div>
                   <div>
                     <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Descrição</p>

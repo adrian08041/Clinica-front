@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, FileText, Plus, Stethoscope, User, X } from "lucide-react";
+import { Check, FileText, Plus, Stethoscope, X } from "lucide-react";
+import { PatientCombobox, type PatientOption } from "@/components/pacientes/patient-combobox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -22,7 +23,8 @@ type NewPlanDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreatePlan: (payload: {
-    patient: string;
+    patientId: string | null;
+    patientName: string;
     planName: string;
     startDate: string;
     endDate: string;
@@ -45,7 +47,7 @@ const createInitialProcedures = (): ProcedureDraft[] => [{ id: "draft-1", name: 
 
 export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialogProps) {
   const [step, setStep] = useState(1);
-  const [patient, setPatient] = useState("");
+  const [patient, setPatient] = useState<PatientOption | null>(null);
   const [planName, setPlanName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -59,7 +61,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
 
   const reset = () => {
     setStep(1);
-    setPatient("");
+    setPatient(null);
     setPlanName("");
     setStartDate("");
     setEndDate("");
@@ -95,7 +97,15 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
       return;
     }
 
-    onCreatePlan({ patient, planName, startDate, endDate, notes, procedures });
+    onCreatePlan({
+      patientId: patient?.id ?? null,
+      patientName: patient?.name ?? "",
+      planName,
+      startDate,
+      endDate,
+      notes,
+      procedures,
+    });
     reset();
   };
 
@@ -158,15 +168,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                 <Label className="mb-2">
                   Paciente *
                 </Label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                  <Input
-                    value={patient}
-                    onChange={(e) => setPatient(e.target.value)}
-                    placeholder="Selecione o paciente..."
-                    className="pl-11"
-                  />
-                </div>
+                <PatientCombobox value={patient} onChange={setPatient} />
               </div>
 
               <div>
@@ -330,7 +332,7 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                 <div className="mt-5 grid gap-5 border-t border-[var(--color-brand-teal-border-pale)] pt-5 md:grid-cols-2">
                   <div>
                     <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Paciente</p>
-                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient || "-"}</p>
+                    <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">{patient?.name || "-"}</p>
                   </div>
                   <div>
                     <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">Data de Início</p>

@@ -42,6 +42,7 @@ export interface PaymentMethodDTO {
 }
 
 export interface ReceivablesListParams {
+  search?: string;
   status?: FinanceStatus | "";
   patientId?: string;
   page?: number;
@@ -74,6 +75,7 @@ function buildReceivablesQuery(params: ReceivablesListParams) {
   const search = new URLSearchParams();
   search.set("page", String(params.page ?? 0));
   search.set("size", String(params.size ?? 10));
+  if (params.search) search.set("search", params.search);
   if (params.status) search.set("status", params.status);
   if (params.patientId) search.set("patientId", params.patientId);
   return search.toString();
