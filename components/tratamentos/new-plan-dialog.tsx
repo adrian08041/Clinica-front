@@ -1,13 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, Check, Clock3, FileText, Plus, Stethoscope, User, X } from "lucide-react";
+import { Check, FileText, Plus, Stethoscope, User, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Dialog, DialogDescription, DialogTitle, FlowDialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { dateToIso, isoToDate } from "@/lib/utils/date";
 
 export type ProcedureDraft = {
   id: string;
@@ -204,30 +206,22 @@ export function NewPlanDialog({ open, onOpenChange, onCreatePlan }: NewPlanDialo
                   <Label className="mb-2">
                     Data de Início *
                   </Label>
-                  <div className="relative">
-                    <CalendarDays className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <Input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="pl-11"
-                    />
-                  </div>
+                  <DatePicker
+                    value={isoToDate(startDate)}
+                    onChange={(date) => setStartDate(dateToIso(date))}
+                    placeholder="Selecione a data"
+                  />
                 </div>
 
                 <div>
                   <Label className="mb-2">
                     Previsão de Término
                   </Label>
-                  <div className="relative">
-                    <Clock3 className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <Input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="pl-11"
-                    />
-                  </div>
+                  <DatePicker
+                    value={isoToDate(endDate)}
+                    onChange={(date) => setEndDate(dateToIso(date))}
+                    placeholder="Selecione a data"
+                  />
                 </div>
               </div>
 

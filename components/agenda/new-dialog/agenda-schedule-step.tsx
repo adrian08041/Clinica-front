@@ -9,7 +9,6 @@ import {
   AVAILABLE_TIMES,
   DAY_LABELS,
   MONTH_NAMES,
-  OCCUPIED_TIMES,
 } from "./agenda-new-dialog-shared";
 
 type AgendaScheduleStepProps = {
@@ -20,6 +19,7 @@ type AgendaScheduleStepProps = {
   errors: FieldErrors<AgendaNewDialogValues>;
   firstDay: number;
   navigateMonth: (direction: number) => void;
+  occupiedTimes: string[];
   today: Date;
   trigger: UseFormTrigger<AgendaNewDialogValues>;
 };
@@ -32,6 +32,7 @@ export function AgendaScheduleStep({
   errors,
   firstDay,
   navigateMonth,
+  occupiedTimes,
   today,
   trigger,
 }: AgendaScheduleStepProps) {
@@ -147,7 +148,7 @@ export function AgendaScheduleStep({
               <>
                 <div className="grid grid-cols-3 gap-2">
                   {AVAILABLE_TIMES.map((time) => {
-                    const isOccupied = OCCUPIED_TIMES.includes(time);
+                    const isOccupied = occupiedTimes.includes(time);
                     const isSelected = field.value === time;
 
                     return (

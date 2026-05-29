@@ -1,22 +1,31 @@
 "use client";
 
-import { Controller, type Control, type FieldErrors, type UseFormRegister } from "react-hook-form";
+import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import { Phone, ShieldPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { PatientFormData } from "@/lib/schemas/patient-schema";
 import { formatPhoneInput } from "./patients-shared";
+
+const NO_INSURANCE = "__none__";
 
 type PatientFormStepContactProps = {
   control: Control<PatientFormData>;
   errors: FieldErrors<PatientFormData>;
-  register: UseFormRegister<PatientFormData>;
+  insuranceOptions: string[];
 };
 
 export function PatientFormStepContact({
   control,
   errors,
-  register,
+  insuranceOptions,
 }: PatientFormStepContactProps) {
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 sm:py-8 md:px-8">
@@ -42,7 +51,7 @@ export function PatientFormStepContact({
               <Input
                 value={field.value}
                 onChange={(event) => field.onChange(formatPhoneInput(event.target.value))}
-                placeholder="(55) 34 99668-8345"
+                placeholder="(11) 99668-8345"
                 inputMode="numeric"
                 className="pl-11"
               />
@@ -59,11 +68,30 @@ export function PatientFormStepContact({
           Convênio
         </Label>
         <div className="relative">
-          <ShieldPlus className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-          <Input
-            {...register("insurance")}
-            placeholder="Ex: Unimed, Bradesco, Particular"
-            className="pl-11"
+          <ShieldPlus className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
+          <Controller
+            name="insurance"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value ? field.value : NO_INSURANCE}
+                onValueChange={(value) =>
+                  field.onChange(value === NO_INSURANCE ? "" : value)
+                }
+              >
+                <SelectTrigger className="w-full pl-11">
+                  <SelectValue placeholder="Selecione o convênio" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NO_INSURANCE}>Sem convênio (Particular)</SelectItem>
+                  {insuranceOptions.map((name) => (
+                    <SelectItem key={name} value={name}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           />
         </div>
       </div>

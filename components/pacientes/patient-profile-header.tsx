@@ -1,4 +1,7 @@
-import { PencilLine, MessageCircle } from "lucide-react"
+"use client"
+
+import { MessageCircle } from "lucide-react"
+import { toast } from "sonner"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -8,6 +11,14 @@ import { patientStatusVariant } from "@/components/dashboard/patients/patients-s
 
 interface PatientProfileHeaderProps {
   patient: Patient
+}
+
+// Monta o número para o wa.me garantindo o DDI 55 (número local recebe o prefixo).
+function toWhatsappNumber(phone?: string): string | null {
+  const digits = (phone ?? "").replace(/\D/g, "")
+  if (!digits) return null
+  if (digits.length === 10 || digits.length === 11) return `55${digits}`
+  return digits
 }
 
 function calculateAge(birthDate?: string): string {
@@ -38,22 +49,12 @@ export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
   return (
     <Card className="p-6 flex flex-col md:flex-row md:items-start justify-between">
       <div className="flex items-start gap-6">
-        <div className="relative">
-          <Avatar className="!w-[88px] !h-[88px] border-[3px] border-white shadow-sm shrink-0">
-            <AvatarImage src={patient.avatar} alt={patient.name} />
-            <AvatarFallback className="bg-background-card text-text-tertiary text-2xl font-bold">
-              {patient.name.substring(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <Button
-            variant="brand"
-            size="icon-sm"
-            aria-label="Editar avatar"
-            className="absolute -bottom-1 -right-1 rounded-full border-[3px] border-white shadow-sm"
-          >
-            <PencilLine className="size-4" />
-          </Button>
-        </div>
+        <Avatar className="!w-[88px] !h-[88px] border-[3px] border-white shadow-sm shrink-0">
+          <AvatarImage src={patient.avatar} alt={patient.name} />
+          <AvatarFallback className="bg-background-card text-text-tertiary text-2xl font-bold">
+            {patient.name.substring(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
 
         <div className="flex flex-col gap-2 pt-1">
           <div className="flex items-center gap-3">
@@ -86,13 +87,17 @@ export function PatientProfileHeader({ patient }: PatientProfileHeaderProps) {
         <Button
           variant="outline"
           className="border-border-light shadow-sm h-10 px-4 rounded-lg font-semibold hover:bg-background-hover text-text-secondary"
+          onClick={() => {
+            const number = toWhatsappNumber(patient.phone)
+            if (!number) {
+              toast.error("Paciente sem telefone cadastrado.")
+              return
+            }
+            window.open(`https://wa.me/${number}`, "_blank", "noopener,noreferrer")
+          }}
         >
           <MessageCircle className="size-4 mr-2 text-brand-primary" />
           WhatsApp
-        </Button>
-        <Button variant="brand">
-          <PencilLine className="size-4" />
-          Editar Perfil
         </Button>
       </div>
     </Card>

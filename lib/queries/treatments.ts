@@ -7,6 +7,7 @@ export interface TreatmentListParams {
   page?: number;
   size?: number;
   search?: string;
+  patientId?: string;
 }
 
 export interface TreatmentProcedureRequest {
@@ -68,6 +69,7 @@ function buildTreatmentsQuery(params: TreatmentListParams) {
   search.set("page", String(params.page ?? 0));
   search.set("size", String(params.size ?? 10));
   if (params.search) search.set("search", params.search);
+  if (params.patientId) search.set("patientId", params.patientId);
   return search.toString();
 }
 

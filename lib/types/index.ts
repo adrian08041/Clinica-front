@@ -65,6 +65,7 @@ export type AppointmentType = "evaluation" | "cleaning" | "procedure" | "return"
 
 export interface Appointment {
   id: string;
+  patientId: string;
   patientName: string;
   dentistId: string;
   date: string;
@@ -124,11 +125,11 @@ export interface WeeklyChartBar {
   variant: "primary" | "dark" | "accent";
 }
 
-// Detalhe de paciente — view models alimentados por mock-data
-// (ainda não há endpoint dedicado no back)
+// Detalhe de paciente — view models montados em lib/adapters/patient-history.ts
+// a partir de /appointments?patientId e /finance/receivables?patientId
 
 export type PatientTimelineStatus = "upcoming" | "completed";
-export type PatientPaymentStatus = "paid" | "pending";
+export type PatientPaymentStatus = "paid" | "pending" | "overdue";
 
 export interface PatientTimelineEntry {
   id: string;

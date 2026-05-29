@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  CalendarDays,
   Check,
   CreditCard,
   Tag,
@@ -12,9 +11,11 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Dialog, DialogDescription, DialogTitle, FlowDialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { dateToIso, isoToDate } from "@/lib/utils/date";
 import {
   Select,
   SelectContent,
@@ -244,15 +245,11 @@ export function NewTransactionDialog({ open, onOpenChange, onCreate, isPending =
                 </div>
                 <div>
                   <Label className="mb-2">Vencimento</Label>
-                  <div className="relative">
-                    <CalendarDays className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
-                    <Input
-                      type="date"
-                      value={dueDate}
-                      onChange={(e) => setDueDate(e.target.value)}
-                      className="pl-11"
-                    />
-                  </div>
+                  <DatePicker
+                    value={isoToDate(dueDate)}
+                    onChange={(date) => setDueDate(dateToIso(date))}
+                    placeholder="Selecione a data"
+                  />
                 </div>
                 <div>
                   <Label className="mb-2">Método de Pagamento</Label>

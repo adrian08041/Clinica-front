@@ -12,10 +12,10 @@ import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useCreatePatient,
   useDeletePatient,
-  useInsurances,
   usePatients,
   useUpdatePatient,
 } from "@/lib/queries/patients";
+import { useInsurances as useInsuranceCatalog } from "@/lib/queries/settings";
 import { patientSchema, type PatientFormData } from "@/lib/schemas/patient-schema";
 import type { Patient } from "@/lib/types";
 import { PatientDialog } from "./patients/patient-dialog";
@@ -27,13 +27,13 @@ import {
   formatPhoneInput,
   PATIENT_DIALOG_STEPS,
   patientStatusVariant,
-  PHONE_PREFIX,
+  toLocalPhoneDigits,
 } from "./patients/patients-shared";
 
 const EMPTY_FORM: PatientFormData = {
   name: "",
   cpf: "",
-  phone: PHONE_PREFIX,
+  phone: "",
   insurance: "",
 };
 
@@ -57,7 +57,7 @@ export function PatientsSection() {
     insurance: insuranceFilter,
     status: statusFilter,
   });
-  const insurancesQuery = useInsurances();
+  const insuranceCatalogQuery = useInsuranceCatalog();
   const createPatient = useCreatePatient();
   const updatePatient = useUpdatePatient();
   const deletePatient = useDeletePatient();
@@ -66,7 +66,7 @@ export function PatientsSection() {
   const totalPages = patientsQuery.data?.totalPages ?? 0;
   const totalElements = patientsQuery.data?.totalElements ?? 0;
   const isLoading = patientsQuery.isLoading;
-  const insurances = insurancesQuery.data ?? [];
+  const insuranceOptions = (insuranceCatalogQuery.data ?? []).map((item) => item.name);
 
   const {
     register,
@@ -121,7 +121,7 @@ export function PatientsSection() {
     reset({
       name: patient.name ?? "",
       cpf: formatCpfInput(patient.cpf ?? ""),
-      phone: formatPhoneInput(patient.phone ?? ""),
+      phone: formatPhoneInput(toLocalPhoneDigits(patient.phone)),
       insurance: patient.insurance ?? "",
     });
     setIsDialogOpen(true);
@@ -236,6 +236,7 @@ export function PatientsSection() {
           isEditing={Boolean(editingPatient)}
           isOpen={isDialogOpen}
           isSubmitting={isSubmitting || createPatient.isPending || updatePatient.isPending}
+          insuranceOptions={insuranceOptions}
           name={watchedName}
           cpf={watchedCpf}
           insurance={watchedInsurance}
@@ -255,7 +256,7 @@ export function PatientsSection() {
       <Card className="pt-2 gap-0">
         <PatientsFilters
           insuranceFilter={insuranceFilter}
-          insurances={insurances}
+          insurances={insuranceOptions}
           onInsuranceFilterChange={(value) => {
             setInsuranceFilter(value === "all" ? "" : value);
             setPage(0);

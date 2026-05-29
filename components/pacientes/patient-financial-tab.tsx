@@ -38,6 +38,13 @@ export function PatientFinancialTab({ records }: PatientFinancialTabProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {records.length === 0 ? (
+            <TableRow className="hover:bg-transparent border-transparent">
+              <TableCell colSpan={5} className="py-10 text-center text-sm text-text-muted">
+                Nenhum lançamento financeiro para este paciente.
+              </TableCell>
+            </TableRow>
+          ) : null}
           {records.map((record, index) => (
             <TableRow
               key={record.id}
@@ -55,8 +62,20 @@ export function PatientFinancialTab({ records }: PatientFinancialTabProps) {
                 {record.value}
               </TableCell>
               <TableCell className="py-5">
-                <Badge variant={record.status === "paid" ? "success" : "warning"}>
-                  {record.status === "paid" ? "Pago" : "Pendente"}
+                <Badge
+                  variant={
+                    record.status === "paid"
+                      ? "success"
+                      : record.status === "overdue"
+                        ? "danger"
+                        : "warning"
+                  }
+                >
+                  {record.status === "paid"
+                    ? "Pago"
+                    : record.status === "overdue"
+                      ? "Atrasado"
+                      : "Pendente"}
                 </Badge>
               </TableCell>
               <TableCell className="py-5 pr-8 text-right">

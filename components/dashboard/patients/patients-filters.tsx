@@ -54,7 +54,7 @@ export function PatientsFilters({
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Ativo">Ativo</SelectItem>
-            <SelectItem value="Pendente">Pendente</SelectItem>
+            <SelectItem value="Inativo">Inativo</SelectItem>
           </SelectContent>
         </Select>
 

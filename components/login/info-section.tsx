@@ -51,7 +51,7 @@ export function InfoSection() {
         {/* Footer */}
         <div className="w-full">
           <p className="font-medium text-[#96f7e4]/60 text-[14px] leading-[20px]">
-            © 2026 OdontoFlow. Todos os direitos reservados.
+            © {new Date().getFullYear()} OdontoFlow. Todos os direitos reservados.
           </p>
         </div>
       </div>
