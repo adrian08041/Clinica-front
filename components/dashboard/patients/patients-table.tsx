@@ -95,7 +95,7 @@ export function PatientsTable({
                           variant={patientStatusVariant(patient.status)}
                           className="mt-1"
                         >
-                          {patient.status || "Inativo"}
+                          {patient.status || "Ativo"}
                         </Badge>
                       </div>
                     </div>

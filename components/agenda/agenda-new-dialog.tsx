@@ -11,6 +11,7 @@ import { useDentists } from "@/lib/queries/dentists";
 import { usePatients } from "@/lib/queries/patients";
 import {
   TYPE_MAP_TO_BACK,
+  useAppointments,
   useCreateAppointment,
   type AppointmentRequestPayload,
 } from "@/lib/queries/appointments";
@@ -41,12 +42,12 @@ function toIsoDate(year: number, month: number, day: number) {
   return `${year}-${pad2(month + 1)}-${pad2(day)}`;
 }
 
-export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
+export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNewDialogProps) {
   const formContentRef = useRef<HTMLDivElement | null>(null);
   const [step, setStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [calendarMonth, setCalendarMonth] = useState(1);
-  const [calendarYear, setCalendarYear] = useState(2026);
+  const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
+  const [calendarYear, setCalendarYear] = useState(() => new Date().getFullYear());
 
   const {
     control,
@@ -111,16 +112,48 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
     return currentDate;
   }, []);
 
+  // Horários ocupados reais: consultas já marcadas para o dentista no dia escolhido.
+  const scheduleDateIso =
+    selectedDate !== undefined && selectedDate !== null
+      ? toIsoDate(calendarYear, calendarMonth, selectedDate)
+      : undefined;
+  const hasScheduleContext = Boolean(scheduleDateIso && selectedDentistId);
+  const dayAppointmentsQuery = useAppointments(
+    {
+      startDate: scheduleDateIso,
+      endDate: scheduleDateIso,
+      dentistId: selectedDentistId || undefined,
+    },
+    { enabled: hasScheduleContext },
+  );
+  const occupiedTimes = useMemo(
+    () =>
+      hasScheduleContext
+        ? (dayAppointmentsQuery.data ?? []).map((appointment) => appointment.time)
+        : [],
+    [hasScheduleContext, dayAppointmentsQuery.data],
+  );
+
   useEffect(() => {
     formContentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
+
+  // Aberto a partir do perfil do paciente: pré-seleciona e pula pra etapa de data/hora.
+  useEffect(() => {
+    if (open && initialPatient) {
+      setValue("patientId", initialPatient.id, { shouldValidate: true });
+      setValue("patientName", initialPatient.name, { shouldValidate: true });
+      setStep(2);
+    }
+  }, [open, initialPatient, setValue]);
 
   function resetForm() {
     setStep(1);
     setSearchQuery("");
     reset();
-    setCalendarMonth(1);
-    setCalendarYear(2026);
+    const now = new Date();
+    setCalendarMonth(now.getMonth());
+    setCalendarYear(now.getFullYear());
   }
 
   function handleClose() {
@@ -281,6 +314,7 @@ export function AgendaNewDialog({ open, onOpenChange }: AgendaNewDialogProps) {
                 errors={errors}
                 firstDay={firstDay}
                 navigateMonth={navigateMonth}
+                occupiedTimes={occupiedTimes}
                 today={today}
                 trigger={trigger}
               />

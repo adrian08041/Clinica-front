@@ -9,12 +9,18 @@ export interface AgendaDetailsProps {
   selectedAppointment: Appointment | null;
   showDetails: boolean;
   setShowDetails: (show: boolean) => void;
+  onViewRecord: () => void;
+  onReschedule: () => void;
+  onCancel: () => void;
 }
 
 export function AgendaDetails({
   selectedAppointment,
   showDetails,
   setShowDetails,
+  onViewRecord,
+  onReschedule,
+  onCancel,
 }: AgendaDetailsProps) {
   return (
     <>
@@ -125,18 +131,20 @@ export function AgendaDetails({
 
               {/* Action Buttons */}
               <div className="mt-auto space-y-2 lg:space-y-3 border-t border-border-light pt-3 lg:pt-4 shrink-0">
-                <Button variant="brand" className="w-full">
+                <Button variant="brand" className="w-full" onClick={onViewRecord}>
                   Ver Prontuário
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full font-bold text-text-secondary border-border-light cursor-pointer text-xs lg:text-sm transition-colors"
+                  onClick={onReschedule}
                 >
                   Remarcar
                 </Button>
                 <Button
                   variant="ghost"
                   className="w-full font-bold text-danger-action hover:text-danger-action hover:bg-danger-bg cursor-pointer text-xs lg:text-sm transition-colors"
+                  onClick={onCancel}
                 >
                   Cancelar Agendamento
                 </Button>

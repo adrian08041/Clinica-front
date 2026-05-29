@@ -59,6 +59,7 @@ export interface AppointmentListParams {
   startDate?: string;
   endDate?: string;
   dentistId?: string;
+  patientId?: string;
 }
 
 // ── Adapter to front shape ────────────────────────────────────────────────
@@ -86,6 +87,7 @@ export const TYPE_MAP_TO_BACK: Record<AppointmentType, BackendAppointmentType> =
 export function toAppointment(raw: BackendAppointment): Appointment {
   return {
     id: raw.id,
+    patientId: raw.patient?.id ?? "",
     patientName: raw.patientName,
     dentistId: raw.dentist?.id ?? "",
     date: raw.date,
@@ -113,6 +115,7 @@ function buildAppointmentsQuery(params: AppointmentListParams) {
   if (params.startDate) search.set("startDate", params.startDate);
   if (params.endDate) search.set("endDate", params.endDate);
   if (params.dentistId) search.set("dentistId", params.dentistId);
+  if (params.patientId) search.set("patientId", params.patientId);
   const qs = search.toString();
   return qs ? `?${qs}` : "";
 }
@@ -148,7 +151,10 @@ export const appointmentsApi = {
 
 // ── Hooks ─────────────────────────────────────────────────────────────────
 
-export function useAppointments(params: AppointmentListParams = {}) {
+export function useAppointments(
+  params: AppointmentListParams = {},
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: appointmentKeys.list(params),
     queryFn: async () => {
@@ -156,6 +162,7 @@ export function useAppointments(params: AppointmentListParams = {}) {
       return list.map(toAppointment);
     },
     placeholderData: (previous) => previous,
+    enabled: options?.enabled ?? true,
   });
 }
 

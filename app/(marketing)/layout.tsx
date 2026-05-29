@@ -63,7 +63,7 @@ export default function MarketingLayout({
       <footer className="border-t border-border-light bg-white">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 text-center lg:flex-row lg:px-8 lg:text-left">
           <p className="text-sm font-medium text-text-muted">
-            © 2026 OdontoFlow. Todos os direitos reservados.
+            © {new Date().getFullYear()} OdontoFlow. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-6 text-sm font-medium text-text-muted">
             <SmoothLink href="#inicio" className="hover:text-brand-primary">

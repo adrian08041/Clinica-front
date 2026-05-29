@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, handleUnauthorized } from "@/lib/api";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+import { api, handleUnauthorized, API_URL } from "@/lib/api";
 
 export interface PatientDocumentResponse {
   id: string;

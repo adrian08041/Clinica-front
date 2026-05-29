@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   useAppointments,
+  useDeleteAppointment,
   useRescheduleAppointment,
 } from "@/lib/queries/appointments";
 import type { Appointment, AgendaView } from "@/lib/types";
@@ -13,9 +15,20 @@ import { AgendaHeader } from "./agenda-header";
 import { AgendaCalendarView } from "./agenda-calendar-view";
 import { AgendaDetails } from "./agenda-details";
 import { AgendaNewDialog } from "./agenda-new-dialog";
+import { AgendaRescheduleDialog } from "./agenda-reschedule-dialog";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export function AgendaSection() {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [activeView, setActiveView] = useState<AgendaView>("week");
   const [selectedDentist, setSelectedDentist] = useState<string | null>(null);
@@ -24,11 +37,14 @@ export function AgendaSection() {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
 
   const appointmentsQuery = useAppointments(
     selectedDentist ? { dentistId: selectedDentist } : {},
   );
   const rescheduleAppointment = useRescheduleAppointment();
+  const deleteAppointment = useDeleteAppointment();
 
   const filteredAppointments = useMemo(
     () => appointmentsQuery.data ?? [],
@@ -164,6 +180,40 @@ export function AgendaSection() {
     }
   }
 
+  // ── Ações do painel de detalhes ──
+
+  function handleViewRecord() {
+    if (!selectedAppointment?.patientId) {
+      toast.error("Paciente não vinculado a este agendamento.");
+      return;
+    }
+    router.push(`/pacientes/${selectedAppointment.patientId}`);
+  }
+
+  function handleReschedule() {
+    if (!selectedAppointment) return;
+    setRescheduleOpen(true);
+  }
+
+  function handleCancelRequest() {
+    if (!selectedAppointment) return;
+    setCancelOpen(true);
+  }
+
+  async function confirmCancel() {
+    if (!selectedAppointment) return;
+    try {
+      await deleteAppointment.mutateAsync(selectedAppointment.id);
+      toast.success("Agendamento cancelado.");
+      setCancelOpen(false);
+      setShowDetails(false);
+      setSelectedAppointment(null);
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError.message || "Erro ao cancelar agendamento");
+    }
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 h-full">
       {/* Left: Calendar Area */}
@@ -212,9 +262,44 @@ export function AgendaSection() {
         selectedAppointment={selectedAppointment}
         showDetails={showDetails}
         setShowDetails={setShowDetails}
+        onViewRecord={handleViewRecord}
+        onReschedule={handleReschedule}
+        onCancel={handleCancelRequest}
       />
 
       <AgendaNewDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+
+      <AgendaRescheduleDialog
+        appointment={selectedAppointment}
+        open={rescheduleOpen}
+        onOpenChange={setRescheduleOpen}
+      />
+
+      <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cancelar agendamento</DialogTitle>
+            <DialogDescription>
+              {selectedAppointment
+                ? `Tem certeza que deseja cancelar a consulta de ${selectedAppointment.patientName}? Esta ação não pode ser desfeita.`
+                : "Tem certeza que deseja cancelar este agendamento?"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCancelOpen(false)}>
+              Voltar
+            </Button>
+            <Button
+              variant="ghost"
+              className="font-bold text-danger-action hover:text-danger-action hover:bg-danger-bg"
+              onClick={confirmCancel}
+              disabled={deleteAppointment.isPending}
+            >
+              {deleteAppointment.isPending ? "Cancelando..." : "Cancelar Agendamento"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -25,6 +25,7 @@ type PatientDialogProps = {
   isEditing: boolean;
   isOpen: boolean;
   isSubmitting: boolean;
+  insuranceOptions: string[];
   name?: string;
   cpf?: string;
   insurance?: string;
@@ -45,6 +46,7 @@ export function PatientDialog({
   isEditing,
   isOpen,
   isSubmitting,
+  insuranceOptions,
   name,
   cpf,
   insurance,
@@ -88,7 +90,11 @@ export function PatientDialog({
             ) : null}
 
             {step === 2 ? (
-              <PatientFormStepContact control={control} errors={errors} register={register} />
+              <PatientFormStepContact
+                control={control}
+                errors={errors}
+                insuranceOptions={insuranceOptions}
+              />
             ) : null}
 
             {step === 3 ? (

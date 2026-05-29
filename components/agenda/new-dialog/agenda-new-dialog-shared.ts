@@ -18,6 +18,8 @@ export type AgendaNewDialogValues = z.infer<typeof agendaNewDialogSchema>;
 export type AgendaNewDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Quando informado, abre o fluxo com o paciente já selecionado (pula a busca). */
+  initialPatient?: { id: string; name: string };
 };
 
 export const AGENDA_NEW_DIALOG_TOTAL_STEPS = 4;
@@ -60,8 +62,6 @@ export const AVAILABLE_TIMES = [
   "16:30",
   "17:00",
 ];
-
-export const OCCUPIED_TIMES = ["09:00", "14:30"];
 
 export const MONTH_NAMES = [
   "Janeiro",
