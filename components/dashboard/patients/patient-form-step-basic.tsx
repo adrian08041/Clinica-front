@@ -4,13 +4,22 @@ import { Controller, type Control, type FieldErrors, type UseFormRegister } from
 import { IdCard, UserRound } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { PatientFormData } from "@/lib/schemas/patient-schema";
-import { formatCpfInput } from "./patients-shared";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { PatientDetailsFormData } from "@/lib/schemas/patient-schema";
+import { dateToIso, isoToDate } from "@/lib/utils/date";
+import { formatCpfInput, GENDER_OPTIONS } from "./patients-shared";
 
 type PatientFormStepBasicProps = {
-  control: Control<PatientFormData>;
-  errors: FieldErrors<PatientFormData>;
-  register: UseFormRegister<PatientFormData>;
+  control: Control<PatientDetailsFormData>;
+  errors: FieldErrors<PatientDetailsFormData>;
+  register: UseFormRegister<PatientDetailsFormData>;
 };
 
 export function PatientFormStepBasic({
@@ -69,6 +78,45 @@ export function PatientFormStepBasic({
         {errors.cpf ? (
           <span className="mt-2 block text-xs text-danger-text">{errors.cpf.message}</span>
         ) : null}
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div>
+          <Label className="mb-2">Data de Nascimento</Label>
+          <Controller
+            name="birthDate"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                value={isoToDate(field.value)}
+                onChange={(date) => field.onChange(dateToIso(date))}
+                placeholder="Selecione a data"
+              />
+            )}
+          />
+        </div>
+
+        <div>
+          <Label className="mb-2">Gênero</Label>
+          <Controller
+            name="gender"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value || ""} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {GENDER_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
       </div>
     </div>
   );

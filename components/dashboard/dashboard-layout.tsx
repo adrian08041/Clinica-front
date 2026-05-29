@@ -1,23 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useSyncExternalStore } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { MobileNav } from "@/components/dashboard/mobile-nav";
 import { UNAUTHORIZED_EVENT } from "@/lib/api";
+import { getStoredUser, subscribeUser } from "@/lib/utils/auth";
+import { canAccessRoute, homeFor } from "@/lib/utils/permissions";
 
 export function DashboardLayout({ children, breadcrumbs }: { children: React.ReactNode, breadcrumbs?: string[] }) {
     const router = useRouter();
+    const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const storedUser = useSyncExternalStore(subscribeUser, getStoredUser, () => null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
             router.replace("/login");
+            return;
         }
-    }, [router]);
+        // Guard de cargo: acesso por URL direta a rota proibida volta pra home do cargo.
+        const role = storedUser?.role ?? null;
+        if (role && pathname && !canAccessRoute(role, pathname)) {
+            router.replace(homeFor(role));
+        }
+    }, [router, pathname, storedUser]);
 
     useEffect(() => {
         const onUnauthorized = () => {
@@ -51,7 +61,7 @@ export function DashboardLayout({ children, breadcrumbs }: { children: React.Rea
 
             <main className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
                 <Header breadcrumbs={breadcrumbs} />
-                <div className="flex-1 overflow-auto p-4 pb-20 md:p-8">
+                <div className="relative flex-1 overflow-auto p-4 pb-20 md:p-8">
                     {children}
                 </div>
             </main>

@@ -11,7 +11,8 @@ import {
 import { FlowDialogFooter } from "@/components/ui/flow-dialog-footer";
 import { FlowDialogHeader } from "@/components/ui/flow-dialog-header";
 import type { Control, FieldErrors, UseFormRegister } from "react-hook-form";
-import type { PatientFormData } from "@/lib/schemas/patient-schema";
+import type { PatientDetailsFormData } from "@/lib/schemas/patient-schema";
+import { formatDatePtBr } from "@/lib/utils/date";
 import { PatientFormStepBasic } from "./patient-form-step-basic";
 import { PatientFormStepContact } from "./patient-form-step-contact";
 import { PATIENT_DIALOG_STEPS } from "./patients-shared";
@@ -19,9 +20,9 @@ import { PATIENT_DIALOG_STEPS } from "./patients-shared";
 type PatientBadgeVariant = "success" | "warning" | "danger" | "brand";
 
 type PatientDialogProps = {
-  control: Control<PatientFormData>;
+  control: Control<PatientDetailsFormData>;
   description: string;
-  errors: FieldErrors<PatientFormData>;
+  errors: FieldErrors<PatientDetailsFormData>;
   isEditing: boolean;
   isOpen: boolean;
   isSubmitting: boolean;
@@ -29,11 +30,15 @@ type PatientDialogProps = {
   name?: string;
   cpf?: string;
   insurance?: string;
+  email?: string;
+  birthDate?: string;
+  gender?: string;
+  address?: string;
   onClose: () => void;
   onOpenChange: (open: boolean) => void;
   onPrimaryAction: () => void;
   phone?: string;
-  register: UseFormRegister<PatientFormData>;
+  register: UseFormRegister<PatientDetailsFormData>;
   reviewBadgeVariant: PatientBadgeVariant;
   step: number;
   title: string;
@@ -50,6 +55,10 @@ export function PatientDialog({
   name,
   cpf,
   insurance,
+  email,
+  birthDate,
+  gender,
+  address,
   onClose,
   onOpenChange,
   onPrimaryAction,
@@ -93,6 +102,7 @@ export function PatientDialog({
               <PatientFormStepContact
                 control={control}
                 errors={errors}
+                register={register}
                 insuranceOptions={insuranceOptions}
               />
             ) : null}
@@ -143,6 +153,42 @@ export function PatientDialog({
                       </p>
                       <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">
                         {phone || "-"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                        Data de Nascimento
+                      </p>
+                      <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">
+                        {formatDatePtBr(birthDate) || "-"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                        Gênero
+                      </p>
+                      <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">
+                        {gender || "-"}
+                      </p>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                        E-mail
+                      </p>
+                      <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">
+                        {email || "-"}
+                      </p>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <p className="text-[12px] font-black uppercase tracking-[0.14em] text-[var(--color-text-faint-alt)]">
+                        Endereço
+                      </p>
+                      <p className="mt-2 text-[15px] font-bold text-[var(--color-ink-panel)]">
+                        {address || "-"}
                       </p>
                     </div>
 

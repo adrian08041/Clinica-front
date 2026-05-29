@@ -1,49 +1,50 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Building2, Users, Clock, FileText, Link as LinkIcon, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { isAdmin } from "@/lib/utils/auth";
-
-const subscribeNoop = () => () => {};
-const getIsAdminSnapshot = () => isAdmin();
-const getIsAdminServerSnapshot = () => false;
+import { getStoredUser, subscribeUser, type UserRole } from "@/lib/utils/auth";
 import { ClinicaSettings } from "@/components/configuracoes/clinica-settings";
+import { MetasSettings } from "@/components/configuracoes/metas-settings";
 import { EquipeSettings } from "@/components/configuracoes/equipe-settings";
 import { HorariosSettings } from "@/components/configuracoes/horarios-settings";
 import { ConveniosSettings } from "@/components/configuracoes/convenios-settings";
 import { IntegracoesSettings } from "@/components/configuracoes/integracoes-settings";
 import { LGPDSettings } from "@/components/configuracoes/lgpd-settings";
 
+const ADMIN_ONLY: UserRole[] = ["ADMIN"];
+const ADMIN_RECEP: UserRole[] = ["ADMIN", "RECEPCIONISTA"];
+
 const ALL_MENU_ITEMS = [
-    { id: "clinica", label: "Clínica", icon: Building2, adminOnly: false },
-    { id: "equipe", label: "Equipe", icon: Users, adminOnly: false },
-    { id: "horarios", label: "Horários", icon: Clock, adminOnly: false },
-    { id: "convenios", label: "Convênios", icon: FileText, adminOnly: false },
-    { id: "integracoes", label: "Integrações", icon: LinkIcon, adminOnly: false },
-    { id: "lgpd", label: "LGPD", icon: ShieldCheck, adminOnly: true },
+    { id: "clinica", label: "Clínica", icon: Building2, roles: ADMIN_ONLY },
+    { id: "equipe", label: "Equipe", icon: Users, roles: ADMIN_ONLY },
+    { id: "horarios", label: "Horários", icon: Clock, roles: ADMIN_RECEP },
+    { id: "convenios", label: "Convênios", icon: FileText, roles: ADMIN_RECEP },
+    { id: "integracoes", label: "Integrações", icon: LinkIcon, roles: ADMIN_ONLY },
+    { id: "lgpd", label: "LGPD", icon: ShieldCheck, roles: ADMIN_ONLY },
 ];
 
 export function SettingsContent() {
     const [activeTab, setActiveTab] = useState("clinica");
-    const admin = useSyncExternalStore(subscribeNoop, getIsAdminSnapshot, getIsAdminServerSnapshot);
+    const storedUser = useSyncExternalStore(subscribeUser, getStoredUser, () => null);
+    const role = storedUser?.role ?? null;
 
-    const menuItems = useMemo(
-        () => ALL_MENU_ITEMS.filter((item) => admin || !item.adminOnly),
-        [admin],
-    );
+    const menuItems = ALL_MENU_ITEMS.filter((item) => role !== null && item.roles.includes(role));
+
+    // Garante uma aba válida pro cargo sem setState em effect (deriva durante o render).
+    const effectiveTab = menuItems.some((item) => item.id === activeTab)
+        ? activeTab
+        : menuItems[0]?.id ?? "clinica";
 
     const renderContent = () => {
-        if (activeTab === "lgpd" && !admin) {
-            return (
-                <div className="flex h-[400px] flex-col items-center justify-center rounded-[14px] border border-dashed border-border-light bg-background-card text-text-tertiary">
-                    <p className="text-[14px] font-medium">Acesso restrito a administradores.</p>
-                </div>
-            );
-        }
-        switch (activeTab) {
+        switch (effectiveTab) {
             case "clinica":
-                return <ClinicaSettings />;
+                return (
+                    <div className="flex flex-col gap-6 md:gap-8">
+                        <ClinicaSettings />
+                        <MetasSettings />
+                    </div>
+                );
             case "equipe":
                 return <EquipeSettings />;
             case "horarios":
@@ -74,7 +75,7 @@ export function SettingsContent() {
                 <aside className="w-full md:w-64 shrink-0 grid grid-cols-2 gap-2 md:flex md:flex-col">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
-                        const isActive = activeTab === item.id;
+                        const isActive = effectiveTab === item.id;
 
                         return (
                             <button

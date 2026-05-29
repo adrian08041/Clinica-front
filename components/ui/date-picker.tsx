@@ -37,7 +37,7 @@ export function DatePicker({
             type="button"
             variant="outline"
             className={cn(
-              "h-12 w-full justify-start rounded-lg border-border-light bg-background-card/50 px-4 text-sm font-medium text-text-primary hover:bg-background-card/80 hover:text-text-primary transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0",
+              "h-9 w-full justify-start rounded-md border-border-light bg-background-card/50 px-3 text-sm font-medium text-text-primary hover:bg-background-card/80 hover:text-text-primary transition-all focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-0",
               !value && "text-text-muted",
               // Reserva espaço pra o botão de limpar (que é sibling absoluto).
               showClear && "pr-12",

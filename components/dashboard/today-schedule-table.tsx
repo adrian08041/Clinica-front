@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -47,10 +48,11 @@ export function TodayScheduleTable({ entries }: TodayScheduleTableProps) {
           Agenda de Hoje
         </h3>
         <Button
+          asChild
           variant="link"
           className="text-brand-primary font-medium text-sm p-0 h-auto hover:text-brand-dark"
         >
-          Ver Agenda Completa
+          <Link href="/agenda">Ver Agenda Completa</Link>
         </Button>
       </div>
 

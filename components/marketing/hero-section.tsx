@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Check, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Check, MessageCircle, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { whatsappAgendarUrl } from "@/components/marketing/landing-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -27,11 +28,11 @@ export function HeroSection() {
           </p>
           <div className="animate-hero-in-delay-3 mt-10 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="brand" size="lg">
-              <Link href="/cadastro">
-                <CalendarDays />
-                Agendar Agora
+              <a href={whatsappAgendarUrl()} target="_blank" rel="noopener noreferrer">
+                <MessageCircle />
+                Agendar pelo WhatsApp
                 <ArrowRight />
-              </Link>
+              </a>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link href="#sobre">Conheça a Clínica</Link>

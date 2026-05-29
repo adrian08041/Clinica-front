@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AlertCircle, Bell, ChevronRight, CreditCard, Gift, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,16 +42,20 @@ const VARIANT_STYLES: Record<
 export function NotificationListItem({
   alert,
   compact = false,
+  onNavigate,
 }: {
   alert: DashboardAlert;
   compact?: boolean;
+  onNavigate?: () => void;
 }) {
   const Icon = ICON_MAP[alert.iconName];
   const styles = VARIANT_STYLES[alert.variant];
 
   return (
-    <div
-      className={`group flex items-center gap-4 rounded-xl border ${styles.border} bg-white transition-all duration-200 hover:shadow-sm ${
+    <Link
+      href={alert.actionUrl}
+      onClick={onNavigate}
+      className={`group flex items-center gap-4 rounded-xl border ${styles.border} bg-white transition-all duration-200 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 ${
         compact ? "p-3 pr-3.5" : "p-3.5 pr-4"
       }`}
     >
@@ -61,7 +66,7 @@ export function NotificationListItem({
         {alert.message}
       </p>
       <ChevronRight className="size-4 shrink-0 text-text-muted transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-text-secondary" />
-    </div>
+    </Link>
   );
 }
 
@@ -111,7 +116,11 @@ export function NotificationsDialog({
 
           <div className="flex max-h-[420px] flex-col gap-3 overflow-y-auto pr-1">
             {alerts.map((alert) => (
-              <NotificationListItem key={alert.id} alert={alert} />
+              <NotificationListItem
+                key={alert.id}
+                alert={alert}
+                onNavigate={() => onOpenChange(false)}
+              />
             ))}
           </div>
 

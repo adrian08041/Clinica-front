@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { mapApiAlerts, useAlerts } from "@/lib/queries/dashboard";
+import { getStoredUser, subscribeUser, type StoredUser } from "@/lib/utils/auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -46,6 +47,7 @@ type UserData = {
   role: string;
   email: string;
   initials: string;
+  avatarUrl: string;
 };
 
 const EMPTY_USER: UserData = {
@@ -54,10 +56,12 @@ const EMPTY_USER: UserData = {
   role: "",
   email: "",
   initials: "",
+  avatarUrl: "",
 };
 
 let cachedTimeSnapshot: TimeState | null = null;
 let cachedUserSnapshot: UserData | null = null;
+let cachedUserSource: StoredUser | null = null;
 
 function computeTimeState(): TimeState {
   const now = new Date();
@@ -90,27 +94,26 @@ const getTimeSnapshot = (): TimeState => {
 };
 const getTimeServerSnapshot = (): TimeState | null => null;
 
-function readUserFromStorage(): UserData {
-  try {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) return EMPTY_USER;
-    const parsedUser = JSON.parse(storedUser);
-    const name = parsedUser.name || "";
-    return {
-      fullName: name,
-      firstName: name.split(" ")[0] || "",
-      role: parsedUser.role || "",
-      email: parsedUser.email || "",
-      initials: parsedUser.initials || name.substring(0, 2).toUpperCase(),
-    };
-  } catch {
-    return EMPTY_USER;
-  }
+function mapStoredUser(stored: StoredUser | null): UserData {
+  if (!stored) return EMPTY_USER;
+  const name = stored.name || "";
+  return {
+    fullName: name,
+    firstName: name.split(" ")[0] || "",
+    role: stored.role || "",
+    email: stored.email || "",
+    initials: stored.initials || name.substring(0, 2).toUpperCase(),
+    avatarUrl: stored.avatarUrl || "",
+  };
 }
 
+// getStoredUser() devolve referência estável até o user mudar; recomputa o
+// view-model só quando a fonte muda — mantém o snapshot estável p/ useSyncExternalStore.
 const getUserSnapshot = (): UserData => {
-  if (cachedUserSnapshot === null) {
-    cachedUserSnapshot = readUserFromStorage();
+  const stored = getStoredUser();
+  if (stored !== cachedUserSource || cachedUserSnapshot === null) {
+    cachedUserSource = stored;
+    cachedUserSnapshot = mapStoredUser(stored);
   }
   return cachedUserSnapshot;
 };
@@ -119,19 +122,21 @@ const getUserServerSnapshot = (): UserData => EMPTY_USER;
 export function Header({ breadcrumbs }: HeaderProps) {
   const router = useRouter();
   const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
+  const [notificationsMenuOpen, setNotificationsMenuOpen] = useState(false);
   const alertsQuery = useAlerts();
   const alerts = useMemo(() => mapApiAlerts(alertsQuery.data), [alertsQuery.data]);
   const hasAlerts = alerts.length > 0;
 
   // userData lido do localStorage via useSyncExternalStore — servidor retorna
   // EMPTY_USER, cliente lê após hidratação. Mesmo padrão usado pra timeState.
-  const userData = useSyncExternalStore(subscribeNoop, getUserSnapshot, getUserServerSnapshot);
+  const userData = useSyncExternalStore(subscribeUser, getUserSnapshot, getUserServerSnapshot);
 
   const userFullName = userData.fullName;
   const userFirstName = userData.firstName;
   const userRole = userData.role;
   const userEmail = userData.email;
   const userInitials = userData.initials;
+  const userAvatarUrl = userData.avatarUrl;
 
   // Greeting/data dependem da hora local — só disponível após hidratação pra evitar
   // hydration mismatch (servidor pode estar em fuso diferente do cliente).
@@ -181,7 +186,10 @@ export function Header({ breadcrumbs }: HeaderProps) {
 
         <div className="flex items-center space-x-4 md:space-x-6">
           <div className="flex items-center gap-4">
-            <DropdownMenu>
+            <DropdownMenu
+              open={notificationsMenuOpen}
+              onOpenChange={setNotificationsMenuOpen}
+            >
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -213,7 +221,12 @@ export function Header({ breadcrumbs }: HeaderProps) {
                     </p>
                   ) : hasAlerts ? (
                     alerts.map((alert) => (
-                      <NotificationListItem key={alert.id} alert={alert} compact />
+                      <NotificationListItem
+                        key={alert.id}
+                        alert={alert}
+                        compact
+                        onNavigate={() => setNotificationsMenuOpen(false)}
+                      />
                     ))
                   ) : (
                     <p className="px-1 py-6 text-center text-sm font-medium text-text-tertiary">
@@ -239,7 +252,7 @@ export function Header({ breadcrumbs }: HeaderProps) {
               <DropdownMenuTrigger className="cursor-pointer rounded-xl border border-transparent p-2 outline-none transition-colors hover:border-border-light hover:bg-background-card data-[state=open]:bg-background-card">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 border-2 border-border-light">
-                    <AvatarImage src="" alt={userFullName} />
+                    <AvatarImage src={userAvatarUrl || undefined} alt={userFullName} />
                     <AvatarFallback className="bg-brand-primary font-medium text-white">
                       {userInitials}
                     </AvatarFallback>
@@ -258,7 +271,7 @@ export function Header({ breadcrumbs }: HeaderProps) {
                 <div className="relative flex items-center gap-3 overflow-hidden bg-brand-primary p-4">
                   <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-white opacity-10 blur-2xl" />
                   <Avatar className="relative z-10 h-14 w-14 border-2 border-white/20 shadow-sm">
-                    <AvatarImage src="" alt={userFullName} />
+                    <AvatarImage src={userAvatarUrl || undefined} alt={userFullName} />
                     <AvatarFallback className="bg-white text-lg font-bold text-brand-dark">
                       {userInitials}
                     </AvatarFallback>
@@ -270,7 +283,10 @@ export function Header({ breadcrumbs }: HeaderProps) {
                 </div>
 
                 <div className="flex flex-col gap-1 p-2">
-                  <DropdownMenuItem className="cursor-pointer gap-3 rounded-xl p-3 hover:bg-background-card focus:bg-background-card">
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-3 rounded-xl p-3 hover:bg-background-card focus:bg-background-card"
+                    onClick={() => router.push("/perfil")}
+                  >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background-hover text-text-secondary">
                       <User className="h-5 w-5" />
                     </div>

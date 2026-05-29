@@ -5,6 +5,7 @@ import { Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   useCreateInsurance,
   useDeleteInsurance,
@@ -58,6 +59,7 @@ export function ConveniosSettings() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAgreementId, setEditingAgreementId] = useState<string | null>(null);
+  const [agreementToDelete, setAgreementToDelete] = useState<Agreement | null>(null);
   const [form, setForm] = useState<AgreementFormState>(EMPTY_AGREEMENT_FORM);
 
   const agreements: Agreement[] = (insurancesQuery.data ?? []).map(toAgreement);
@@ -140,18 +142,18 @@ export function ConveniosSettings() {
     }
   };
 
-  const handleDeleteAgreement = async (agreementId: string) => {
+  const handleDeleteAgreement = (agreementId: string) => {
     const target = agreements.find((agreement) => agreement.id === agreementId);
-    const shouldDelete = window.confirm(
-      target
-        ? `Deseja remover o convênio ${target.name}?`
-        : "Deseja remover este convênio?",
-    );
-    if (!shouldDelete) return;
+    if (target) setAgreementToDelete(target);
+  };
+
+  const confirmDeleteAgreement = async () => {
+    if (!agreementToDelete) return;
 
     try {
-      await deleteInsurance.mutateAsync(agreementId);
+      await deleteInsurance.mutateAsync(agreementToDelete.id);
       toast.success("Convênio removido com sucesso!");
+      setAgreementToDelete(null);
     } catch (error: unknown) {
       const apiError = error as { message?: string };
       toast.error(apiError.message || "Erro ao remover convênio");
@@ -210,6 +212,26 @@ export function ConveniosSettings() {
         onOpenChange={handleDialogChange}
         onFormChange={setForm}
         onSave={handleSaveAgreement}
+      />
+
+      <ConfirmDialog
+        open={Boolean(agreementToDelete)}
+        onOpenChange={(open) => {
+          if (!open) setAgreementToDelete(null);
+        }}
+        onConfirm={() => void confirmDeleteAgreement()}
+        title="Remover convênio"
+        description={
+          <>
+            Tem certeza que deseja remover o convênio{" "}
+            <span className="font-semibold text-text-primary">
+              {agreementToDelete?.name}
+            </span>
+            ?
+          </>
+        }
+        confirmLabel="Remover"
+        isLoading={deleteInsurance.isPending}
       />
     </>
   );

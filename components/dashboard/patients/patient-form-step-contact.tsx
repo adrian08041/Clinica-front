@@ -1,7 +1,7 @@
 "use client";
 
-import { Controller, type Control, type FieldErrors } from "react-hook-form";
-import { Phone, ShieldPlus } from "lucide-react";
+import { Controller, type Control, type FieldErrors, type UseFormRegister } from "react-hook-form";
+import { Mail, MapPin, Phone, ShieldPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,20 +11,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { PatientFormData } from "@/lib/schemas/patient-schema";
+import type { PatientDetailsFormData } from "@/lib/schemas/patient-schema";
 import { formatPhoneInput } from "./patients-shared";
 
 const NO_INSURANCE = "__none__";
 
 type PatientFormStepContactProps = {
-  control: Control<PatientFormData>;
-  errors: FieldErrors<PatientFormData>;
+  control: Control<PatientDetailsFormData>;
+  errors: FieldErrors<PatientDetailsFormData>;
+  register: UseFormRegister<PatientDetailsFormData>;
   insuranceOptions: string[];
 };
 
 export function PatientFormStepContact({
   control,
   errors,
+  register,
   insuranceOptions,
 }: PatientFormStepContactProps) {
   return (
@@ -65,6 +67,24 @@ export function PatientFormStepContact({
 
       <div>
         <Label className="mb-2">
+          E-mail
+        </Label>
+        <div className="relative">
+          <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
+          <Input
+            {...register("email")}
+            type="email"
+            placeholder="email@exemplo.com"
+            className="pl-11"
+          />
+        </div>
+        {errors.email ? (
+          <span className="mt-2 block text-xs text-danger-text">{errors.email.message}</span>
+        ) : null}
+      </div>
+
+      <div>
+        <Label className="mb-2">
           Convênio
         </Label>
         <div className="relative">
@@ -92,6 +112,20 @@ export function PatientFormStepContact({
                 </SelectContent>
               </Select>
             )}
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label className="mb-2">
+          Endereço
+        </Label>
+        <div className="relative">
+          <MapPin className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-icon-muted)]" />
+          <Input
+            {...register("address")}
+            placeholder="Rua, número, complemento, cidade - UF"
+            className="pl-11"
           />
         </div>
       </div>

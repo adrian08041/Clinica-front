@@ -2,34 +2,20 @@
 
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { getStoredUser, subscribeUser } from "@/lib/utils/auth";
+import { canAccessRoute } from "@/lib/utils/permissions";
 
 export default function MenuPage() {
     const router = useRouter();
-    const [user, setUser] = useState({
-        name: "Dra. Ana Silva",
-        role: "Ortodontista",
-        initials: "AS"
-    });
-
-    useEffect(() => {
-        try {
-            const storedUser = localStorage.getItem("user");
-            if (storedUser) {
-                const parsedUser = JSON.parse(storedUser);
-                // eslint-disable-next-line
-                setUser({
-                    name: parsedUser.name || "Dra. Ana Silva",
-                    role: parsedUser.role || "Ortodontista",
-                    initials: parsedUser.initials || "AS"
-                });
-            }
-        } catch {
-            // Silently ignore parse errors from localStorage
-        }
-    }, []);
+    const storedUser = useSyncExternalStore(subscribeUser, getStoredUser, () => null);
+    const user = {
+        name: storedUser?.name || "Usuário",
+        role: storedUser?.role || "",
+        initials: storedUser?.initials || (storedUser?.name?.substring(0, 2).toUpperCase() ?? "U"),
+    };
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -40,7 +26,7 @@ export default function MenuPage() {
     const menuItems = [
         { name: "Tratamentos", href: "/tratamentos" },
         { name: "Configurações da Clínica", href: "/configuracoes" },
-    ];
+    ].filter((item) => canAccessRoute(storedUser?.role ?? null, item.href));
 
     return (
         <div className="w-full max-w-md mx-auto px-1 pt-6 pb-24">

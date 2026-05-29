@@ -117,6 +117,7 @@ export interface DashboardAlert {
   message: string;
   variant: "warning" | "danger" | "success";
   iconName: string;
+  actionUrl: string;
 }
 
 export interface WeeklyChartBar {

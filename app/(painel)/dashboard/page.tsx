@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import {
   CalendarCheck,
   CheckCircle,
@@ -14,6 +14,8 @@ import { GoalsSection } from "@/components/dashboard/goals-section";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { WeeklyChart } from "@/components/dashboard/weekly-chart";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
+import { getStoredUser, subscribeUser } from "@/lib/utils/auth";
+import { canViewFinance } from "@/lib/utils/permissions";
 import {
   mapApiAlerts,
   useAlerts,
@@ -69,6 +71,7 @@ function formatGrowth(value: number | undefined): string {
 
 function buildStats(
   summary: ReturnType<typeof useDashboardSummary>["data"],
+  showFinance: boolean,
 ): DashboardStat[] {
   const safe = summary ?? {
     appointmentsToday: 0,
@@ -78,7 +81,7 @@ function buildStats(
     growthPercentages: {},
   };
 
-  return [
+  const stats: DashboardStat[] = [
     {
       title: "Consultas Hoje",
       value: String(safe.appointmentsToday),
@@ -112,6 +115,11 @@ function buildStats(
       },
     },
   ];
+
+  // Faturamento é exclusivo do ADMIN.
+  return showFinance
+    ? stats
+    : stats.filter((stat) => stat.iconName !== "DollarSign");
 }
 
 function buildSchedule(
@@ -131,6 +139,7 @@ function buildSchedule(
 
 function buildGoals(
   goals: ReturnType<typeof useGoals>["data"],
+  showFinance: boolean,
 ): GoalProgress[] {
   if (!goals) return [];
 
@@ -146,7 +155,7 @@ function buildGoals(
       ? Math.min(100, (treatmentActual / treatmentGoal) * 100)
       : 0;
 
-  return [
+  const allGoals: GoalProgress[] = [
     {
       label: "Faturamento",
       current: BRL_FORMATTER.format(revenueActual),
@@ -162,6 +171,10 @@ function buildGoals(
       variant: "warning",
     },
   ];
+
+  return showFinance
+    ? allGoals
+    : allGoals.filter((goal) => goal.label !== "Faturamento");
 }
 
 function buildWeeklyBars(
@@ -231,12 +244,21 @@ export default function Dashboard() {
   const alertsQuery = useAlerts();
   const chartQuery = useWeeklyChart();
 
-  const stats = useMemo(() => buildStats(summaryQuery.data), [summaryQuery.data]);
+  const storedUser = useSyncExternalStore(subscribeUser, getStoredUser, () => null);
+  const showFinance = canViewFinance(storedUser?.role ?? null);
+
+  const stats = useMemo(
+    () => buildStats(summaryQuery.data, showFinance),
+    [summaryQuery.data, showFinance],
+  );
   const schedule = useMemo(
     () => buildSchedule(agendaQuery.data),
     [agendaQuery.data],
   );
-  const goals = useMemo(() => buildGoals(goalsQuery.data), [goalsQuery.data]);
+  const goals = useMemo(
+    () => buildGoals(goalsQuery.data, showFinance),
+    [goalsQuery.data, showFinance],
+  );
   const alerts = useMemo(
     () => mapApiAlerts(alertsQuery.data),
     [alertsQuery.data],
@@ -276,9 +298,13 @@ export default function Dashboard() {
         />
       ) : null}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 gap-6 ${
+          showFinance ? "lg:grid-cols-4" : "lg:grid-cols-3"
+        }`}
+      >
         {summaryQuery.isLoading
-          ? Array.from({ length: 4 }).map((_, index) => (
+          ? Array.from({ length: showFinance ? 4 : 3 }).map((_, index) => (
               <StatCardSkeleton key={index} />
             ))
           : stats.map((stat) => (

@@ -1,7 +1,11 @@
 "use client";
 
-import { MapPin, Send } from "lucide-react";
-import { contactCards } from "@/components/marketing/landing-data";
+import { Send } from "lucide-react";
+import {
+  CLINIC_ADDRESS,
+  contactCards,
+  mapsEmbedUrl,
+} from "@/components/marketing/landing-data";
 import { ScrollReveal } from "@/components/marketing/scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -79,43 +83,57 @@ export function ContactSection() {
 
         <div className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
-            {contactCards.map(({ title, lines, icon: Icon }, index) => (
-              <ScrollReveal key={title} delay={index * 100} direction="right">
-                <Card
-                  asChild
-                  className="h-full p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <article>
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-brand-primary/10">
-                      <Icon className="size-5 text-brand-primary" />
-                    </div>
-                    <h3 className="mt-4 text-base font-bold text-text-primary">
-                      {title}
-                    </h3>
-                    <div className="mt-2 space-y-1 text-sm leading-6 text-text-secondary">
-                      {lines.map((line) => (
-                        <p key={line}>{line}</p>
-                      ))}
-                    </div>
-                  </article>
-                </Card>
-              </ScrollReveal>
-            ))}
+            {contactCards.map(({ title, lines, icon: Icon, href, external }, index) => {
+              const inner = (
+                <>
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-brand-primary/10">
+                    <Icon className="size-5 text-brand-primary" />
+                  </div>
+                  <h3 className="mt-4 text-base font-bold text-text-primary">
+                    {title}
+                  </h3>
+                  <div className="mt-2 space-y-1 text-sm leading-6 text-text-secondary">
+                    {lines.map((line) => (
+                      <p key={line}>{line}</p>
+                    ))}
+                  </div>
+                </>
+              );
+
+              return (
+                <ScrollReveal key={title} delay={index * 100} direction="right">
+                  <Card
+                    asChild
+                    className="h-full p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    {href ? (
+                      <a
+                        href={href}
+                        {...(external
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <article>{inner}</article>
+                    )}
+                  </Card>
+                </ScrollReveal>
+              );
+            })}
           </div>
 
           <ScrollReveal delay={200} direction="right">
             <Card className="overflow-hidden p-0">
-              <div className="flex h-[300px] items-center justify-center bg-background-card">
-                <div className="text-center">
-                  <MapPin className="mx-auto size-8 text-brand-primary" />
-                  <p className="mt-3 text-xl font-bold text-text-primary">
-                    São Paulo
-                  </p>
-                  <p className="mt-1 text-sm text-text-muted">
-                    Mapa ilustrativo da região da clínica
-                  </p>
-                </div>
-              </div>
+              <iframe
+                title={`Mapa da OdontoFlow — ${CLINIC_ADDRESS}`}
+                src={mapsEmbedUrl()}
+                className="h-[300px] w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </Card>
           </ScrollReveal>
         </div>

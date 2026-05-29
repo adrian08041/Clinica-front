@@ -1,5 +1,7 @@
 export const PATIENT_DIALOG_STEPS = ["Identificação", "Contato", "Revisão"];
 
+export const GENDER_OPTIONS = ["Masculino", "Feminino", "Outro"];
+
 export function patientStatusVariant(
   status?: string,
 ): "success" | "warning" | "danger" {

@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { api } from "@/lib/api";
+import { setStoredUser, type UserRole } from "@/lib/utils/auth";
+import { homeFor } from "@/lib/utils/permissions";
 
 interface AuthResponse {
   token: string;
@@ -21,6 +23,7 @@ interface AuthResponse {
   email: string;
   role: string;
   initials: string;
+  avatarUrl: string | null;
 }
 
 export function LoginForm() {
@@ -52,16 +55,17 @@ export function LoginForm() {
       });
 
       localStorage.setItem("token", response.token);
-      localStorage.setItem("user", JSON.stringify({
+      setStoredUser({
         id: response.id,
         name: response.name,
         email: response.email,
-        role: response.role,
+        role: response.role as never,
         initials: response.initials,
-      }));
+        avatarUrl: response.avatarUrl,
+      });
 
       toast.success("Bem-vindo(a) de volta!");
-      router.push("/dashboard");
+      router.push(homeFor(response.role as UserRole));
     } catch (error: unknown) {
       const apiError = error as { message?: string; status?: number };
       const message = apiError.status === 400
@@ -193,17 +197,6 @@ export function LoginForm() {
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Entrar"}
         </Button>
       </form>
-
-      {/* Footer Text */}
-      <p className="font-medium text-[#6a7282] text-[16px] leading-[24px] text-center mt-6">
-        Primeiro acesso?{" "}
-        <Link
-          href="/cadastro"
-          className="font-bold text-[#0d9488] hover:underline"
-        >
-          Crie sua conta
-        </Link>
-      </p>
     </div>
   );
 }

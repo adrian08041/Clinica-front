@@ -1,9 +1,9 @@
 import {
   type LucideIcon,
   Clock3,
+  Mail,
   MapPin,
   MessageCircle,
-  Phone,
   ShieldCheck,
   SmilePlus,
   Sparkles,
@@ -11,6 +11,35 @@ import {
   Stethoscope,
   Syringe,
 } from "lucide-react";
+
+// Linha de WhatsApp da clínica (mesma do chatbot/uazapi). Único lugar onde o
+// número vive — reusado pelos CTAs de "Agendar" e pelo telefone do header.
+export const CLINIC_WHATSAPP = "5511915935231";
+export const CLINIC_PHONE_DISPLAY = "(11) 91593-5231";
+
+const AGENDAR_MESSAGE =
+  "Olá! Vim pelo site da OdontoFlow e gostaria de agendar uma consulta.";
+
+/** Deep link do WhatsApp com mensagem pré-preenchida para o lead agendar. */
+export function whatsappAgendarUrl(): string {
+  return `https://wa.me/${CLINIC_WHATSAPP}?text=${encodeURIComponent(AGENDAR_MESSAGE)}`;
+}
+
+/** Endereço da clínica — usado nos cards de contato e no mapa. */
+export const CLINIC_ADDRESS = "Rua Saúde, 123 - Centro, São Paulo, SP";
+
+/** E-mail de contato da clínica. */
+export const CLINIC_EMAIL = "contato@odontoflow.com";
+
+/** URL de embed do Google Maps (sem API key) centrada no endereço da clínica. */
+export function mapsEmbedUrl(): string {
+  return `https://maps.google.com/maps?q=${encodeURIComponent(CLINIC_ADDRESS)}&z=15&output=embed`;
+}
+
+/** Link do Google Maps (abre o app/site) para o endereço da clínica. */
+export function mapsLinkUrl(): string {
+  return `https://maps.google.com/maps?q=${encodeURIComponent(CLINIC_ADDRESS)}`;
+}
 
 export type Treatment = {
   title: string;
@@ -39,6 +68,10 @@ export type ContactCard = {
   title: string;
   lines: string[];
   icon: LucideIcon;
+  /** Quando presente, o card vira um link clicável. */
+  href?: string;
+  /** true abre em nova aba (links externos: mapa, WhatsApp). */
+  external?: boolean;
 };
 
 export const treatments: Treatment[] = [
@@ -149,11 +182,14 @@ export const contactCards: ContactCard[] = [
     title: "Endereço",
     lines: ["Rua Saúde, 123 - Centro", "São Paulo, SP"],
     icon: MapPin,
+    href: mapsLinkUrl(),
+    external: true,
   },
   {
-    title: "Telefone",
-    lines: ["(34) 3333-3333", "(34) 99999-9999"],
-    icon: Phone,
+    title: "E-mail",
+    lines: [CLINIC_EMAIL, "Respondemos em até 1 dia útil"],
+    icon: Mail,
+    href: `mailto:${CLINIC_EMAIL}`,
   },
   {
     title: "Horário",
@@ -162,7 +198,9 @@ export const contactCards: ContactCard[] = [
   },
   {
     title: "WhatsApp",
-    lines: ["Resposta rápida em", "até 15 minutos."],
+    lines: [CLINIC_PHONE_DISPLAY, "Resposta em até 15 min"],
     icon: MessageCircle,
+    href: `https://wa.me/${CLINIC_WHATSAPP}`,
+    external: true,
   },
 ];

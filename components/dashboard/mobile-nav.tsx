@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
+import { getStoredUser, subscribeUser } from "@/lib/utils/auth";
+import { canAccessRoute } from "@/lib/utils/permissions";
 import {
     Home,
     Users,
@@ -21,6 +24,10 @@ const navItems = [
 
 export function MobileNav() {
     const pathname = usePathname();
+    const storedUser = useSyncExternalStore(subscribeUser, getStoredUser, () => null);
+    const visibleNavItems = navItems.filter((item) =>
+        canAccessRoute(storedUser?.role ?? null, item.href),
+    );
 
     return (
         <div
@@ -28,7 +35,7 @@ export function MobileNav() {
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
             <div className="flex justify-around items-center h-[72px] px-2">
-                {navItems.map((item) => {
+                {visibleNavItems.map((item) => {
                     // Trata o /dashboard como base e não ativa nos outros
                     const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
                     const Icon = item.icon;

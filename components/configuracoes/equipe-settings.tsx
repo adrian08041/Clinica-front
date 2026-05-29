@@ -5,6 +5,7 @@ import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   useCreateDentist,
   useDeleteDentist,
@@ -53,6 +54,7 @@ export function EquipeSettings() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
+  const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
   const [form, setForm] = useState<TeamFormState>(EMPTY_TEAM_FORM);
 
   const teamMembers: TeamMember[] = useMemo(
@@ -120,18 +122,18 @@ export function EquipeSettings() {
     }
   };
 
-  const handleDeleteMember = async (memberId: string) => {
+  const handleDeleteMember = (memberId: string) => {
     const target = teamMembers.find((member) => member.id === memberId);
-    const shouldDelete = window.confirm(
-      target
-        ? `Deseja remover o cadastro de ${target.name}?`
-        : "Deseja remover este funcionário?",
-    );
-    if (!shouldDelete) return;
+    if (target) setMemberToDelete(target);
+  };
+
+  const confirmDeleteMember = async () => {
+    if (!memberToDelete) return;
 
     try {
-      await deleteDentist.mutateAsync(memberId);
+      await deleteDentist.mutateAsync(memberToDelete.id);
       toast.success("Funcionário removido com sucesso!");
+      setMemberToDelete(null);
     } catch (error: unknown) {
       const apiError = error as { message?: string };
       toast.error(apiError.message || "Erro ao remover funcionário");
@@ -203,6 +205,26 @@ export function EquipeSettings() {
         onOpenChange={handleDialogChange}
         onFormChange={setForm}
         onSave={handleSaveMember}
+      />
+
+      <ConfirmDialog
+        open={Boolean(memberToDelete)}
+        onOpenChange={(open) => {
+          if (!open) setMemberToDelete(null);
+        }}
+        onConfirm={() => void confirmDeleteMember()}
+        title="Remover funcionário"
+        description={
+          <>
+            Tem certeza que deseja remover o cadastro de{" "}
+            <span className="font-semibold text-text-primary">
+              {memberToDelete?.name}
+            </span>
+            ?
+          </>
+        }
+        confirmLabel="Remover"
+        isLoading={deleteDentist.isPending}
       />
     </>
   );

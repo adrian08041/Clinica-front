@@ -146,5 +146,6 @@ export function mapApiAlerts(alerts: DashboardAlertApi[] | undefined): Dashboard
     message: alert.title,
     variant: ALERT_VARIANT_MAP[alert.severity] ?? "warning",
     iconName: ALERT_ICON_MAP[alert.type] ?? "AlertCircle",
+    actionUrl: alert.actionUrl,
   }));
 }

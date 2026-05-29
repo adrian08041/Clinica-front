@@ -8,6 +8,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { QueryErrorBanner } from "@/components/ui/query-error-banner";
 import {
   useCreatePatient,
@@ -16,7 +17,10 @@ import {
   useUpdatePatient,
 } from "@/lib/queries/patients";
 import { useInsurances as useInsuranceCatalog } from "@/lib/queries/settings";
-import { patientSchema, type PatientFormData } from "@/lib/schemas/patient-schema";
+import {
+  patientDetailsSchema,
+  type PatientDetailsFormData,
+} from "@/lib/schemas/patient-schema";
 import type { Patient } from "@/lib/types";
 import { PatientDialog } from "./patients/patient-dialog";
 import { PatientsFilters } from "./patients/patients-filters";
@@ -30,10 +34,14 @@ import {
   toLocalPhoneDigits,
 } from "./patients/patients-shared";
 
-const EMPTY_FORM: PatientFormData = {
+const EMPTY_FORM: PatientDetailsFormData = {
   name: "",
   cpf: "",
   phone: "",
+  email: "",
+  birthDate: "",
+  gender: "",
+  address: "",
   insurance: "",
 };
 
@@ -48,6 +56,7 @@ export function PatientsSection() {
   const [sortBy, setSortBy] = useState("name,asc");
   const [step, setStep] = useState(1);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [patientToDelete, setPatientToDelete] = useState<Patient | null>(null);
 
   const patientsQuery = usePatients({
     page,
@@ -74,8 +83,8 @@ export function PatientsSection() {
     formState: { errors, isSubmitting },
     reset,
     trigger,
-  } = useForm<PatientFormData>({
-    resolver: zodResolver(patientSchema),
+  } = useForm<PatientDetailsFormData>({
+    resolver: zodResolver(patientDetailsSchema),
     defaultValues: EMPTY_FORM,
   });
 
@@ -83,6 +92,10 @@ export function PatientsSection() {
   const watchedCpf = useWatch({ control, name: "cpf" });
   const watchedPhone = useWatch({ control, name: "phone" });
   const watchedInsurance = useWatch({ control, name: "insurance" });
+  const watchedEmail = useWatch({ control, name: "email" });
+  const watchedBirthDate = useWatch({ control, name: "birthDate" });
+  const watchedGender = useWatch({ control, name: "gender" });
+  const watchedAddress = useWatch({ control, name: "address" });
 
   const dialogTitle = editingPatient ? "Editar Paciente" : "Novo Paciente";
   const dialogDescription = editingPatient
@@ -122,6 +135,10 @@ export function PatientsSection() {
       name: patient.name ?? "",
       cpf: formatCpfInput(patient.cpf ?? ""),
       phone: formatPhoneInput(toLocalPhoneDigits(patient.phone)),
+      email: patient.email ?? "",
+      birthDate: patient.birthDate ?? "",
+      gender: patient.gender ?? "",
+      address: patient.address ?? "",
       insurance: patient.insurance ?? "",
     });
     setIsDialogOpen(true);
@@ -135,7 +152,7 @@ export function PatientsSection() {
     }
 
     if (step === 2) {
-      const isValid = await trigger(["phone"]);
+      const isValid = await trigger(["phone", "email"]);
       if (isValid) setStep(3);
       return false;
     }
@@ -143,11 +160,15 @@ export function PatientsSection() {
     return true;
   };
 
-  const submitPatient = async (data: PatientFormData) => {
+  const submitPatient = async (data: PatientDetailsFormData) => {
     const payload = {
       name: data.name,
       cpf: data.cpf,
       phone: data.phone,
+      email: data.email || null,
+      birthDate: data.birthDate || null,
+      gender: data.gender || null,
+      address: data.address || null,
       insurance: data.insurance || null,
     };
 
@@ -175,27 +196,28 @@ export function PatientsSection() {
       return;
     }
 
-    const isValid = await trigger(["name", "cpf", "phone"]);
+    const isValid = await trigger(["name", "cpf", "phone", "email"]);
     if (!isValid) return;
 
     await submitPatient({
       name: watchedName ?? "",
       cpf: watchedCpf ?? "",
       phone: watchedPhone ?? "",
+      email: watchedEmail ?? "",
+      birthDate: watchedBirthDate ?? "",
+      gender: watchedGender ?? "",
+      address: watchedAddress ?? "",
       insurance: watchedInsurance ?? "",
     });
   };
 
-  const handleDeletePatient = async (patient: Patient) => {
-    const shouldDelete = window.confirm(
-      `Deseja excluir o paciente ${patient.name}? Essa ação remove o cadastro da lista ativa.`,
-    );
-
-    if (!shouldDelete) return;
+  const confirmDeletePatient = async () => {
+    if (!patientToDelete) return;
 
     try {
-      await deletePatient.mutateAsync(patient.id);
+      await deletePatient.mutateAsync(patientToDelete.id);
       toast.success("Paciente excluído com sucesso!");
+      setPatientToDelete(null);
     } catch (error: unknown) {
       const apiError = error as { message?: string };
       toast.error(apiError.message || "Erro ao excluir paciente");
@@ -240,6 +262,10 @@ export function PatientsSection() {
           name={watchedName}
           cpf={watchedCpf}
           insurance={watchedInsurance}
+          email={watchedEmail}
+          birthDate={watchedBirthDate}
+          gender={watchedGender}
+          address={watchedAddress}
           onClose={() =>
             step === 1 ? handleDialogChange(false) : setStep((current) => current - 1)
           }
@@ -278,7 +304,7 @@ export function PatientsSection() {
         <PatientsTable
           deletingPatientId={deletePatient.isPending ? deletePatient.variables ?? null : null}
           isLoading={isLoading}
-          onDelete={(patient) => void handleDeletePatient(patient)}
+          onDelete={(patient) => setPatientToDelete(patient)}
           onEdit={openEditDialog}
           onOpenProfile={(patientId) => router.push(`/pacientes/${patientId}`)}
           patients={patients}
@@ -292,6 +318,26 @@ export function PatientsSection() {
           totalPages={totalPages}
         />
       </Card>
+
+      <ConfirmDialog
+        open={Boolean(patientToDelete)}
+        onOpenChange={(open) => {
+          if (!open) setPatientToDelete(null);
+        }}
+        onConfirm={() => void confirmDeletePatient()}
+        title="Excluir paciente"
+        description={
+          <>
+            Tem certeza que deseja excluir{" "}
+            <span className="font-semibold text-text-primary">
+              {patientToDelete?.name}
+            </span>
+            ? Essa ação remove o cadastro da lista ativa.
+          </>
+        }
+        confirmLabel="Excluir"
+        isLoading={deletePatient.isPending}
+      />
     </div>
   );
 }

@@ -1,6 +1,11 @@
 import Link from "next/link";
-import { LogIn, Phone } from "lucide-react";
+import { LogIn, MessageCircle, Phone } from "lucide-react";
 import { SmoothLink } from "@/components/marketing/smooth-link";
+import {
+  CLINIC_PHONE_DISPLAY,
+  CLINIC_WHATSAPP,
+  whatsappAgendarUrl,
+} from "@/components/marketing/landing-data";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -42,12 +47,20 @@ export default function MarketingLayout({
           </nav>
 
           <div className="hidden items-center gap-4 lg:flex">
-            <div className="flex items-center gap-2 text-text-secondary">
+            <a
+              href={`https://wa.me/${CLINIC_WHATSAPP}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-text-secondary transition hover:text-brand-primary"
+            >
               <Phone className="size-4 text-brand-primary" />
-              <span className="text-sm font-medium">(34) 99999-9999</span>
-            </div>
+              <span className="text-sm font-medium">{CLINIC_PHONE_DISPLAY}</span>
+            </a>
             <Button asChild variant="brand">
-              <Link href="/cadastro">Agendar Consulta</Link>
+              <a href={whatsappAgendarUrl()} target="_blank" rel="noopener noreferrer">
+                <MessageCircle />
+                Agendar Consulta
+              </a>
             </Button>
             <Button asChild variant="outline" size="icon">
               <Link href="/login" title="Fazer login">

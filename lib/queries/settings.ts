@@ -12,6 +12,8 @@ export interface ClinicResponse {
   email: string;
   website: string | null;
   logoUrl: string | null;
+  revenueGoal: number | null;
+  treatmentGoal: number | null;
 }
 
 export interface ClinicPayload {
@@ -22,6 +24,8 @@ export interface ClinicPayload {
   email: string;
   website?: string | null;
   logoUrl?: string | null;
+  revenueGoal?: number | null;
+  treatmentGoal?: number | null;
 }
 
 export interface ClinicHourEntry {
