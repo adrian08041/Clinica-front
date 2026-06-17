@@ -1,17 +1,14 @@
-import Link from "next/link"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/table"
-import type { ScheduleEntry, ScheduleStatus } from "@/lib/types"
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import type { ScheduleEntry, ScheduleStatus } from "@/lib/types";
 
 const STATUS_CONFIG: Record<
   ScheduleStatus,
@@ -20,11 +17,11 @@ const STATUS_CONFIG: Record<
   confirmed: { label: "Confirmado", variant: "success" },
   pending: { label: "Pendente", variant: "warning" },
   cancelled: { label: "Cancelado", variant: "danger" },
-}
+};
 
 function StatusBadge({ status }: { status: ScheduleStatus }) {
-  const config = STATUS_CONFIG[status]
-  return <Badge variant={config.variant}>{config.label}</Badge>
+  const config = STATUS_CONFIG[status];
+  return <Badge variant={config.variant}>{config.label}</Badge>;
 }
 
 function getInitials(name: string) {
@@ -33,87 +30,88 @@ function getInitials(name: string) {
     .map((n) => n[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 }
 
+const columns: DataTableColumn<ScheduleEntry>[] = [
+  {
+    id: "time",
+    header: "Horário",
+    cell: (entry) => entry.time,
+    cellClassName: "text-sm font-medium text-text-secondary",
+  },
+  {
+    id: "patient",
+    header: "Paciente",
+    primary: true,
+    cell: (entry) => (
+      <div className="flex items-center gap-3">
+        <Avatar>
+          <AvatarImage src={entry.patientAvatar} alt={entry.patientName} />
+          <AvatarFallback>{getInitials(entry.patientName)}</AvatarFallback>
+        </Avatar>
+        <span className="truncate text-sm font-semibold text-text-primary">
+          {entry.patientName}
+        </span>
+      </div>
+    ),
+  },
+  {
+    id: "procedure",
+    header: "Procedimento",
+    cell: (entry) => entry.procedure,
+    cellClassName: "text-sm text-text-secondary",
+  },
+  {
+    id: "dentist",
+    header: "Dentista",
+    cell: (entry) => entry.dentist,
+    cellClassName: "text-sm text-text-tertiary",
+  },
+  {
+    id: "status",
+    header: "Status",
+    headerClassName: "text-right",
+    cellClassName: "text-right",
+    cell: (entry) => <StatusBadge status={entry.status} />,
+  },
+];
+
 interface TodayScheduleTableProps {
-  entries: ScheduleEntry[]
+  entries: ScheduleEntry[];
 }
 
 export function TodayScheduleTable({ entries }: TodayScheduleTableProps) {
+  const [listMode, setListMode] = useState<"table" | "cards">("table");
+
   return (
-    <Card className="gap-0 p-0 overflow-hidden">
-      <div className="border-b border-border-light h-[77px] px-6 flex items-center justify-between">
-        <h3 className="font-semibold text-text-primary text-lg leading-7">
+    <Card
+      className={cn(
+        "gap-0 overflow-hidden p-0",
+        listMode === "cards" && "border-transparent bg-transparent shadow-none",
+      )}
+    >
+      <div className="flex h-[77px] items-center justify-between border-b border-border-light px-6">
+        <h3 className="text-lg font-semibold leading-7 text-text-primary">
           Agenda de Hoje
         </h3>
         <Button
           asChild
           variant="link"
-          className="text-brand-primary font-medium text-sm p-0 h-auto hover:text-brand-dark"
+          className="h-auto p-0 text-sm font-medium text-brand-primary hover:text-brand-dark"
         >
           <Link href="/agenda">Ver Agenda Completa</Link>
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow className="border-border-light hover:bg-transparent">
-            <TableHead className="w-[15%] min-w-[80px] px-4 text-text-tertiary text-xs font-semibold uppercase tracking-wider">
-              Horário
-            </TableHead>
-            <TableHead className="w-[30%] min-w-[160px] px-4 text-text-tertiary text-xs font-semibold uppercase tracking-wider">
-              Paciente
-            </TableHead>
-            <TableHead className="w-[25%] min-w-[140px] px-4 text-text-tertiary text-xs font-semibold uppercase tracking-wider">
-              Procedimento
-            </TableHead>
-            <TableHead className="w-[20%] min-w-[120px] px-4 text-text-tertiary text-xs font-semibold uppercase tracking-wider">
-              Dentista
-            </TableHead>
-            <TableHead className="min-w-[100px] px-4 text-right text-text-tertiary text-xs font-semibold uppercase tracking-wider">
-              Status
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {entries.map((entry) => (
-            <TableRow
-              key={entry.id}
-              className="border-border-light h-[65px] hover:bg-background-hover transition-colors"
-            >
-              <TableCell className="px-4 font-medium text-text-secondary text-sm">
-                {entry.time}
-              </TableCell>
-              <TableCell className="px-4">
-                <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage
-                      src={entry.patientAvatar}
-                      alt={entry.patientName}
-                    />
-                    <AvatarFallback>
-                      {getInitials(entry.patientName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="font-semibold text-text-primary text-sm truncate">
-                    {entry.patientName}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="px-4 text-text-secondary text-sm truncate">
-                {entry.procedure}
-              </TableCell>
-              <TableCell className="px-4 text-text-tertiary text-sm truncate">
-                {entry.dentist}
-              </TableCell>
-              <TableCell className="px-4 text-right">
-                <StatusBadge status={entry.status} />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <DataTable
+        columns={columns}
+        data={entries}
+        getRowKey={(entry) => entry.id}
+        size="md"
+        emptyMessage="Nenhum agendamento para hoje."
+        onModeChange={setListMode}
+      />
     </Card>
-  )
+  );
 }

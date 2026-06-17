@@ -20,6 +20,7 @@ type AgendaScheduleStepProps = {
   firstDay: number;
   navigateMonth: (direction: number) => void;
   occupiedTimes: string[];
+  pastTimes: string[];
   today: Date;
   trigger: UseFormTrigger<AgendaNewDialogValues>;
 };
@@ -33,6 +34,7 @@ export function AgendaScheduleStep({
   firstDay,
   navigateMonth,
   occupiedTimes,
+  pastTimes,
   today,
   trigger,
 }: AgendaScheduleStepProps) {
@@ -149,6 +151,8 @@ export function AgendaScheduleStep({
                 <div className="grid grid-cols-3 gap-2">
                   {AVAILABLE_TIMES.map((time) => {
                     const isOccupied = occupiedTimes.includes(time);
+                    const isPast = pastTimes.includes(time);
+                    const isUnavailable = isOccupied || isPast;
                     const isSelected = field.value === time;
 
                     return (
@@ -157,17 +161,17 @@ export function AgendaScheduleStep({
                         type="button"
                         variant="outline"
                         onClick={() => {
-                          if (!isOccupied) {
+                          if (!isUnavailable) {
                             field.onChange(time);
                             void trigger("time");
                           }
                         }}
-                        disabled={isOccupied}
+                        disabled={isUnavailable}
                         className={cn(
                           "h-10 rounded-[12px] text-xs font-bold",
                           isSelected
                             ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-dark hover:text-white"
-                            : isOccupied
+                            : isUnavailable
                               ? "cursor-not-allowed border-background-hover bg-background-card text-border-light"
                               : "border-border-light bg-white text-text-secondary hover:border-brand-primary hover:text-brand-primary",
                         )}

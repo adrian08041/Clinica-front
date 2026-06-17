@@ -13,6 +13,7 @@ import {
   useUpdateDentist,
 } from "@/lib/queries/dentists";
 import type { Dentist } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { TeamMemberDialog } from "./equipe/team-member-dialog";
 import { TeamMembersTable } from "./equipe/team-members-table";
 import {
@@ -56,6 +57,7 @@ export function EquipeSettings() {
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
   const [form, setForm] = useState<TeamFormState>(EMPTY_TEAM_FORM);
+  const [listMode, setListMode] = useState<"table" | "cards">("table");
 
   const teamMembers: TeamMember[] = useMemo(
     () => (dentistsQuery.data ?? []).map(dentistToMember),
@@ -142,7 +144,12 @@ export function EquipeSettings() {
 
   return (
     <>
-      <Card className="w-full overflow-hidden p-4 sm:p-6 md:p-8 gap-0">
+      <Card
+        className={cn(
+          "w-full overflow-hidden p-4 sm:p-6 md:p-8 gap-0",
+          listMode === "cards" && "border-transparent bg-transparent shadow-none",
+        )}
+      >
         <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-start md:justify-between">
           <div>
             <h2 className="text-[20px] font-bold leading-[28px] text-text-primary">
@@ -193,6 +200,7 @@ export function EquipeSettings() {
             teamMembers={teamMembers}
             onEdit={openEditDialog}
             onDelete={handleDeleteMember}
+            onModeChange={setListMode}
           />
         )}
       </Card>

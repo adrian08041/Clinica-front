@@ -26,6 +26,7 @@ import {
   type AgendaNewDialogProps,
   type AgendaNewDialogValues,
   APPOINTMENT_TYPES,
+  AVAILABLE_TIMES,
   formatAgendaDate,
   getDaysInMonth,
   getFirstDayOfMonth,
@@ -136,6 +137,25 @@ export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNe
     [hasScheduleContext, dayAppointmentsQuery.data],
   );
 
+  // Horários que já passaram: só quando o dia escolhido é hoje, bloqueia os
+  // slots cujo início é anterior (ou igual) ao horário atual.
+  const pastTimes = useMemo(() => {
+    if (selectedDate === undefined || selectedDate === null) return [];
+
+    const now = new Date();
+    const isToday =
+      calendarYear === now.getFullYear() &&
+      calendarMonth === now.getMonth() &&
+      selectedDate === now.getDate();
+    if (!isToday) return [];
+
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    return AVAILABLE_TIMES.filter((time) => {
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + minutes <= nowMinutes;
+    });
+  }, [calendarYear, calendarMonth, selectedDate]);
+
   useEffect(() => {
     formContentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
@@ -203,6 +223,20 @@ export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNe
       !selectedTime ||
       !selectedType
     ) {
+      return;
+    }
+
+    const [selectedHours, selectedMinutes] = selectedTime.split(":").map(Number);
+    const selectedDateTime = new Date(
+      calendarYear,
+      calendarMonth,
+      selectedDate,
+      selectedHours,
+      selectedMinutes,
+    );
+    if (selectedDateTime.getTime() <= Date.now()) {
+      toast.error("Selecione um horário no futuro.");
+      setStep(2);
       return;
     }
 
@@ -308,6 +342,7 @@ export function AgendaNewDialog({ open, onOpenChange, initialPatient }: AgendaNe
                 firstDay={firstDay}
                 navigateMonth={navigateMonth}
                 occupiedTimes={occupiedTimes}
+                pastTimes={pastTimes}
                 today={today}
                 trigger={trigger}
               />

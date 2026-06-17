@@ -1,96 +1,86 @@
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import type { PatientFinancialRecord } from "@/lib/types"
+"use client";
+
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import type { PatientFinancialRecord } from "@/lib/types";
+
+function StatusBadge({ status }: { status: PatientFinancialRecord["status"] }) {
+  const variant =
+    status === "paid" ? "success" : status === "overdue" ? "danger" : "warning";
+  const label =
+    status === "paid" ? "Pago" : status === "overdue" ? "Atrasado" : "Pendente";
+  return <Badge variant={variant}>{label}</Badge>;
+}
+
+const columns: DataTableColumn<PatientFinancialRecord>[] = [
+  {
+    id: "description",
+    header: "Descrição",
+    primary: true,
+    cell: (record) => (
+      <span className="text-sm font-bold text-text-secondary">
+        {record.description}
+      </span>
+    ),
+  },
+  {
+    id: "date",
+    header: "Data",
+    cell: (record) => record.date,
+    cellClassName: "text-sm font-medium text-text-tertiary",
+  },
+  {
+    id: "value",
+    header: "Valor",
+    cell: (record) => record.value,
+    cellClassName: "text-sm font-extrabold text-text-primary",
+  },
+  {
+    id: "status",
+    header: "Status",
+    cell: (record) => <StatusBadge status={record.status} />,
+  },
+  {
+    id: "receipt",
+    header: "Recibo",
+    headerClassName: "text-right",
+    cellClassName: "text-right",
+    cell: (record) =>
+      record.hasReceipt ? (
+        <button className="text-sm font-bold text-brand-primary transition-colors hover:text-brand-dark">
+          Baixar PDF
+        </button>
+      ) : (
+        <span className="font-bold text-text-muted">-</span>
+      ),
+  },
+];
 
 interface PatientFinancialTabProps {
-  records: PatientFinancialRecord[]
+  records: PatientFinancialRecord[];
 }
 
 export function PatientFinancialTab({ records }: PatientFinancialTabProps) {
+  const [listMode, setListMode] = useState<"table" | "cards">("table");
+
   return (
-    <Card className="overflow-x-auto p-0">
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent border-border-light">
-            <TableHead className="h-14 font-extrabold text-xs text-text-muted tracking-wider pl-8">
-              DESCRIÇÃO
-            </TableHead>
-            <TableHead className="h-14 font-extrabold text-xs text-text-muted tracking-wider">
-              DATA
-            </TableHead>
-            <TableHead className="h-14 font-extrabold text-xs text-text-muted tracking-wider">
-              VALOR
-            </TableHead>
-            <TableHead className="h-14 font-extrabold text-xs text-text-muted tracking-wider">
-              STATUS
-            </TableHead>
-            <TableHead className="h-14 font-extrabold text-xs text-text-muted tracking-wider text-right pr-8">
-              RECIBO
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {records.length === 0 ? (
-            <TableRow className="hover:bg-transparent border-transparent">
-              <TableCell colSpan={5} className="py-10 text-center text-sm text-text-muted">
-                Nenhum lançamento financeiro para este paciente.
-              </TableCell>
-            </TableRow>
-          ) : null}
-          {records.map((record, index) => (
-            <TableRow
-              key={record.id}
-              className={`group hover:bg-background-hover/50 transition-colors ${
-                index < records.length - 1 ? "border-border-light" : "border-transparent"
-              }`}
-            >
-              <TableCell className="py-5 pl-8 text-sm font-bold text-text-secondary">
-                {record.description}
-              </TableCell>
-              <TableCell className="py-5 text-sm font-medium text-text-tertiary">
-                {record.date}
-              </TableCell>
-              <TableCell className="py-5 text-sm font-extrabold text-text-primary">
-                {record.value}
-              </TableCell>
-              <TableCell className="py-5">
-                <Badge
-                  variant={
-                    record.status === "paid"
-                      ? "success"
-                      : record.status === "overdue"
-                        ? "danger"
-                        : "warning"
-                  }
-                >
-                  {record.status === "paid"
-                    ? "Pago"
-                    : record.status === "overdue"
-                      ? "Atrasado"
-                      : "Pendente"}
-                </Badge>
-              </TableCell>
-              <TableCell className="py-5 pr-8 text-right">
-                {record.hasReceipt ? (
-                  <button className="text-sm font-bold text-brand-primary hover:text-brand-dark transition-colors">
-                    Baixar PDF
-                  </button>
-                ) : (
-                  <span className="text-text-muted font-bold">-</span>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <Card
+      className={cn(
+        "p-0",
+        listMode === "cards" && "border-transparent bg-transparent shadow-none",
+      )}
+    >
+      <DataTable
+        columns={columns}
+        data={records}
+        getRowKey={(record) => record.id}
+        size="sm"
+        emptyMessage="Nenhum lançamento financeiro para este paciente."
+        onModeChange={setListMode}
+      />
     </Card>
-  )
+  );
 }

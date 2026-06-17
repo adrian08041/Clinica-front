@@ -17,6 +17,7 @@ import {
   useUpdatePatient,
 } from "@/lib/queries/patients";
 import { useInsurances as useInsuranceCatalog } from "@/lib/queries/settings";
+import { cn } from "@/lib/utils";
 import {
   patientDetailsSchema,
   type PatientDetailsFormData,
@@ -57,6 +58,9 @@ export function PatientsSection() {
   const [step, setStep] = useState(1);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
   const [patientToDelete, setPatientToDelete] = useState<Patient | null>(null);
+  // Quando a lista vira cards (mobile), o painel "solta" a casca para não
+  // parecer card dentro de card. A largura é preservada (só a aparência some).
+  const [listMode, setListMode] = useState<"table" | "cards">("table");
 
   const patientsQuery = usePatients({
     page,
@@ -279,7 +283,12 @@ export function PatientsSection() {
         />
       </div>
 
-      <Card className="pt-2 gap-0">
+      <Card
+        className={cn(
+          "pt-2 gap-0",
+          listMode === "cards" && "border-transparent bg-transparent shadow-none",
+        )}
+      >
         <PatientsFilters
           insuranceFilter={insuranceFilter}
           insurances={insuranceOptions}
@@ -306,6 +315,7 @@ export function PatientsSection() {
           isLoading={isLoading}
           onDelete={(patient) => setPatientToDelete(patient)}
           onEdit={openEditDialog}
+          onModeChange={setListMode}
           onOpenProfile={(patientId) => router.push(`/pacientes/${patientId}`)}
           patients={patients}
         />
